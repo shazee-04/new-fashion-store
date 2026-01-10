@@ -13,38 +13,41 @@ public class User implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false, length = 100)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "mobile", nullable = false)
+    @Column(name = "mobile", nullable = false, length = 15)
     private String mobile;
 
-    @Column(name = "verification_code")
+    @Column(name = "verification_code", length = 100)
     private String verificationCode;
 
     @Column(name = "is_verified")
     private Boolean isVerified = false;
 
-    @Column(name = "registered_date")
+    @Column(name = "registered_date", nullable = false)
     private LocalDateTime registeredDate;
 
-    @Column(name = "status")
-    private Boolean status = true;
-
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     // Relationships //
     @ManyToOne
     @JoinColumn(name = "user_type_id", nullable = false)
     private UserType userType;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
 
     public User() {
     }
@@ -55,11 +58,11 @@ public class User implements Serializable {
         this.registeredDate = LocalDateTime.now();
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -127,6 +130,14 @@ public class User implements Serializable {
         this.registeredDate = registeredDate;
     }
 
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
     public UserType getUserType() {
         return userType;
     }
@@ -135,11 +146,11 @@ public class User implements Serializable {
         this.userType = userType;
     }
 
-    public Boolean getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }
