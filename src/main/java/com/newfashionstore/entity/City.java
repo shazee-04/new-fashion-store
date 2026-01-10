@@ -13,7 +13,7 @@ public class City implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
     public City() {
