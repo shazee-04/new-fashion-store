@@ -12,7 +12,7 @@ public class UserType implements Serializable {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", nullable = false, length = 20)
     private String type;
 
     public UserType() {
