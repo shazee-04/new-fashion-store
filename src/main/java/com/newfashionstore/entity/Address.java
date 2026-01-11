@@ -7,22 +7,24 @@ import java.io.Serializable;
 @Entity
 @Table(name = "address")
 public class Address implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private int id;
 
-    @Column(name = "line1", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "line1", nullable = false, length = 255)
     private String line1;
 
-    @Column(name = "line2", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "line2", length = 255)
     private String line2;
 
-    @Column(name = "postal_code", nullable = false)
+    @Column(name = "postal_code", length = 10)
     private String postalCode;
 
-    // Relations //
+    @Column(name = "is_default")
+    private Boolean isDefault = false;
+
+    // Relationships
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -34,11 +36,11 @@ public class Address implements Serializable {
     public Address() {
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -64,6 +66,14 @@ public class Address implements Serializable {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public Boolean getDefault() {
+        return isDefault;
+    }
+
+    public void setDefault(Boolean aDefault) {
+        isDefault = aDefault;
     }
 
     public User getUser() {
