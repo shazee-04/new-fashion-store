@@ -2,6 +2,8 @@ package com.newfashionstore.controller;
 
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.dto.UserDTO;
+import com.newfashionstore.entity.Cart;
+import com.newfashionstore.entity.Stock;
 import com.newfashionstore.entity.User;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
@@ -15,9 +17,11 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Path("/login")
 public class UserLogin {
@@ -47,14 +51,43 @@ public class UserLogin {
             }
 
             if (Encryption.checkPassword(loginDTO.getPassword(), user.getPassword())) {
-                HttpSession httpSession = request.getSession(true);
+                HttpSession httpSession = request.getSession();
+                HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) httpSession.getAttribute("sessionCart");
+
+                if (sessionCart != null && !sessionCart.isEmpty()) {
+                    try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+                        Transaction syncTransaction = dbSession.beginTransaction();
+
+                        for (Integer stockId : sessionCart.keySet()) {
+                            Integer qty = sessionCart.get(stockId);
+
+                            Query<Cart> cartQuery = dbSession.createQuery(
+                                    "FROM Cart WHERE user.id = :uid AND stock.id = :sid", Cart.class);
+                            cartQuery.setParameter("uid", user.getId());
+                            cartQuery.setParameter("sid", stockId);
+                            Cart existingItem = cartQuery.uniqueResult();
+
+                            if (existingItem != null) {
+                                existingItem.setQty(existingItem.getQty() + qty);
+                                dbSession.merge(existingItem);
+                            } else {
+                                Stock stock = dbSession.get(Stock.class, stockId);
+                                Cart newCartItem = new Cart();
+                                newCartItem.setUser(user);
+                                newCartItem.setStock(stock);
+                                newCartItem.setQty(qty);
+                                dbSession.persist(newCartItem);
+                            }
+                        }
+                        syncTransaction.commit();
+
+                        httpSession.removeAttribute("sessionCart");
+                    }
+                }
+
                 httpSession.setAttribute("user", user);
-
                 session.beginTransaction();
-
-                user.setLastLogin(LocalDateTime.now());
-
-//                session.update(user);
+//                user.setLastLogin(LocalDateTime.now());
                 session.getTransaction().commit();
 
                 responseDTO.setSuccess(true);
