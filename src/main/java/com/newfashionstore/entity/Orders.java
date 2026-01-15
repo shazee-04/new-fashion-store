@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "orders")
 public class Orders implements Serializable {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private String id;
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
@@ -42,11 +42,11 @@ public class Orders implements Serializable {
         this.orderDate = LocalDateTime.now();
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
