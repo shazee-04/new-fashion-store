@@ -1,12 +1,27 @@
 package com.newfashionstore.dto;
 
+import jakarta.validation.constraints.*;
+
 import java.io.Serializable;
 
 public class UserDTO implements Serializable {
+    @NotBlank(message = "first name cannot be empty")
+    @Size(min = 2, max = 50, message = "first name must be between 2 and 50 characters")
     private String firstName;
+
+    @NotBlank(message = "last name cannot be empty")
     private String lastName;
+
+    @NotBlank(message = "email is required")
+    @Email(message = "please provide a valid email address")
     private String email;
+
+    @NotBlank(message = "password is required")
+    @Size(min = 8, message = "password must be at least 8 characters long")
     private String password;
+
+    @NotBlank(message = "mobile number is required")
+    @Pattern(regexp = "^07[0-9]{8}$", message = "mobile must be a valid 10-digit number")
     private String mobile;
 
     public UserDTO() {
