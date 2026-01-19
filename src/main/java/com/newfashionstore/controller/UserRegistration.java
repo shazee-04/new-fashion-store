@@ -7,6 +7,10 @@ import com.newfashionstore.entity.User;
 import com.newfashionstore.entity.UserType;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -17,14 +21,32 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Path("/register")
 public class UserRegistration {
+    private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private static final Validator validator = factory.getValidator();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response registerUser(UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
+
+        // Validate the DTO
+        Set<ConstraintViolation<UserDTO>> violations = validator.validate(userDTO);
+
+        if (!violations.isEmpty()) {
+            String errorMessage = violations.stream()
+                    .map(ConstraintViolation::getMessage)
+                    .collect(Collectors.joining(", "));
+
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ResponseDTO(false, errorMessage))
+                    .build();
+        }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
