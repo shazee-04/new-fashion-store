@@ -1,0 +1,10 @@
+.invalid-input{
+    border: 1px solid #ec6758;
+}
+
+.error-msg {
+    color: #ec6758;
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 2px;
+}
