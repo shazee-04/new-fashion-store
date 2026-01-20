@@ -18,6 +18,8 @@ public class UserDTO implements Serializable {
 
     @NotBlank(message = "password is required")
     @Size(min = 8, message = "password must be at least 8 characters long")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{8,}$",
+            message = "password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number")
     private String password;
 
     @NotBlank(message = "mobile number is required")
