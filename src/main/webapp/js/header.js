@@ -78,18 +78,27 @@ class Header extends HTMLElement {
                 <div class="col-auto">
                     <ul class="list-unstyled d-flex justify-content-end align-items-center mb-0">
                         <li class="search-box mx-2">
-                            <a href="" class="search-button">
+                            <a href="#search" class="search-button">
                                 <i class="bi bi-search" style="font-size: 20px;"></i>
                             </a>
                         </li>
                         <li>
-                            <a href="wishlist.html" class="text-uppercase d-flex mx-2 me-4">
+                            <a href="wishlist.html" class="text-uppercase d-flex mx-2" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                data-bs-title="wishlist">
                                 <i class="bi bi-heart" style="font-size: 20px;"></i>
                                 <span class="wishlist-count m-auto"></span>
                             </a>
                         </li>
                         <li>
-                            <a href="my-account.html#like" class="ms-2">
+                            <a href="cart.html" class="text-uppercase mx-2 me-4" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                                aria-controls="offcanvasCart">
+                                <i class="bi bi-bag" style="font-size: 20px;"  
+                                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="cart">
+                                </i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="my-account.html" class="ms-2">
                                 <i class="bi bi-person-circle" style="font-size: 22px;"></i>
                             </a>
                         </li>
