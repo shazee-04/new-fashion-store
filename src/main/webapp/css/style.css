@@ -1,4 +1,5 @@
-.invalid-input{
+/* Register and login forms ---------------------------- */
+.invalid-input {
     border: 1px solid #ec6758;
 }
 
@@ -9,6 +10,7 @@
     margin-top: 2px;
 }
 
+/* Offcanvas Cart ------------------------------------- */
 .cart-item-title {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -42,4 +44,17 @@
     font-weight: 500;
     padding: .25rem;
     text-align: center;
+}
+
+/* Removes the 'X' button from Chrome, Safari, Edge, and Opera */
+.search-popup input[type="search"]::-webkit-search-cancel-button {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* Removes the 'X' button from Internet Explorer */
+.search-popup input[type="search"]::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
 }
