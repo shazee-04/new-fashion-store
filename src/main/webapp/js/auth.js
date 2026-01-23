@@ -1,10 +1,14 @@
 document.getElementById('register-form').addEventListener('submit', async function (e) {
     e.preventDefault();
+
     await submitRegistration();
 });
 
 async function submitRegistration() {
     clearErrors();
+
+    const loadingToast = getLoadingToast("Creating your account.").showToast();
+    document.getElementById('registerBtn').disabled = true;
 
     const data = {
         firstName: document.getElementById('firstName').value,
@@ -17,7 +21,7 @@ async function submitRegistration() {
     try {
         const response = await fetch('api/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         });
 
@@ -42,9 +46,14 @@ async function submitRegistration() {
                 else if (msg.includes("mobile")) showErrorWithField('mobileError', 'mobile', err);
                 else if (msg.includes("password")) showErrorWithField('passwordError', 'password', err);
             });
+
+            showToast("Registration failed. Please try again.", false);
         }
     } catch (error) {
         console.error('Registration error:', error);
-        showToast("Server connection failed!", false);
+        showToast("Server connection failed! Please try again.", false);
+    } finally {
+        document.getElementById('registerBtn').disabled = false;
+        loadingToast.hideToast();
     }
 }
