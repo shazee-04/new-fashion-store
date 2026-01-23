@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class ResponseDTO implements Serializable {
     private boolean success;
     private String message;
+    private Object data;
 
     public ResponseDTO() {
     }
@@ -28,5 +29,13 @@ public class ResponseDTO implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
     }
 }
