@@ -11,6 +11,25 @@ function showToast(message, isSuccess) {
     }).showToast();
 }
 
+// Loading toast
+function getLoadingToast(message) {
+    return Toastify({
+        text: `<div class="toast-loader"></div>` + message,
+        duration: -1,
+        close: false,
+        gravity: "bottom",
+        position: "right",
+        stopOnFocus: true,
+        escapeMarkup: false,
+        style: {
+            background: "#333",
+            color: "#fff",
+            display: "flex",
+            alignItems: "center"
+        }
+    });
+}
+
 // Display error messages for form fields
 function showError(spanId, message) {
     const spanElement = document.getElementById(spanId);
