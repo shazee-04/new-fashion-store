@@ -22,6 +22,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @Path("/login")
@@ -41,93 +42,83 @@ public class UserLogin {
                     .build();
         }
 
-        // Authenticate user ---
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-
+            // Fetch user ---
             Query<User> query = session.createQuery("FROM User WHERE email = :email", User.class);
             query.setParameter("email", loginDTO.getEmail());
             User user = query.uniqueResult();
 
-            // Check if user exists ---
-            if (user == null) {
+            // Credential check ---
+            if (user == null || !Encryption.checkPassword(loginDTO.getPassword(), user.getPassword())) {
                 responseDTO.setSuccess(false);
                 responseDTO.setMessage("Invalid email or password.");
                 return Response.status(Response.Status.UNAUTHORIZED).entity(responseDTO).build();
             }
 
-            // Check if user is active ---
+            // Status check ---
             if (user.getStatus().getId() != 1) {
                 responseDTO.setSuccess(false);
-                responseDTO.setMessage("Your account is inactive. Please contact support.");
+                responseDTO.setMessage("Your account is inactive.");
                 return Response.status(Response.Status.FORBIDDEN).entity(responseDTO).build();
             }
 
-            // Verify password ---
-            if (Encryption.checkPassword(loginDTO.getPassword(), user.getPassword())) {
-                // HTTP session ---
-                HttpSession httpSession = request.getSession();
-                HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) httpSession.getAttribute("sessionCart");
+            // Start transaction ---
+            Transaction transaction = session.beginTransaction();
 
-                // Sync session cart with database cart
-                if (sessionCart != null && !sessionCart.isEmpty()) {
-                    try (Session newSession = HibernateUtil.getSessionFactory().openSession()) {
-                        Transaction syncTransaction = newSession.beginTransaction();
+            // Sync session cart ---
+            HttpSession httpSession = request.getSession();
+            HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) httpSession.getAttribute("sessionCart");
 
-                        for (Integer stockId : sessionCart.keySet()) {
-                            Integer qty = sessionCart.get(stockId);
+            if (sessionCart != null && !sessionCart.isEmpty()) {
+                for (Integer stockId : sessionCart.keySet()) {
+                    Integer qty = sessionCart.get(stockId);
 
-                            Query<Cart> cartQuery = newSession.createQuery(
-                                    "FROM Cart WHERE user.id = :uid AND stock.id = :sid", Cart.class);
-                            cartQuery.setParameter("uid", user.getId());
-                            cartQuery.setParameter("sid", stockId);
-                            Cart existingItem = cartQuery.uniqueResult();
+                    Cart existingItem = session.createQuery(
+                                    "FROM Cart WHERE user.id = :uid AND stock.id = :sid", Cart.class)
+                            .setParameter("uid", user.getId())
+                            .setParameter("sid", stockId)
+                            .uniqueResult();
 
-                            if (existingItem != null) {
-                                existingItem.setQty(existingItem.getQty() + qty);
-                                newSession.merge(existingItem);
-                            } else {
-                                Stock stock = newSession.get(Stock.class, stockId);
-                                Cart newCartItem = new Cart();
-                                newCartItem.setUser(user);
-                                newCartItem.setStock(stock);
-                                newCartItem.setQty(qty);
-                                newSession.persist(newCartItem);
-                            }
-                        }
-                        syncTransaction.commit();
-
-                        httpSession.removeAttribute("sessionCart");
+                    if (existingItem != null) {
+                        existingItem.setQty(existingItem.getQty() + qty);
+                        session.merge(existingItem);
+                    } else {
+                        Stock stock = session.get(Stock.class, stockId);
+                        Cart newCartItem = new Cart();
+                        newCartItem.setUser(user);
+                        newCartItem.setStock(stock);
+                        newCartItem.setQty(qty);
+                        session.persist(newCartItem);
                     }
                 }
-
-                // Set user in session ---
-                httpSession.setAttribute("user", user);
-
-                // Update last login time ---
-                session.beginTransaction();
-//                user.setLastLogin(LocalDateTime.now());
-                session.getTransaction().commit();
-
-                // Prepare data for the response ---
-                UserDTO userDTO = new UserDTO();
-                userDTO.setFirstName(user.getFirstName());
-                userDTO.setLastName(user.getLastName());
-                userDTO.setEmail(user.getEmail());
-                userDTO.setMobile(user.getMobile());
-
-                responseDTO.setSuccess(true);
-                responseDTO.setMessage("Login successful!");
-                responseDTO.setData(userDTO);
-
-                return Response.ok().entity(responseDTO).build();
-            } else {
-                responseDTO.setSuccess(false);
-                responseDTO.setMessage("Invalid email or password.");
-                return Response.status(Response.Status.UNAUTHORIZED).entity(responseDTO).build();
+                httpSession.removeAttribute("sessionCart");
             }
+
+            // Update last login ---
+            user.setLastLogin(LocalDateTime.now());
+            session.merge(user);
+
+            transaction.commit();
+
+            // User Session ---
+            httpSession.setAttribute("user", user);
+
+            // Prepare response ---
+            UserDTO userDTO = new UserDTO();
+            userDTO.setFirstName(user.getFirstName());
+            userDTO.setLastName(user.getLastName());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setMobile(user.getMobile());
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Login successful!");
+            responseDTO.setData(userDTO);
+
+            return Response.ok().entity(responseDTO).build();
+
         } catch (Exception e) {
             responseDTO.setSuccess(false);
-            responseDTO.setMessage("Login failed: server error");
+            responseDTO.setMessage("Login failed: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
