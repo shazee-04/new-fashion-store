@@ -12,12 +12,11 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "last name cannot be empty")
     private String lastName;
 
-    @NotBlank(message = "email is required")
+    @NotBlank(message = "please enter a valid email address")
     @Email(message = "please provide a valid email address")
     private String email;
 
     @NotBlank(message = "password is required")
-    @Size(min = 8, message = "password must be at least 8 characters long")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{8,}$",
             message = "password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number")
     private String password;
