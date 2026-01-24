@@ -19,7 +19,7 @@ async function loginUser() {
     };
 
     try {
-        const reponse = await fetch('api/login', {
+        const response = await fetch('api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,16 +27,16 @@ async function loginUser() {
             body: JSON.stringify(data)
         })
 
-        const result = await reponse.json();
+        const result = await response.json();
 
-        if (result.ok && result.success) {
+        if (response.ok && result.success) {
             showToast(result.message, true);
 
             sessionStorage.setItem("user", JSON.stringify(result.data));
 
             setTimeout(() => {
                 window.location.href = 'index.html';
-            }, 1500);
+            }, 2000);
         } else {
             const errorText = result.message || "";
 
@@ -50,6 +50,7 @@ async function loginUser() {
             });
 
             showToast("Login failed. Please try again.", false);
+            console.log(errors);
         }
     } catch (error) {
         console.error('Login error:', error);
