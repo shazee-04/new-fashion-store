@@ -30,6 +30,22 @@ function getLoadingToast(message) {
     });
 }
 
+// Redirect with toast notification
+function redirectToast(message, url, delay = 1000, isSuccess = true) {
+    Toastify({
+        text: message,
+        duration: delay,
+        gravity: "bottom",
+        position: "right",
+        style: {
+            background: isSuccess ? "#2ecc71" : "#e74c3c",
+        },
+        callback: function () {
+            window.location.href = url;
+        }
+    }).showToast();
+}
+
 // Display error messages for form fields
 function showError(spanId, message) {
     const spanElement = document.getElementById(spanId);
@@ -56,3 +72,14 @@ function clearErrors() {
     document.querySelectorAll('.invalid-input').forEach(el => el.classList.remove('invalid-input'));
 }
 
+// Get cookie value by name
+function getCookie(name) {
+    const cookies = document.cookie.split('; ');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.split('=');
+        if (key === name) {
+            return decodeURIComponent(value);
+        }
+    }
+    return null;
+}
