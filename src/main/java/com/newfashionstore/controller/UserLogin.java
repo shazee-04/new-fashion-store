@@ -74,7 +74,7 @@ public class UserLogin {
             Transaction transaction = session.beginTransaction();
 
             // Sync session cart ---
-            HttpSession httpSession = request.getSession();
+            httpSession = request.getSession();
             HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) httpSession.getAttribute("sessionCart");
 
             if (sessionCart != null && !sessionCart.isEmpty()) {
