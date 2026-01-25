@@ -1,3 +1,17 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const user = sessionStorage.getItem("user");
+    if (user) {
+        window.location.href = "index.html";
+        return;
+    }
+    
+    const emailCookie = getCookie("email");
+    if (emailCookie) {
+        document.getElementById('email').value = emailCookie;
+        document.getElementById('rememberMe').checked = true;
+    }
+});
+
 document.getElementById('login-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -12,6 +26,7 @@ async function loginUser() {
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
 
     const data = {
         email: email,
@@ -30,13 +45,17 @@ async function loginUser() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            showToast(result.message, true);
-
             sessionStorage.setItem("user", JSON.stringify(result.data));
+            if (rememberMe) {
+                const date = new Date();
+                date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + date.toUTCString();
+                document.cookie = "email=" + result.data.email + ";" + expires + ";path=/";
+            } else {
+                document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            }
 
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            redirectToast(result.message, "index.html", 1000, true);
         } else {
             const errorText = result.message || "";
 
