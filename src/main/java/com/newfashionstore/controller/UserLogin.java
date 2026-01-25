@@ -34,6 +34,14 @@ public class UserLogin {
     public Response loginUser(LoginDTO loginDTO, @Context HttpServletRequest request) {
         ResponseDTO responseDTO = new ResponseDTO();
 
+        // Redirect if already logged in ---
+        HttpSession httpSession = request.getSession(false);
+        if (httpSession != null && httpSession.getAttribute("user") != null) {
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Already logged in.");
+            return Response.ok(responseDTO).build();
+        }
+
         // Validate DTO ---
         String violations = Vaidator.validateLoginDTO(loginDTO);
         if (violations != null) {
