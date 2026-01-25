@@ -1,3 +1,11 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const user = sessionStorage.getItem("user");
+    if (user) {
+        window.location.href = "index.html";
+        return;
+    }
+});
+
 document.getElementById('register-form').addEventListener('submit', async function (e) {
     e.preventDefault();
 
@@ -21,17 +29,14 @@ async function submitRegistration() {
     try {
         const response = await fetch('api/register', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
         const result = await response.json();
 
         if (response.ok && result.success) {
-            showToast(result.message, true);
-            setTimeout(() => {
-                window.location.href = 'login.html';
-            }, 2000);
+            redirectToast(result.message, "login.html", 1000, true);
         } else {
             const errorText = result.message || "";
 
