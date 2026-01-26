@@ -367,59 +367,51 @@ class Header extends HTMLElement {
                 </div>
 
                 <div class="col-auto">
-                    <ul class="list-unstyled d-flex justify-content-end align-items-center mb-0">
-                        <li class="search-box mx-2">
-                            <a class="search-button c-pointer">
-                                <i class="bi bi-search" style="font-size: 20px;"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="wishlist.html" class="text-uppercase d-flex mx-2" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                    <ul class="navbar-nav list-unstyled d-flex justify-content-end align-items-center mb-0 text-dark">
+                        <li class="nav-item">
+                            <a href="wishlist.html" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom"
                                 data-bs-title="wishlist">
-                                <i class="bi bi-heart" style="font-size: 20px;"></i>
+                                    Wishlist
                                 <span class="wishlist-count m-auto"></span>
                             </a>
                         </li>
-                        <li>
-                            <a href="cart.html" class="text-uppercase mx-2 me-4" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                        <li class="nav-item">
+                            <a href="cart.html" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                 aria-controls="offcanvasCart">
-                                <i class="bi bi-bag" style="font-size: 20px;"  
-                                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="cart">
-                                </i>
+                                Cart
+                            </a>
+                        </li>
+                        <li class="nav-item search-box">
+                            <a class="nav-link search-button c-pointer">
+                                <svg width="22" height="22" viewBox="0 0 22 22">
+                                    <use xlink:href="#search"></use>
+                                </svg>
                             </a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="my-account.html#" id="dropdownShop"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="bi bi-person-circle text-dark" style="font-size: 22px;"></i>
+                                <svg width="22" height="22" viewBox="0 0 22 22">
+                                    <use xlink:href="#user"></use>
+                                </svg>
                             </a>
                             <ul class="dropdown-menu list-unstyled end-0" style="left: auto;"  aria-labelledby="dropdownShop">
                                 <li>
                                     <a href="#" class="dropdown-item item-anchor">
-                                        New Arrivals
+                                        Account
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" class="dropdown-item item-anchor">
-                                        Trending
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="dropdown-item item-anchor">
-                                        Mens
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#" class="dropdown-item item-anchor">
-                                        Womens
+                                        Orders
                                     </a>
                                 </li>
                                 <li>
                                 ${user ? `
-                                    <a id="logoutBtn" class="dropdown-item item-anchor text-danger">
+                                    <a id="logoutBtn" class="dropdown-item item-anchor text-danger c-pointer">
                                         Logout
                                     </a> ` : `
-                                    <a href="login.html" class="dropdown-item item-anchor">
+                                    <a href="login.html" class="dropdown-item item-anchor fw-medium">
                                         Login
                                     </a>
                                 `}
