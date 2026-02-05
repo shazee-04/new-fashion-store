@@ -2,14 +2,14 @@ let currentPage = 0;
 const pageSize = 8;
 
 document.addEventListener('DOMContentLoaded', () => {
-    loadProducts(0);
+    applyFilters(0);
 
-    // document.querySelectorAll('.filter-check').forEach(el => {
-    //     el.addEventListener('change', () => loadProducts(0));
-    // });
+    document.querySelectorAll('.filter-check').forEach(el => {
+        el.addEventListener('change', () => applyFilters(0));
+    });
 });
 
-async function loadProducts(page = 0) {
+async function applyFilters(page = 0) {
     currentPage = page;
 
     // Get Filters
@@ -91,7 +91,7 @@ function renderPagination(totalCount) {
         btn.className = `btn ${i === currentPage ? 'btn-dark' : 'btn-outline-dark'} me-2`;
         btn.onclick = () => {
             window.scrollTo(0, 0); // Scroll to top on page change
-            loadProducts(i);
+            applyFilters(i);
         };
         paginationContainer.appendChild(btn);
     }
