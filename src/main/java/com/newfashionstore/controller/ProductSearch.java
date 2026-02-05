@@ -10,10 +10,8 @@ import jakarta.ws.rs.core.Response;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Path("/products")
 public class ProductSearch {
@@ -31,39 +29,41 @@ public class ProductSearch {
             @QueryParam("size") @DefaultValue("8") int size) {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Base Query
+            // Base HQL
             StringBuilder hql = new StringBuilder("SELECT DISTINCT p FROM Product p " +
-                    "JOIN FETCH p.category " +
-                    "JOIN FETCH p.brand " +
+                    "JOIN FETCH p.category JOIN FETCH p.brand " +
                     "WHERE p.status.id = 1");
             StringBuilder countHql = new StringBuilder("SELECT COUNT(DISTINCT p) FROM Product p WHERE p.status.id = 1");
 
-
             Map<String, Object> params = new HashMap<>();
 
+            // Search Logic
             if (searchText != null && !searchText.trim().isEmpty()) {
-                String filter = " AND (p.title REGEXP :searchText OR p.description REGEXP :searchText)";
+                String filter = " AND (p.title LIKE :searchText)";
                 hql.append(filter);
                 countHql.append(filter);
-                String regex = String.join("|", searchText.split("\\s+"));
-                params.put("searchText", regex);
+                params.put("searchText", "%" + searchText + "%");
             }
 
+            // Multiple Categories
             if (category != null && !category.isEmpty()) {
-                String filter = " AND p.category.name = :category";
+                List<String> categoryList = Arrays.asList(category.split(";"));
+                String filter = " AND p.category.name IN (:categories)";
                 hql.append(filter);
                 countHql.append(filter);
-                params.put("category", category);
+                params.put("categories", categoryList);
             }
 
+            // Multiple Brands
             if (brand != null && !brand.isEmpty()) {
-                String filter = " AND p.brand.name = :brand";
+                List<String> brandList = Arrays.asList(brand.split(";"));
+                String filter = " AND p.brand.name IN (:brands)";
                 hql.append(filter);
                 countHql.append(filter);
-                params.put("brand", brand);
+                params.put("brands", brandList);
             }
 
-
+            // Price Filtering
             if (minPrice != null || maxPrice != null) {
                 String priceFilter = " AND p.id IN (SELECT s.product.id FROM Stock s WHERE 1=1";
                 if (minPrice != null) priceFilter += " AND s.price >= :minPrice";
@@ -75,17 +75,15 @@ public class ProductSearch {
                 if (maxPrice != null) params.put("maxPrice", maxPrice);
             }
 
-            // Create Queries
+            // Execute Queries
             Query<Product> query = session.createQuery(hql.toString(), Product.class);
             Query<Long> countQuery = session.createQuery(countHql.toString(), Long.class);
 
-            // Set Parameters
-            params.forEach((param, value) -> {
-                query.setParameter(param, value);
-                countQuery.setParameter(param, value);
+            params.forEach((p, v) -> {
+                query.setParameter(p, v);
+                countQuery.setParameter(p, v);
             });
 
-            // Pagination
             query.setFirstResult(page * size);
             query.setMaxResults(size);
 
@@ -93,31 +91,26 @@ public class ProductSearch {
                 ProductDTO dto = new ProductDTO();
                 dto.setId(p.getId());
                 dto.setTitle(p.getTitle());
-                dto.setDescription(p.getDescription());
                 dto.setCategoryName(p.getCategory().getName());
                 dto.setBrandName(p.getBrand().getName());
 
-                // Set Price
-                Double price = session.createQuery(
-                                "SELECT MIN(s.price) FROM Stock s WHERE s.product.id = :pid", Double.class)
-                        .setParameter("pid", p.getId())
-                        .uniqueResult();
+                // Fetch Min Price
+                Double price = session.createQuery("SELECT MIN(s.price) FROM Stock s WHERE s.product.id = :pid", Double.class)
+                        .setParameter("pid", p.getId()).uniqueResult();
                 dto.setMinPrice(price != null ? price : 0.0);
 
-                // Set Images
-                List<String> images = session.createQuery(
-                                "SELECT pi.path FROM ProductImage pi WHERE pi.product.id = :pid", String.class)
-                        .setParameter("pid", p.getId())
-                        .list();
+                // Fetch Images
+                List<String> images = session.createQuery("SELECT pi.path FROM ProductImage pi WHERE pi.product.id = :pid", String.class)
+                        .setParameter("pid", p.getId()).list();
                 dto.setImages(images);
                 return dto;
-            }).toList();
+            }).collect(Collectors.toList());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("products", dtoList);
-            response.put("totalCount", countQuery.uniqueResult());
+            Map<String, Object> res = new HashMap<>();
+            res.put("products", dtoList);
+            res.put("totalCount", countQuery.uniqueResult());
 
-            return Response.ok(response).build();
+            return Response.ok(res).build();
         }
     }
 }
