@@ -1,5 +1,5 @@
 let currentPage = 0;
-const pageSize = 8;
+const pageSize = 12;
 
 document.addEventListener('DOMContentLoaded', () => {
     applyFilters(0);
@@ -15,9 +15,9 @@ async function applyFilters(page = 0) {
     // Get Filters
     const searchText = document.getElementById('shopSearchInput')?.value || "";
     const categories = Array.from(document.querySelectorAll('.filter-check[data-type="category"]:checked'))
-        .map(c => c.value).join(',');
+        .map(c => c.value).join(';');
     const brands = Array.from(document.querySelectorAll('.filter-check[data-type="brand"]:checked'))
-        .map(b => b.value).join(',');
+        .map(b => b.value).join(';');
 
     const minPrice = document.getElementById('minPrice')?.value || "";
     const maxPrice = document.getElementById('maxPrice')?.value || "";
@@ -32,15 +32,17 @@ async function applyFilters(page = 0) {
 
     try {
         const response = await fetch(url);
-        if (response.ok) {
-            const data = await response.json();
-            renderProducts(data.products);
-            renderPagination(data.totalCount);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderProducts(result.data.products);
+            renderPagination(result.data.totalCount);
         } else {
             showToast("Failed to load products!", false);
         }
-    } catch (e) {
-        showToast("Connection error: " + e.message, false);
+    } catch (error) {
+        console.error('Shop error:', error);
+        showToast("Server connection failed! Please try again.", false);
     }
 }
 
@@ -78,21 +80,67 @@ function renderProducts(products) {
 }
 
 function renderPagination(totalCount) {
+    const resultCount = document.getElementById('result-count');
+    if (resultCount) {
+        resultCount.innerHTML = `Showing ${pageSize * currentPage + 1}–
+        ${Math.min(pageSize * (currentPage + 1), totalCount)} of ${totalCount} results`;
+    }
+
     const totalPages = Math.ceil(totalCount / pageSize);
     const paginationContainer = document.getElementById('pagination-container');
     paginationContainer.innerHTML = '';
 
-    if (totalPages <= 1) return; // Don't show if only one page
+    if (totalPages <= 1) return;
+
+    const prevLi = document.createElement('li');
+    prevLi.className = `page-item ${currentPage === 0 ? 'disabled' : ''}`;
+    const prevA = document.createElement('a');
+    prevA.className = 'page-link shadow-none';
+    prevA.setAttribute('aria-label', 'Previous');
+    prevA.innerHTML = '<i class="bi bi-arrow-left"></i>';
+    prevA.href = '#';
+    prevA.onclick = (e) => {
+        e.preventDefault();
+        if (currentPage > 0) {
+            window.scrollTo(0, 0);
+            applyFilters(currentPage - 1);
+        }
+    };
+    prevLi.appendChild(prevA);
+    paginationContainer.appendChild(prevLi);
 
     for (let i = 0; i < totalPages; i++) {
-        const btn = document.createElement('button');
-        btn.innerText = i + 1;
-        // Highlight active page
-        btn.className = `btn ${i === currentPage ? 'btn-dark' : 'btn-outline-dark'} me-2`;
-        btn.onclick = () => {
-            window.scrollTo(0, 0); // Scroll to top on page change
-            applyFilters(i);
+        const li = document.createElement('li');
+        li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+        const a = document.createElement('a');
+        a.className = 'page-link shadow-none';
+        a.innerText = i + 1;
+        a.href = '#';
+        a.onclick = (e) => {
+            e.preventDefault();
+            if (i !== currentPage) {
+                window.scrollTo(0, 0);
+                applyFilters(i);
+            }
         };
-        paginationContainer.appendChild(btn);
+        li.appendChild(a);
+        paginationContainer.appendChild(li);
     }
+
+    const nextLi = document.createElement('li');
+    nextLi.className = `page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`;
+    const nextA = document.createElement('a');
+    nextA.className = 'page-link shadow-none';
+    nextA.setAttribute('aria-label', 'Next');
+    nextA.innerHTML = '<i class="bi bi-arrow-right"></i>';
+    nextA.href = '#';
+    nextA.onclick = (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages - 1) {
+            window.scrollTo(0, 0);
+            applyFilters(currentPage + 1);
+        }
+    };
+    nextLi.appendChild(nextA);
+    paginationContainer.appendChild(nextLi);
 }
