@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.filter-check').forEach(el => {
         el.addEventListener('change', () => applyFilters(0));
     });
+
+    document.getElementById('sortSelect').addEventListener('change', () => applyFilters(0));
 });
 
 async function applyFilters(page = 0) {
@@ -22,13 +24,16 @@ async function applyFilters(page = 0) {
     const minPrice = document.getElementById('minPrice')?.value || "";
     const maxPrice = document.getElementById('maxPrice')?.value || "";
 
+    const sortSelect = document.getElementById('sortSelect')?.value || "0";
+
     // Build URL
     const url = `api/products/search?page=${page}&size=${pageSize}` +
         `&query=${encodeURIComponent(searchText)}` +
         `&category=${categories}` +
         `&brand=${brands}` +
         `&minPrice=${minPrice}` +
-        `&maxPrice=${maxPrice}`;
+        `&maxPrice=${maxPrice}` +
+        `&sort=${sortSelect}`;
 
     try {
         const response = await fetch(url);

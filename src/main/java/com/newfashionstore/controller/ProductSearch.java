@@ -27,7 +27,8 @@ public class ProductSearch {
             @QueryParam("minPrice") Double minPrice,
             @QueryParam("maxPrice") Double maxPrice,
             @QueryParam("page") @DefaultValue("0") int page,
-            @QueryParam("size") @DefaultValue("8") int size) {
+            @QueryParam("size") @DefaultValue("8") int size,
+            @QueryParam("sort") @DefaultValue("0") int sort) {
 
         ResponseDTO responseDTO = new ResponseDTO();
 
@@ -76,6 +77,22 @@ public class ProductSearch {
                 countHql.append(priceFilter);
                 if (minPrice != null) params.put("minPrice", minPrice);
                 if (maxPrice != null) params.put("maxPrice", maxPrice);
+            }
+
+            // Sorting
+            switch (sort) {
+                case 1:
+                    hql.append(" ORDER BY (SELECT MIN(s.price) FROM Stock s WHERE s.product.id = p.id) ASC");
+                    break;
+                case 2:
+                    hql.append(" ORDER BY (SELECT MIN(s.price) FROM Stock s WHERE s.product.id = p.id) DESC");
+                    break;
+                case 3:
+                    hql.append(" ORDER BY p.title ASC");
+                    break;
+                default:
+                    hql.append(" ORDER BY p.id DESC");
+                    break;
             }
 
             // Execute Queries
