@@ -1,6 +1,7 @@
 package com.newfashionstore.controller;
 
 import com.newfashionstore.dto.ProductDTO;
+import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.ProductImage;
 import com.newfashionstore.util.HibernateUtil;
@@ -27,6 +28,8 @@ public class ProductSearch {
             @QueryParam("maxPrice") Double maxPrice,
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("8") int size) {
+
+        ResponseDTO responseDTO = new ResponseDTO();
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Base HQL
@@ -106,11 +109,20 @@ public class ProductSearch {
                 return dto;
             }).collect(Collectors.toList());
 
-            Map<String, Object> res = new HashMap<>();
-            res.put("products", dtoList);
-            res.put("totalCount", countQuery.uniqueResult());
+            Map<String, Object> data = new HashMap<>();
+            data.put("products", dtoList);
+            data.put("totalCount", countQuery.uniqueResult());
 
-            return Response.ok(res).build();
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Products loaded successfully!");
+            responseDTO.setData(data);
+
+            return Response.ok().entity(responseDTO).build();
+
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Product loading failed: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
 }
