@@ -145,12 +145,12 @@ class Header extends HTMLElement {
     <!-- Search Popup -->
     <div class="search-popup">
         <div class="search-popup-container">
-            <form role="search" method="get" class="form-group" action="">
+            <form role="search" class="form-group">
                 <label for="search-form"></label>
                 <div class="position-relative">
                     <input type="search" id="search-form" class="form-control border-0 border-bottom shadow-none"
-                        placeholder="Type and press enter" value="" name="s" />
-                    <button type="submit" class="search-submit border-0 position-absolute bg-transparent"
+                        placeholder="Type and press enter" value="" />
+                    <button id="searchSubmit" class="search-submit border-0 position-absolute bg-transparent"
                         style="bottom: 10px;right: 15px;">
                         <i class="bi bi-arrow-right" style="font-size: 24px;"></i>
                     </button>
@@ -432,6 +432,17 @@ class Header extends HTMLElement {
                 window.location.href = 'index.html';
             });
         }
+
+        document.getElementById('searchSubmit').addEventListener('click', (e) => {
+            e.preventDefault();
+            const searchText = document.getElementById('search-form')?.value;
+            if (window.location.pathname.endsWith('shop.html') && searchText?.trim()) {
+                applyFilters(0);
+            } else if (searchText?.trim()) {
+                window.location.href = `shop.html?query=${encodeURI(searchText)}`;
+            }
+            document.querySelector('.search-popup').classList.remove('is-visible');
+        })
     }
 }
 
