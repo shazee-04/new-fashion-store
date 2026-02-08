@@ -83,3 +83,28 @@ function getCookie(name) {
     }
     return null;
 }
+
+// Update browser URL with filters
+function updateBrowserURL({
+    page,
+    searchText,
+    categories,
+    brands,
+    minPrice,
+    maxPrice,
+    sort
+}) {
+    const params = new URLSearchParams();
+
+    if (page > 0) params.set('page', page);
+    if (searchText) params.set('query', searchText);
+    if (categories) params.set('category', categories);
+    if (brands) params.set('brand', brands);
+    if (minPrice) params.set('minPrice', minPrice);
+    if (maxPrice) params.set('maxPrice', maxPrice);
+    if (sort) params.set('sort', sort);
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+
+    window.history.pushState({}, '', newUrl);
+}
