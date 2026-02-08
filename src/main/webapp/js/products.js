@@ -2,20 +2,60 @@ let currentPage = 0;
 const pageSize = 12;
 
 document.addEventListener('DOMContentLoaded', () => {
-    applyFilters(0);
+    const params = new URLSearchParams(window.location.search);
+
+    const page = parseInt(params.get('page')) || 0;
+
+    if (params.get('query')) {
+        document.getElementById('search-form').value = params.get('query');
+    }
+    if (params.get('minPrice')) {
+        document.getElementById('minPrice').value = params.get('minPrice');
+    }
+    if (params.get('maxPrice')) {
+        document.getElementById('maxPrice').value = params.get('maxPrice');
+    }
+
+    // Restore checkboxes
+    if (params.get('category')) {
+        (params.get('category') || '').split(';').forEach(val => {
+            const el = document.querySelector(`.filter-check[data-type="category"][value="${val}"]`);
+            if (el) el.checked = true;
+        });
+    }
+
+    if (params.get('brand')) {
+        (params.get('brand') || '').split(';').forEach(val => {
+            const el = document.querySelector(`.filter-check[data-type="brand"][value="${val}"]`);
+            if (el) el.checked = true;
+        });
+    }
+
+    // Restore sort
+    if (params.get('sort')) {
+        document.getElementById('sortSelect').value = params.get('sort');
+    }
+
+    applyFilters(page);
 
     document.querySelectorAll('.filter-check').forEach(el => {
         el.addEventListener('change', () => applyFilters(0));
     });
 
     document.getElementById('sortSelect').addEventListener('change', () => applyFilters(0));
+
+    // document.getElementById('searchSubmit').addEventListener('click', (e) => {
+    //     e.preventDefault();
+    //     applyFilters(0);
+    //     document.querySelector('.search-popup').classList.remove('is-visible');
+    // });
 });
 
 async function applyFilters(page = 0) {
     currentPage = page;
 
     // Get Filters
-    const searchText = document.getElementById('shopSearchInput')?.value || "";
+    const searchText = document.getElementById('search-form')?.value || "";
     const categories = Array.from(document.querySelectorAll('.filter-check[data-type="category"]:checked'))
         .map(c => c.value).join(';');
     const brands = Array.from(document.querySelectorAll('.filter-check[data-type="brand"]:checked'))
@@ -35,8 +75,23 @@ async function applyFilters(page = 0) {
         `&maxPrice=${maxPrice}` +
         `&sort=${sortSelect}`;
 
+    updateBrowserURL({
+        page,
+        searchText,
+        categories,
+        brands,
+        minPrice,
+        maxPrice,
+        sort: sortSelect
+    });
+
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         const result = await response.json();
 
         if (response.ok && result.success) {
@@ -56,7 +111,7 @@ function renderProducts(products) {
     productGrid.innerHTML = '';
 
     if (products.length === 0) {
-        productGrid.innerHTML = '<div class="col-12 text-center py-5"><h3>No products found matching your criteria.</h3></div>';
+        productGrid.innerHTML = '<div class="col-12 text-center py-5 vh-100"><h4>No products found matching your criteria.</h4></div>';
         return;
     }
 
