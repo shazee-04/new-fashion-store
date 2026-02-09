@@ -123,7 +123,7 @@ function renderProducts(products) {
             <a href="single-product.html?id=${p.id}">
               <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid">
             </a>
-            <a href="#" onclick="addToWishlist(${p.id}); return false;" class="btn-icon btn-wishlist">
+            <a href="#" onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
             </a>
             <div class="product-content">
@@ -131,7 +131,7 @@ function renderProducts(products) {
                 <a href="single-product.html?id=${p.id}">${p.title}</a>
               </h5>
               <a href="#" class="text-decoration-none add-to-cart-btn"
-                onclick="quickAddToCart(${p.id}); return false;"
+                onclick="quickAddToCart(${p.id})"
                 data-after="Add to cart"><span>$${p.minPrice.toFixed(2)}</span></a>
             </div>
           </div>
