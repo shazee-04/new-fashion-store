@@ -436,7 +436,7 @@ class Header extends HTMLElement {
         document.getElementById('searchSubmit').addEventListener('click', (e) => {
             e.preventDefault();
             const searchText = document.getElementById('search-form')?.value;
-            if (window.location.pathname.endsWith('shop.html') && searchText?.trim()) {
+            if (window.location.pathname.endsWith('shop.html')) {
                 applyFilters(0);
             } else if (searchText?.trim()) {
                 window.location.href = `shop.html?query=${encodeURI(searchText)}`;
