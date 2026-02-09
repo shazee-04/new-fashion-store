@@ -56,6 +56,10 @@ public class CartController {
                 t.commit();
                 responseDTO.setSuccess(true);
                 responseDTO.setMessage("Item added to cart successfully");
+            } catch (Exception e) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Adding to cart failed: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
             }
         } else {
             HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
