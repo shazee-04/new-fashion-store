@@ -4,6 +4,7 @@ import com.newfashionstore.dto.ProductDTO;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.ProductImage;
+import com.newfashionstore.entity.Stock;
 import com.newfashionstore.util.HibernateUtil;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -113,6 +114,12 @@ public class ProductSearch {
                 dto.setTitle(p.getTitle());
                 dto.setCategoryName(p.getCategory().getName());
                 dto.setBrandName(p.getBrand().getName());
+
+                // Default Stock ID
+                Stock defStock = session.createQuery("FROM Stock s WHERE s.product.id = :pid ORDER BY s.price ASC", Stock.class)
+                        .setParameter("pid", p.getId())
+                        .setMaxResults(1).uniqueResult();
+                dto.setDefStockId(defStock != null ? defStock.getId() : 0);
 
                 // Fetch Min Price
                 Double price = session.createQuery("SELECT MIN(s.price) FROM Stock s WHERE s.product.id = :pid", Double.class)
