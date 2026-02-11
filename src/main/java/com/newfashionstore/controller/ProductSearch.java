@@ -5,8 +5,12 @@ import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.ProductImage;
 import com.newfashionstore.entity.Stock;
+import com.newfashionstore.entity.User;
 import com.newfashionstore.util.HibernateUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.hibernate.Session;
@@ -29,9 +33,12 @@ public class ProductSearch {
             @QueryParam("maxPrice") Double maxPrice,
             @QueryParam("page") @DefaultValue("0") int page,
             @QueryParam("size") @DefaultValue("8") int size,
-            @QueryParam("sort") @DefaultValue("0") int sort) {
+            @QueryParam("sort") @DefaultValue("0") int sort,
+            @Context HttpServletRequest request) {
 
         ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession httpSession = request.getSession();
+        User user = (User) httpSession.getAttribute("user");
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Base HQL
@@ -114,6 +121,17 @@ public class ProductSearch {
                 dto.setTitle(p.getTitle());
                 dto.setCategoryName(p.getCategory().getName());
                 dto.setBrandName(p.getBrand().getName());
+
+                // Check If Wishlisted
+                if (user != null) {
+                    boolean wishlisted = session.createQuery("SELECT COUNT(w) > 0 FROM Wishlist w WHERE w.user.id = :uid AND w.product.id = :pid", Boolean.class)
+                            .setParameter("uid", user.getId())
+                            .setParameter("pid", p.getId())
+                            .uniqueResult();
+                    dto.setWishlisted(wishlisted);
+                } else {
+                    dto.setWishlisted(false);
+                }
 
                 // Default Stock ID
                 Stock defStock = session.createQuery("FROM Stock s WHERE s.product.id = :pid ORDER BY s.price ASC", Stock.class)

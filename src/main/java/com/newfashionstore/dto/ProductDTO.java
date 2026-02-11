@@ -12,6 +12,7 @@ public class ProductDTO implements Serializable {
     private double minPrice;
     private List<String> images;
     private int defStockId;
+    private boolean isWishlisted;
 
     public ProductDTO() {
     }
@@ -78,5 +79,13 @@ public class ProductDTO implements Serializable {
 
     public void setDefStockId(int defStockId) {
         this.defStockId = defStockId;
+    }
+
+    public boolean isWishlisted() {
+        return isWishlisted;
+    }
+
+    public void setWishlisted(boolean wishlisted) {
+        isWishlisted = wishlisted;
     }
 }
