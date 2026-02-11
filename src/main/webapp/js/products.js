@@ -120,13 +120,13 @@ function renderProducts(products) {
 
         const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast("Product is out of stock!", false)"`;
 
-            productGrid.innerHTML += `
+        productGrid.innerHTML += `
         <div class="col-md-3 mb-3 product-item link-effect">
           <div class="image-holder position-relative">
             <a href="single-product.html?id=${p.id}">
               <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid">
             </a>
-            <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer" data-product-id="${p.id}">
+            <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer ${p.wislisted ? 'text-danger' : ''}" data-product-id="${p.id}">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
             </a>
             <div class="product-content">
