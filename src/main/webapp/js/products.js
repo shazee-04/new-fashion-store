@@ -117,22 +117,26 @@ function renderProducts(products) {
 
     products.forEach(p => {
         const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/placeholder.jpg';
-        productGrid.innerHTML += `
+
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast("Product is out of stock!", false)"`;
+
+            productGrid.innerHTML += `
         <div class="col-md-3 mb-3 product-item link-effect">
           <div class="image-holder position-relative">
             <a href="single-product.html?id=${p.id}">
               <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid">
             </a>
-            <a href="#" onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist">
+            <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer" data-product-id="${p.id}">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
             </a>
             <div class="product-content">
               <h5 class="element-title text-uppercase fs-5 mt-3">
                 <a href="single-product.html?id=${p.id}">${p.title}</a>
               </h5>
-              <a href="#" class="text-decoration-none add-to-cart-btn"
-                onclick="quickAddToCart(${p.id})"
-                data-after="Add to cart"><span>$${p.minPrice.toFixed(2)}</span></a>
+              <a class="text-decoration-none add-to-cart-btn c-pointer"
+                ${cartAction} data-stock-id="${p.defStockId}"
+                data-after="Add to cart"><span>LKR${p.minPrice.toFixed(2)}</span>
+              </a>
             </div>
           </div>
         </div>`;
