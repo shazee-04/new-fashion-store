@@ -126,7 +126,7 @@ function renderProducts(products) {
             <a href="single-product.html?id=${p.id}">
               <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid">
             </a>
-            <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer ${p.wislisted ? 'text-danger' : ''}" data-product-id="${p.id}">
+            <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
             </a>
             <div class="product-content">
