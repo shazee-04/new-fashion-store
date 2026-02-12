@@ -1,31 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
     const user = sessionStorage.getItem("user");
-    if (user) {
+    if (user && user !== "undefined") {
         window.location.href = "index.html";
         return;
     }
-    
+
     const emailCookie = getCookie("email");
     if (emailCookie) {
-        document.getElementById('email').value = emailCookie;
+        document.getElementById('email').value = decodeURIComponent(emailCookie);
         document.getElementById('rememberMe').checked = true;
     }
+
+    document.getElementById('login-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        loginUser();
+    });
 });
-
-document.getElementById('login-form').addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    await loginUser();
-})
 
 async function loginUser() {
     clearErrors();
 
-    const loadingToast = getLoadingToast("Logging you in...").showToast();
+    const loadingToast = getLoadingToast("Logging you in...");
+    loadingToast?.showToast();
     document.getElementById('loginBtn').disabled = true;
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
     const rememberMe = document.getElementById('rememberMe').checked;
 
     const data = {
@@ -45,12 +45,14 @@ async function loginUser() {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            sessionStorage.setItem("user", JSON.stringify(result.data));
+            if (result.data) {
+                sessionStorage.setItem("user", JSON.stringify(result.data));
+            }
             if (rememberMe) {
                 const date = new Date();
                 date.setTime(date.getTime() + (30 * 24 * 60 * 60 * 1000));
                 let expires = "expires=" + date.toUTCString();
-                document.cookie = "email=" + result.data.email + ";" + expires + ";path=/";
+                document.cookie = `email=${encodeURIComponent(result.data.email)};${expires};path=/`;
             } else {
                 document.cookie = "email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
             }
