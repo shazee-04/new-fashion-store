@@ -1,7 +1,5 @@
 class Header extends HTMLElement {
     connectedCallback() {
-        const userJson = sessionStorage.getItem("user");
-        const user = userJson ? JSON.parse(userJson) : null;
 
         this.innerHTML = `
     <!-- SVG Icons -->
@@ -389,13 +387,13 @@ class Header extends HTMLElement {
                             </a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="my-account.html#" id="dropdownShop"
+                            <a class="nav-link dropdown-toggle" href="my-account.html#" id="dropdownUser"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <svg width="22" height="22" viewBox="0 0 22 22">
                                     <use xlink:href="#user"></use>
                                 </svg>
                             </a>
-                            <ul class="dropdown-menu list-unstyled end-0" style="left: auto;"  aria-labelledby="dropdownShop">
+                            <ul class="dropdown-menu list-unstyled end-0" style="left: auto;"  aria-labelledby="dropdownUser">
                                 <li>
                                     <a href="#" class="dropdown-item item-anchor">
                                         Account
@@ -406,15 +404,7 @@ class Header extends HTMLElement {
                                         Orders
                                     </a>
                                 </li>
-                                <li>
-                                ${user ? `
-                                    <a id="logoutBtn" class="dropdown-item item-anchor text-danger c-pointer">
-                                        Logout
-                                    </a> ` : `
-                                    <a href="login.html" class="dropdown-item item-anchor fw-medium">
-                                        Login
-                                    </a>
-                                `}
+                                <li id="log-in-out-btn">
                                 </li>
                             </ul>
                         </li>
@@ -425,24 +415,70 @@ class Header extends HTMLElement {
     </nav>
         `;
 
-        if (user) {
-            this.querySelector('#logoutBtn').addEventListener('click', (e) => {
+        this.initializeUserMenu();
+        this.initializeSearch();
+    }
+
+    initializeUserMenu() {
+        let user = null;
+
+        try {
+            const userJson = sessionStorage.getItem("user");
+
+            if (userJson && userJson !== "undefined") {
+                user = JSON.parse(userJson);
+            }
+        } catch (error) {
+            console.error("Invalid user json in sessionStorage:", error);
+            sessionStorage.removeItem("user");
+        }
+
+        const logInOutBtn = this.querySelector('#log-in-out-btn');
+
+        if (!logInOutBtn) return;
+
+        if (user && user.email) {
+            logInOutBtn.innerHTML =
+                `<button id="logoutBtn" class="dropdown-item item-anchor text-uppercase text-danger fw-medium">
+                    Logout
+                </button>`;
+
+            const logoutBtn = this.querySelector('#logoutBtn');
+            logoutBtn?.addEventListener('click', (e) => {
                 e.preventDefault();
                 sessionStorage.removeItem('user');
                 window.location.href = 'index.html';
             });
-        }
 
-        document.getElementById('searchSubmit').addEventListener('click', (e) => {
+        } else {
+            logInOutBtn.innerHTML =
+                `<a href="login.html" class="dropdown-item item-anchor text-uppercase fw-medium">
+                    Login
+                </a>`;
+        }
+    }
+
+    initializeSearch() {
+        const searchBtn = this.querySelector('#searchSubmit');
+        const searchInput = this.querySelector('#search-form');
+        const searchPopup = this.querySelector('.search-popup');
+
+        searchBtn?.addEventListener('click', (e) => {
             e.preventDefault();
-            const searchText = document.getElementById('search-form')?.value;
+
+            const searchText = searchInput?.value?.trim();
+
             if (window.location.pathname.endsWith('shop.html')) {
-                applyFilters(0);
-            } else if (searchText?.trim()) {
-                window.location.href = `shop.html?query=${encodeURI(searchText)}`;
+                if (typeof applyFilters === "function") {
+                    applyFilters(0);
+                }
+            } else if (searchText) {
+                window.location.href =
+                    `shop.html?query=${encodeURIComponent(searchText)}`;
             }
-            document.querySelector('.search-popup').classList.remove('is-visible');
-        })
+
+            searchPopup?.classList.remove('is-visible');
+        });
     }
 }
 
