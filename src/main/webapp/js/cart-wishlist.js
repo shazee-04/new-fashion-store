@@ -34,7 +34,7 @@ async function quickAddToCart(stockId) {
         } else {
             showToast(result.message || "Failed adding item to cart!", false);
         }
-    } catch (e) {
+    } catch (error) {
         console.error('Cart error:', error);
         showToast("Error connecting to server", false);
     }
