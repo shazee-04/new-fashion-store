@@ -75,4 +75,38 @@ public class CartController {
         }
         return Response.ok().entity(responseDTO).build();
     }
+
+    @GET
+    @Path("/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCartCount(@Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        long count = 0;
+
+        if (user != null) {
+            try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+                count = dbSession.createQuery("SELECT COUNT(c) FROM Cart c WHERE c.user.id = :uid", Long.class)
+                        .setParameter("uid", user.getId())
+                        .uniqueResult();
+            } catch (Exception e) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Failed to retrieve cart count: " + e.getMessage());
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+            }
+        } else {
+            HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
+            if (sessionCart != null) {
+                count = sessionCart.size();
+            }
+        }
+
+        responseDTO.setSuccess(true);
+        responseDTO.setMessage("Cart count retrieved successfully");
+        responseDTO.setData(count);
+        return Response.ok().entity(responseDTO).build();
+    }
 }
