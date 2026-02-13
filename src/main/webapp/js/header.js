@@ -377,6 +377,7 @@ class Header extends HTMLElement {
                             <a href="cart.html" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                 aria-controls="offcanvasCart">
                                 Cart
+                                <span class="cart-count m-auto"></span>
                             </a>
                         </li>
                         <li class="nav-item search-box">
@@ -433,6 +434,12 @@ class Header extends HTMLElement {
             sessionStorage.removeItem("user");
         }
 
+        this.setLogInOutBtn(user);
+        this.setWishlistCount();
+        this.setCartCount();
+    }
+
+    setLogInOutBtn(user) {
         const logInOutBtn = this.querySelector('#log-in-out-btn');
 
         if (!logInOutBtn) return;
@@ -449,12 +456,53 @@ class Header extends HTMLElement {
                 sessionStorage.removeItem('user');
                 window.location.href = 'index.html';
             });
-
         } else {
             logInOutBtn.innerHTML =
                 `<a href="login.html" class="dropdown-item item-anchor text-uppercase fw-medium">
                     Login
                 </a>`;
+        }
+    }
+
+    async setWishlistCount() {
+        const element = this.querySelector('.wishlist-count');
+
+        try {
+            const response = await fetch("api/wishlist/count", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                element.textContent = `(${result.data ? result.data : 0})`;
+            }
+        } catch (error) {
+            console.error("Error fetching wishlist count:", error);
+        }
+    }
+
+    async setCartCount() {
+        const element = this.querySelector('.cart-count');
+
+        try {
+            const response = await fetch("api/cart/count", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                element.textContent = `(${result.data ? result.data : 0})`;
+            }
+        } catch (error) {
+            console.error("Error fetching cart count:", error);
         }
     }
 
