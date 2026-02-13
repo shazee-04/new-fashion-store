@@ -528,6 +528,11 @@ class Header extends HTMLElement {
             searchPopup?.classList.remove('is-visible');
         });
     }
+
+    refreshCounts() {
+        this.setWishlistCount();
+        this.setCartCount();
+    }
 }
 
 customElements.define('header-component', Header);
