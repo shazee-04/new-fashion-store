@@ -7,10 +7,7 @@ import com.newfashionstore.entity.Wishlist;
 import com.newfashionstore.util.HibernateUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -69,6 +66,38 @@ public class WishlistController {
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    @GET
+    @Path("/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getWishlistCount(@Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        HttpSession httpSession = request.getSession();
+        User user = (User) httpSession.getAttribute("user");
+
+        long count = 0;
+
+        if (user == null) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to retrieve cart count: login required.");
+            return Response.status(Response.Status.UNAUTHORIZED).entity(responseDTO).build();
+        }
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            count = session.createQuery("SELECT COUNT(w) FROM Wishlist w WHERE w.user.id = :uid", Long.class)
+                    .setParameter("uid", user.getId())
+                    .uniqueResult();
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Wishlist count retrieved successfully.");
+            responseDTO.setData(count);
+            return Response.ok(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to retrieve wishlist count: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
