@@ -12,6 +12,8 @@ async function addToWishlist(productId) {
 
         if (response.ok && result.success) {
             showToast(result.message, true);
+            document.querySelector(`[data-product-id="${productId}"]`).classList.add('text-danger');
+            document.querySelector('header-component')?.refreshCounts();
         } else {
             showToast(result.message || "Failed adding item to wishlist!", false);
         }
@@ -31,6 +33,7 @@ async function quickAddToCart(stockId) {
         const result = await response.json();
         if (response.ok && result.success) {
             showToast(result.message, true);
+            document.querySelector('header-component')?.refreshCounts();
         } else {
             showToast(result.message || "Failed adding item to cart!", false);
         }
