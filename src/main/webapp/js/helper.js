@@ -91,8 +91,7 @@ function updateBrowserURL({
     categories,
     brands,
     minPrice,
-    maxPrice,
-    sort
+    maxPrice
 }) {
     const params = new URLSearchParams();
 
@@ -102,9 +101,9 @@ function updateBrowserURL({
     if (brands) params.set('brand', brands);
     if (minPrice) params.set('minPrice', minPrice);
     if (maxPrice) params.set('maxPrice', maxPrice);
-    if (sort) params.set('sort', sort);
+    // if (sort) params.set('sort', sort);
 
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    const newUrl = `${window.location.pathname}` + (params.toString() ? `?${params.toString()}` : '');
 
     window.history.pushState({}, '', newUrl);
 }

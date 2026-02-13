@@ -81,8 +81,8 @@ async function applyFilters(page = 0) {
         categories,
         brands,
         minPrice,
-        maxPrice,
-        sort: sortSelect
+        maxPrice
+        // sort: sortSelect
     });
 
     try {
