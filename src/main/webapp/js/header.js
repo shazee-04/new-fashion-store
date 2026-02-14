@@ -1,6 +1,9 @@
 class Header extends HTMLElement {
     connectedCallback() {
+        this.render();
+    }
 
+    render() {
         this.innerHTML = `
     <!-- SVG Icons -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
@@ -324,27 +327,27 @@ class Header extends HTMLElement {
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
                                     <ul class="dropdown-menu list-unstyled" aria-labelledby="dropdownShop">
                                         <li>
-                                            <a href="#" class="dropdown-item item-anchor">
+                                            <a href="shop.html?sort=0" class="dropdown-item item-anchor">
                                                 New Arrivals
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item item-anchor">
+                                            <a href="shop.html" class="dropdown-item item-anchor">
                                                 Trending
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item item-anchor">
+                                            <a href="shop.html?category=men" class="dropdown-item item-anchor">
                                                 Mens
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item item-anchor">
+                                            <a href="shop.html?category=women" class="dropdown-item item-anchor">
                                                 Womens
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="#" class="dropdown-item item-anchor">
+                                            <a href="shop.html" class="dropdown-item item-anchor">
                                                 Shop All
                                             </a>
                                         </li>
