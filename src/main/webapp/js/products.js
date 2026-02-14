@@ -2,10 +2,50 @@ let currentPage = 0;
 const pageSize = 12;
 
 document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
+    loadFilters().then(() => {
+        syncFiltersWithURL();
+    })
 
-    const page = parseInt(params.get('page')) || 0;
+    document.getElementById('sortSelect').addEventListener('change', () => applyFilters(0));
+});
 
+async function loadFilters() {
+    const res = await fetch('api/filters/all');
+    const data = await res.json();
+
+    const categoryContainer = document.getElementById('categoryContainer');
+    const brandContainer = document.getElementById('brandContainer');
+
+    categoryContainer.innerHTML = data.categories.map(c => `
+        <div class="form-check">
+            <input class="form-check-input filter-check"
+                   type="checkbox"
+                   value="${c.name}"
+                   data-type="category"
+                   id="cat-${c.id}">
+            <label class="form-check-label"
+                   for="cat-${c.id}">
+                ${c.name}
+            </label>
+        </div>
+    `).join('');
+
+    brandContainer.innerHTML = data.brands.map(b => `
+        <div class="form-check">
+            <input class="form-check-input filter-check"
+                   type="checkbox"
+                   value="${b.name}"
+                   data-type="brand"
+                   id="brand-${b.id}">
+            <label class="form-check-label"
+                   for="brand-${b.id}">
+                ${b.name}
+            </label>
+        </div>
+    `).join('');
+}
+
+function syncFiltersWithURL() {
     if (params.get('query')) {
         document.getElementById('search-form').value = params.get('query');
     }
@@ -35,21 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (params.get('sort')) {
         document.getElementById('sortSelect').value = params.get('sort');
     }
-
-    applyFilters(page);
-
-    document.querySelectorAll('.filter-check').forEach(el => {
-        el.addEventListener('change', () => applyFilters(0));
-    });
-
-    document.getElementById('sortSelect').addEventListener('change', () => applyFilters(0));
-
-    // document.getElementById('searchSubmit').addEventListener('click', (e) => {
-    //     e.preventDefault();
-    //     applyFilters(0);
-    //     document.querySelector('.search-popup').classList.remove('is-visible');
-    // });
-});
+}
 
 async function applyFilters(page = 0) {
     currentPage = page;
