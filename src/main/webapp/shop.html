@@ -13,13 +13,13 @@
 
     <meta name="keywords" content="ecommerce,fashion,store,shop,clothing,accessories">
     <meta name="description"
-          content="New Fashion Store - Your one-stop shop for the latest fashion trends. Discover a wide range of clothing, accessories, and more.">
+        content="New Fashion Store - Your one-stop shop for the latest fashion trends. Discover a wide range of clothing, accessories, and more.">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-            crossorigin="anonymous"></script>
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/vendor.css">
@@ -28,155 +28,133 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-            href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
-            rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body class="homepage">
-<header-component></header-component>
+    <header-component></header-component>
 
-<main class="main-content py-5">
-    <div class="container">
-        <div class="row py-2">
-            <div class="col-md-9">
-                <span id="result-count">No results found</span>
-            </div>
-            <div class="col-md-3 d-flex">
-                <select class="form-select border-0 shadow-none" aria-label="Default sorting" id="sortSelect">
-                    <option value="0" selected>Newest Arrival</option>
-                    <option value="1">Price Low to High</option>
-                    <option value="2">Price High to Low</option>
-                    <option value="3">Name A-Z</option>
-                </select>
-                <button class="btn btn-light border-0 shadow-none" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasFilter"
-                        aria-controls="offcanvasFilter">
-                    <i class="bi bi-funnel text-muted"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasFilter">
-            <div class="offcanvas-header justify-content-between align-items-center">
-                <h5 class="offcanvas-title" id="offcanvasFilterLabel">
-                    Filters
-                </h5>
-                <button type="button" class="text-reset shadow-none border-0 bg-transparent" data-bs-dismiss="offcanvas"
-                        aria-label="Close">
-                    <i class="bi bi-x-lg text-black"></i>
-                </button>
+    <main class="main-content py-5">
+        <div class="container">
+            <div class="row py-2">
+                <div class="col-md-9">
+                    <span id="result-count">No results found</span>
+                </div>
+                <div class="col-md-3 d-flex">
+                    <select class="form-select border-0 shadow-none" aria-label="Default sorting" id="sortSelect">
+                        <option value="0" selected>Newest Arrival</option>
+                        <option value="1">Price Low to High</option>
+                        <option value="2">Price High to Low</option>
+                        <option value="3">Name A-Z</option>
+                    </select>
+                    <button class="btn btn-light border-0 shadow-none" data-bs-toggle="offcanvas"
+                        data-bs-target="#offcanvasFilter" aria-controls="offcanvasFilter">
+                        <i class="bi bi-funnel text-muted"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="offcanvas-body">
+            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasFilter"
+                aria-modal="true" role="dialog">
+                <div class="offcanvas-header justify-content-between align-items-center">
+                    <h5 class="offcanvas-title" id="offcanvasFilterLabel">
+                        Filters
+                    </h5>
+                    <button type="button" id="offcanvasFilterClose" class="text-reset shadow-none border-0 bg-transparent"
+                        data-bs-dismiss="offcanvas" aria-label="Close">
+                        <i class="bi bi-x-lg text-black"></i>
+                    </button>
+                </div>
+
                 <div class="offcanvas-body">
-
                     <form id="filterForm">
-                        <!-- Filter Counter -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="fw-semibold">
-                                Filters
-                                <span id="filterCount" class="badge bg-dark ms-2">0</span>
-                            </span>
-                        </div>
-
                         <!-- Categories (Dynamic) -->
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Categories</label>
+                            <h6 class="form-label">Categories</h6>
                             <div id="categoryContainer"></div>
                         </div>
 
                         <!-- Brands (Dynamic) -->
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Brands</label>
+                            <h6 class="form-label">Brands</h6>
                             <div id="brandContainer"></div>
                         </div>
 
                         <!-- Price -->
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Price Range</label>
+                            <h6 class="form-label">Price Range (LKR)</h6>
                             <div class="row g-2">
                                 <div class="col">
-                                    <input type="number" id="minPrice" class="form-control" placeholder="Min">
+                                    <input type="number" id="minPrice" class="form-control shadow-none"
+                                        placeholder="Min" min="0" step="500">
                                 </div>
                                 <div class="col">
-                                    <input type="number" id="maxPrice" class="form-control" placeholder="Max">
+                                    <input type="number" id="maxPrice" class="form-control shadow-none"
+                                        placeholder="Max" min="1000" step="500">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Sort -->
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Sort By</label>
-                            <select id="sortSelect" class="form-select">
-                                <option value="0">Default</option>
-                                <option value="1">Price: Low → High</option>
-                                <option value="2">Price: High → Low</option>
-                                <option value="3">Newest</option>
-                            </select>
-                        </div>
-
                         <!-- Buttons -->
                         <div class="d-flex gap-2 mt-4">
-                            <button type="button" id="resetFilters"
-                                    class="btn btn-outline-secondary w-50">
+                            <button type="button" id="resetFilters" class="btn btn-outline-secondary w-50">
                                 Reset
                             </button>
 
-                            <button type="submit" id="applyFiltersBtn"
-                                    class="btn btn-dark w-50" disabled>
+                            <button type="button" id="applyFiltersBtn" class="btn btn-dark w-50">
                                 Search
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <div class="row" id="product-grid">
+
+            </div>
+
+            <nav aria-label="Page navigation" class="d-flex justify-content-center mt-5">
+                <ul class="pagination" id="pagination-container">
+                    <li class="page-item">
+                        <a class="page-link shadow-none" aria-label="Previous">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link shadow-none">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link shadow-none" aria-label="Next">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
+    </main>
 
-        <div class="row" id="product-grid">
+    <footer-component></footer-component>
 
-        </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+    <script src="assets/js/SmoothScroll.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script src="assets/js/script.js"></script>
 
-        <nav aria-label="Page navigation" class="d-flex justify-content-center mt-5">
-            <ul class="pagination" id="pagination-container">
-                <li class="page-item">
-                    <a class="page-link shadow-none" aria-label="Previous">
-                        <i class="bi bi-arrow-left"></i>
-                    </a>
-                </li>
-                <li class="page-item active">
-                    <a class="page-link shadow-none">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link shadow-none" aria-label="Next">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</main>
+    <script src="js/header.js" defer></script>
+    <script src="js/footer.js" defer></script>
+    <script src="js/head.js" defer></script>
 
-<footer-component></footer-component>
-
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/plugins.js"></script>
-<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
-<script src="assets/js/SmoothScroll.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-<script src="assets/js/script.js"></script>
-
-<script src="js/header.js" defer></script>
-<script src="js/footer.js" defer></script>
-<script src="js/head.js" defer></script>
-
-<script src="js/helper.js"></script>
-<script src="js/script.js"></script>
-<script src="js/cart-wishlist.js"></script>
-<script src="js/products.js"></script>
+    <script src="js/helper.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/cart-wishlist.js"></script>
+    <script src="js/products.js"></script>
 </body>
 
 </html>
