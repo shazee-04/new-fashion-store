@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo(0, 0);
         document.getElementById('offcanvasFilterClose')?.click();
     });
+
+    document.getElementById('resetFilters').addEventListener('click', () => {
+        resetFilters();
+    })
 });
 
 async function loadFilters() {
@@ -26,7 +30,7 @@ async function loadFilters() {
         <div class="form-check">
             <input class="form-check-input filter-check ms-0 shadow-none"
                    type="checkbox"
-                   value="${c.name}"
+                   value="${c.name.toLowerCase()}"
                    data-type="category"
                    id="cat-${c.id}">
             <label class="form-check-label fs-6"
@@ -40,7 +44,7 @@ async function loadFilters() {
         <div class="form-check">
             <input class="form-check-input filter-check ms-0 shadow-none"
                    type="checkbox"
-                   value="${b.name}"
+                   value="${b.name.toLowerCase()}"
                    data-type="brand"
                    id="brand-${b.id}">
             <label class="form-check-label fs-6"
@@ -141,6 +145,15 @@ async function applyFilters(page = 0) {
         console.error('Shop error:', error);
         showToast("Server connection failed! Please try again.", false);
     }
+}
+
+function resetFilters() {
+    document.querySelectorAll('.form-check-input').forEach(el =>
+        el.checked = false);
+    document.getElementById('search-form').value = '';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    document.getElementById('sortSelect').value = '0';
 }
 
 function renderProducts(products) {
