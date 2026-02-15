@@ -174,7 +174,8 @@ function renderProducts(products) {
         <div class="col-md-3 mb-3 product-item link-effect">
           <div class="image-holder position-relative">
             <a href="single-product.html?id=${p.id}">
-              <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid">
+              <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
+              onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
             </a>
             <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
