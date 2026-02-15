@@ -166,16 +166,15 @@ function renderProducts(products) {
     }
 
     products.forEach(p => {
-        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/placeholder.jpg';
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
 
-        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast("Product is out of stock!", false)"`;
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast('Product is out of stock!', false)"`;
 
         productGrid.innerHTML += `
         <div class="col-md-3 mb-3 product-item link-effect">
           <div class="image-holder position-relative">
             <a href="single-product.html?id=${p.id}">
-              <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
-              onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+              <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"">
             </a>
             <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
               <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
