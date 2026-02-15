@@ -7,37 +7,43 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     document.getElementById('sortSelect').addEventListener('change', () => applyFilters(0));
+
+    document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+        applyFilters(0);
+        window.scrollTo(0, 0);
+        document.getElementById('offcanvasFilterClose')?.click();
+    });
 });
 
 async function loadFilters() {
-    const res = await fetch('api/filters/all');
-    const data = await res.json();
+    const response = await fetch('api/filters/all');
+    const result = await response.json();
 
     const categoryContainer = document.getElementById('categoryContainer');
     const brandContainer = document.getElementById('brandContainer');
 
-    categoryContainer.innerHTML = data.categories.map(c => `
+    categoryContainer.innerHTML = result.data.categories.map(c => `
         <div class="form-check">
-            <input class="form-check-input filter-check"
+            <input class="form-check-input filter-check ms-0 shadow-none"
                    type="checkbox"
                    value="${c.name}"
                    data-type="category"
                    id="cat-${c.id}">
-            <label class="form-check-label"
+            <label class="form-check-label fs-6"
                    for="cat-${c.id}">
                 ${c.name}
             </label>
         </div>
     `).join('');
 
-    brandContainer.innerHTML = data.brands.map(b => `
+    brandContainer.innerHTML = result.data.brands.map(b => `
         <div class="form-check">
-            <input class="form-check-input filter-check"
+            <input class="form-check-input filter-check ms-0 shadow-none"
                    type="checkbox"
                    value="${b.name}"
                    data-type="brand"
                    id="brand-${b.id}">
-            <label class="form-check-label"
+            <label class="form-check-label fs-6"
                    for="brand-${b.id}">
                 ${b.name}
             </label>
@@ -46,6 +52,9 @@ async function loadFilters() {
 }
 
 function syncFiltersWithURL() {
+    const params = new URLSearchParams(window.location.search);
+    const page = parseInt(params.get('page')) || 0;
+
     if (params.get('query')) {
         document.getElementById('search-form').value = params.get('query');
     }
@@ -75,6 +84,8 @@ function syncFiltersWithURL() {
     if (params.get('sort')) {
         document.getElementById('sortSelect').value = params.get('sort');
     }
+
+    applyFilters(page);
 }
 
 async function applyFilters(page = 0) {
