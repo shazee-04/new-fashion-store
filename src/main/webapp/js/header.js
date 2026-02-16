@@ -1,6 +1,9 @@
 class Header extends HTMLElement {
     connectedCallback() {
         this.render();
+        window.addEventListener("userChanged", () => {
+            this.render();
+        });
     }
 
     render() {
@@ -424,30 +427,19 @@ class Header extends HTMLElement {
     }
 
     initializeUserMenu() {
-        let user = null;
+        const user = Auth.getUser();
 
-        try {
-            const userJson = sessionStorage.getItem("user");
-
-            if (userJson && userJson !== "undefined") {
-                user = JSON.parse(userJson);
-            }
-        } catch (error) {
-            console.error("Invalid user json in sessionStorage:", error);
-            sessionStorage.removeItem("user");
-        }
-
-        this.setLogInOutBtn(user);
-        this.setWishlistCount();
+        this.setLogInOutBtn();
         this.setCartCount();
+        if (user) this.setWishlistCount();
     }
 
-    setLogInOutBtn(user) {
+    setLogInOutBtn() {
         const logInOutBtn = this.querySelector('#log-in-out-btn');
 
         if (!logInOutBtn) return;
 
-        if (user && user.email) {
+        if (Auth.isLoggedIn()) {
             logInOutBtn.innerHTML =
                 `<button id="logoutBtn" class="dropdown-item item-anchor text-uppercase text-danger fw-medium">
                     Logout
@@ -456,8 +448,7 @@ class Header extends HTMLElement {
             const logoutBtn = this.querySelector('#logoutBtn');
             logoutBtn?.addEventListener('click', (e) => {
                 e.preventDefault();
-                sessionStorage.removeItem('user');
-                window.location.href = 'index.html';
+                Auth.logout();
             });
         } else {
             logInOutBtn.innerHTML =
@@ -533,8 +524,8 @@ class Header extends HTMLElement {
     }
 
     refreshCounts() {
-        this.setWishlistCount();
         this.setCartCount();
+        if (Auth.isLoggedIn()) this.setWishlistCount();
     }
 }
 
