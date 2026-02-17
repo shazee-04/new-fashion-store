@@ -1,4 +1,11 @@
 async function addToWishlist(productId) {
+    if (!productId) return;
+
+    if (!Auth.isLoggedIn()) {
+        showToast("Please login to add items to wishlist!", false);
+        return;
+    }
+
     try {
         const response = await fetch(`api/wishlist/add?pId=${productId}`,
             {
@@ -13,7 +20,7 @@ async function addToWishlist(productId) {
         if (response.ok && result.success) {
             showToast(result.message, true);
             document.querySelector(`[data-product-id="${productId}"]`).classList.add('text-danger');
-            document.querySelector('header-component')?.refreshCounts();
+            document.querySelector('header-component')?.refreshWishlistCount();
         } else {
             showToast(result.message || "Failed adding item to wishlist!", false);
         }
@@ -24,16 +31,16 @@ async function addToWishlist(productId) {
 }
 
 async function quickAddToCart(stockId) {
-    if(!stockId || stockId === 0) return;
+    if (!stockId || stockId === 0) return;
 
     try {
-        const response = await fetch(`api/cart/add?stockId=${stockId}&qty=1`, { 
-            method: 'POST' 
+        const response = await fetch(`api/cart/add?stockId=${stockId}&qty=1`, {
+            method: 'POST'
         });
         const result = await response.json();
         if (response.ok && result.success) {
             showToast(result.message, true);
-            document.querySelector('header-component')?.refreshCounts();
+            document.querySelector('header-component')?.refreshCartCount();
         } else {
             showToast(result.message || "Failed adding item to cart!", false);
         }
