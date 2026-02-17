@@ -459,6 +459,11 @@ class Header extends HTMLElement {
     async setWishlistCount() {
         const element = this.querySelector('.wishlist-count');
 
+        if (!Auth.isLoggedIn()) {
+            element.textContent = '';
+            return;
+        }
+
         try {
             const response = await fetch("api/wishlist/count", {
                 method: "GET",
