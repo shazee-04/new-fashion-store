@@ -18,13 +18,17 @@ const Auth = {
     },
 
     logout() {
-        sessionStorage.removeItem('user');
-        window.dispatchEvent(new Event('userChanged'));
+        fetch('api/logout', { method: 'POST' })
+            .finally(() => {
+                sessionStorage.removeItem('user');
+                window.dispatchEvent(new Event('userChanged'));
+                redirectToast("Logging out!", "index.html", 1000, true);
+            })
     },
 
     requireAuth() {
         if (!this.isLoggedIn()) {
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
         }
     }
 };
