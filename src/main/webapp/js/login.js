@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const user = sessionStorage.getItem("user");
-    if (user && user !== "undefined") {
+    if (Auth.isLoggedIn()) {
         window.location.href = "index.html";
         return;
     }
@@ -46,7 +45,7 @@ async function loginUser() {
 
         if (response.ok && result.success) {
             if (result.data) {
-                sessionStorage.setItem("user", JSON.stringify(result.data));
+                Auth.login(result.data);
             }
             if (rememberMe) {
                 const date = new Date();

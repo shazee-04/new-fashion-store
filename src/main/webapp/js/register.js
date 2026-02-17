@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const user = sessionStorage.getItem("user");
-    if (user) {
+    if (Auth.isLoggedIn()) {
         window.location.href = "index.html";
         return;
     }
@@ -28,7 +27,7 @@ async function submitRegistration() {
     try {
         const response = await fetch('api/register', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
