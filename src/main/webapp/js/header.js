@@ -2,7 +2,7 @@ class Header extends HTMLElement {
     connectedCallback() {
         this.render();
         window.addEventListener("userChanged", () => {
-            this.render();
+            this.initializeUserMenu();
         });
     }
 
@@ -427,11 +427,9 @@ class Header extends HTMLElement {
     }
 
     initializeUserMenu() {
-        const user = Auth.getUser();
-
         this.setLogInOutBtn();
         this.setCartCount();
-        if (user) this.setWishlistCount();
+        this.setWishlistCount();
     }
 
     setLogInOutBtn() {
@@ -525,7 +523,15 @@ class Header extends HTMLElement {
 
     refreshCounts() {
         this.setCartCount();
-        if (Auth.isLoggedIn()) this.setWishlistCount();
+        this.setWishlistCount();
+    }
+
+    refreshCartCount() {
+        this.setCartCount();
+    }
+
+    refreshWishlistCount() {
+        this.setWishlistCount();
     }
 }
 
