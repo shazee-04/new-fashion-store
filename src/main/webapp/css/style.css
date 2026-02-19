@@ -117,3 +117,8 @@
     height: 420px;
     object-fit: cover;
 }
+
+#swiper-slide-container .product-image {
+    max-height: 100vh;
+    object-fit: cover;
+}
