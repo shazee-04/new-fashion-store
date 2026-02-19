@@ -1,4 +1,4 @@
-package com.newfashionstore.annotation;
+package com.newfashionstore.annotations;
 
 import jakarta.ws.rs.NameBinding;
 

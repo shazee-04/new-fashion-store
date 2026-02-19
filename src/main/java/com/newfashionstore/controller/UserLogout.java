@@ -1,6 +1,6 @@
 package com.newfashionstore.controller;
 
-import com.newfashionstore.annotation.Secure;
+import com.newfashionstore.annotations.Secure;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.POST;

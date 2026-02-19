@@ -1,6 +1,7 @@
 package com.newfashionstore.filter;
 
-import com.newfashionstore.annotation.Secure;
+import com.newfashionstore.annotations.Secure;
+import com.newfashionstore.dto.ResponseDTO;
 import jakarta.annotation.Priority;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -12,7 +13,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
 import java.io.IOException;
-import java.net.URI;
 
 @Provider
 @Secure
@@ -28,9 +28,13 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         boolean isAuthenticated = (session != null && session.getAttribute("user") != null);
 
         if (!isAuthenticated) {
+            ResponseDTO responseDTO = new ResponseDTO();
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Please login first!");
+
             requestContext.abortWith(
                     Response.status(Response.Status.UNAUTHORIZED)
-                            .location(URI.create(request.getContextPath() + "/login"))
+                            .entity(responseDTO)
                             .build()
             );
         }

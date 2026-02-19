@@ -8,8 +8,8 @@
         <servlet-name>JerseyServlet</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
-            <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.newfashionstore.controller</param-value>
+            <param-name>jakarta.ws.rs.Application</param-name>
+            <param-value>com.newfashionstore.config.AppConfig</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

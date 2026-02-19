@@ -1,6 +1,6 @@
 package com.newfashionstore.controller;
 
-import com.newfashionstore.annotation.Secure;
+import com.newfashionstore.annotations.Secure;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.User;
@@ -29,12 +29,6 @@ public class WishlistController {
         HttpSession httpSession = request.getSession();
 
         User user = (User) httpSession.getAttribute("user");
-
-        if (user == null) {
-            responseDTO.setSuccess(false);
-            responseDTO.setMessage("Please login to add items to wishlist.");
-            return Response.status(Response.Status.UNAUTHORIZED).entity(responseDTO).build();
-        }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
