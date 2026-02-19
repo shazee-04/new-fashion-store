@@ -1,9 +1,10 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.dto.BannerDTO;
 import com.newfashionstore.dto.ProductDTO;
 import com.newfashionstore.dto.ResponseDTO;
+import com.newfashionstore.entity.Banner;
 import com.newfashionstore.entity.Product;
-import com.newfashionstore.entity.ProductImage;
 import com.newfashionstore.entity.Stock;
 import com.newfashionstore.entity.User;
 import com.newfashionstore.util.HibernateUtil;
@@ -164,6 +165,31 @@ public class ProductSearch {
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Product loading failed: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    @GET
+    @Path("/banner")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBanners() {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<Banner> bannerList = session
+                    .createQuery("FROM Banner b WHERE b.status.id = 1 ORDER BY b.id DESC", Banner.class)
+                    .list();
+
+            Map<String, Object> banners = new HashMap<>();
+            banners.put("banners", bannerList);
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Banners loaded successfully!");
+            responseDTO.setData(banners);
+            return Response.ok().entity(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Banner loading failed: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
