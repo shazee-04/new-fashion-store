@@ -296,7 +296,7 @@ class Header extends HTMLElement {
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg text-uppercase fs-6 p-3 px-1 border-bottom align-items-center">
+    <nav class="navbar navbar-expand-lg navbar-light text-white text-uppercase fs-6 p-3 border-bottom border-light align-items-center fixed-top border-opacity-10">
         <div class="container-fluid justify-content-evenly">
             <div class="row justify-content-between align-items-center w-100 flex-nowrap">
 
@@ -305,8 +305,10 @@ class Header extends HTMLElement {
                         data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                         <i class="bi bi-list-nested"></i>
                     </button>
-                    <a class="navbar-brand" href="index.html"><img height="32px" src="assets/images/main-logo.png"
-                            alt="logo"></a>
+                    <a class="navbar-brand" href="index.html">
+<!--                        <img height="32px" src="assets/images/main-logo.png" alt="logo">-->
+                        <h3 class="p-0 m-0 fs-2">NEW FASHION</h3>
+                    </a>
                 </div>
 
                 <div class="col-auto">
@@ -373,8 +375,7 @@ class Header extends HTMLElement {
                 <div class="col-auto">
                     <ul class="navbar-nav list-unstyled d-flex justify-content-end align-items-center mb-0 text-dark">
                         <li class="nav-item">
-                            <a href="wishlist.html" class="nav-link" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                data-bs-title="wishlist">
+                            <a href="wishlist.html" class="nav-link">
                                     Wishlist
                                 <span class="wishlist-count m-auto"></span>
                             </a>
