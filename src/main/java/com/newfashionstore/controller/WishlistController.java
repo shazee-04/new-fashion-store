@@ -1,5 +1,6 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.annotation.Secure;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.User;
@@ -21,6 +22,7 @@ public class WishlistController {
 
     @POST
     @Path("/add")
+    @Secure
     @Produces(MediaType.APPLICATION_JSON)
     public Response addToWishlist(@QueryParam("pId") int productId, @Context HttpServletRequest request) {
         ResponseDTO responseDTO = new ResponseDTO();
