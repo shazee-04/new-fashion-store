@@ -1,6 +1,7 @@
 package com.newfashionstore.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductDTO implements Serializable {
@@ -13,6 +14,7 @@ public class ProductDTO implements Serializable {
     private List<String> images;
     private int defStockId;
     private boolean isWishlisted;
+    private LocalDateTime addedDate;
 
     public ProductDTO() {
     }
@@ -87,5 +89,13 @@ public class ProductDTO implements Serializable {
 
     public void setWishlisted(boolean wishlisted) {
         isWishlisted = wishlisted;
+    }
+
+    public LocalDateTime getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(LocalDateTime addedDate) {
+        this.addedDate = addedDate;
     }
 }

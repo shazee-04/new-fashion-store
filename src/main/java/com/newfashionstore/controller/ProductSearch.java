@@ -122,6 +122,7 @@ public class ProductSearch {
                 dto.setTitle(p.getTitle());
                 dto.setCategoryName(p.getCategory().getName());
                 dto.setBrandName(p.getBrand().getName());
+                dto.setAddedDate(p.getAddedDate());
 
                 // Check If Wishlisted
                 if (user != null) {
