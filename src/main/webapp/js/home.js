@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     getBannerData();
+    getNewArrivals();
+    getBestSelling();
+    getMoreProducts();
 })
 
 async function getBannerData() {
@@ -7,15 +10,15 @@ async function getBannerData() {
         const response = await fetch("api/products/banner");
         const result = await response.json();
 
-        if(response.ok && result.success) {
-            renderHeroSwiper(result.data.banners);
+        if (response.ok && result.success) {
+            renderBanners(result.data.banners);
         }
     } catch (error) {
         console.error("Failed to load banner data:", error);
     }
 }
 
-function renderHeroSwiper(banners) {
+function renderBanners(banners) {
     const swiperWrapper = document.getElementById('swiper-slide-container');
 
     swiperWrapper.innerHTML = '';
@@ -36,6 +39,159 @@ function renderHeroSwiper(banners) {
                                 <a href="${b.url}" class="btn btn-light text-uppercase mt-3">Shop Collection</a>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    })
+}
+
+async function getNewArrivals() {
+    try {
+        const response = await fetch("api/products/search?sort=0&size=8");
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderNewArrivals(result.data.products);
+        }
+    } catch (error) {
+        console.error("Failed to load new arrivals:", error);
+    }
+}
+
+function renderNewArrivals(products) {
+    const newArrivalSwiperWrapper = document.getElementById('new-arrival-slide-container');
+
+    newArrivalSwiperWrapper.innerHTML = '';
+
+    products.forEach((p) => {
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
+            : `onclick="showToast("Product is out of stock!", false)"`;
+
+        newArrivalSwiperWrapper.innerHTML += `
+        <div class="swiper-slide">
+            <div class="product-item image-zoom-effect link-effect">
+                <div class="image-holder position-relative">
+                    <a href="single-product.html?id=${p.id}">
+                        <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
+                        onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                    </a>
+                    <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer 
+                                ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
+                    </a>
+                    <div class="product-content">
+                        <h5 class="element-title text-uppercase fs-5 mt-3">
+                            <a href="single-product.html?id=${p.id}">${p.title}</a>
+                        </h5>
+                        <a class="text-decoration-none add-to-cart-btn c-pointer"
+                                  ${cartAction} data-stock-id="${p.defStockId}"
+                                  data-after="Add to cart"><span>LKR${p.minPrice.toFixed(2)}</span>
+                           </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    })
+}
+
+async function getBestSelling() {
+    try {
+        const response = await fetch("api/products/search?sort=1&size=8");
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderBestSelling(result.data.products);
+        }
+    } catch (error) {
+        console.error("Failed to load best selling products:", error);
+    }
+}
+
+function renderBestSelling(products) {
+    const bestSellingSwiperWrapper = document.getElementById('best-selling-slide-container');
+
+    bestSellingSwiperWrapper.innerHTML = '';
+
+    products.forEach((p) => {
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
+            : `onclick="showToast("Product is out of stock!", false)"`;
+
+        bestSellingSwiperWrapper.innerHTML += `
+        <div class="swiper-slide">
+            <div class="product-item image-zoom-effect link-effect">
+                <div class="image-holder position-relative">
+                    <a href="single-product.html?id=${p.id}">
+                        <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
+                        onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                    </a>
+                    <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer 
+                                ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
+                    </a>
+                    <div class="product-content">
+                        <h5 class="element-title text-uppercase fs-5 mt-3">
+                            <a href="single-product.html?id=${p.id}">${p.title}</a>
+                        </h5>
+                        <a class="text-decoration-none add-to-cart-btn c-pointer"
+                                  ${cartAction} data-stock-id="${p.defStockId}"
+                                  data-after="Add to cart"><span>LKR${p.minPrice.toFixed(2)}</span>
+                           </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    })
+}
+
+async function getMoreProducts() {
+    try {
+        const response = await fetch("api/products/search?sort=2&size=8");
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderMoreProducts(result.data.products);
+        }
+    } catch (error) {
+        console.error("Failed to load best selling products:", error);
+    }
+}
+
+function renderMoreProducts(products) {
+    const moreProductsSwiperWrapper = document.getElementById('more-products-slide-container');
+
+    moreProductsSwiperWrapper.innerHTML = '';
+
+    products.forEach((p) => {
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
+            : `onclick="showToast("Product is out of stock!", false)"`;
+
+        moreProductsSwiperWrapper.innerHTML += `
+        <div class="swiper-slide">
+            <div class="product-item image-zoom-effect link-effect">
+                <div class="image-holder position-relative">
+                    <a href="single-product.html?id=${p.id}">
+                        <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
+                        onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                    </a>
+                    <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer 
+                                ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
+                    </a>
+                    <div class="product-content">
+                        <h5 class="element-title text-uppercase fs-5 mt-3">
+                            <a href="single-product.html?id=${p.id}">${p.title}</a>
+                        </h5>
+                        <a class="text-decoration-none add-to-cart-btn c-pointer"
+                                  ${cartAction} data-stock-id="${p.defStockId}"
+                                  data-after="Add to cart"><span>LKR${p.minPrice.toFixed(2)}</span>
+                           </a>
                     </div>
                 </div>
             </div>
