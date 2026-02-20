@@ -91,7 +91,7 @@
 /* Skeleton Animation ---------------------------------- */
 .skeleton{
   color:transparent;
-  background:linear-gradient(90deg,#f0f0f0 25%,#e4e4e4 50%,#f0f0f0 75%);
+  background:linear-gradient(90deg,#e4e4e4 25%,#ffffff 50%,#e4e4e4 75%);
   background-size:200% 100%;
   animation:shimmer 3s linear infinite;
 }
@@ -105,10 +105,19 @@
     0% {
         background-position: -200% 0;
     }
-
     100% {
         background-position: 200% 0;
     }
+}
+
+#shop-by-brand .brand-tile {
+    min-height: 140px;
+}
+
+#shop-by-brand .brand-logo {
+    max-height: 60px;
+    width: auto;
+    object-fit: contain;
 }
 
 /* Product Image -------------------------------------- */
