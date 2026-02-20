@@ -216,10 +216,10 @@
     var initScrollNav = function () {
         var scroll = $(window).scrollTop();
 
-        if (scroll >= 200) {
-            $('.navbar.fixed-top').addClass("bg-black");
+        if (scroll >= 100) {
+            $('.navbar.sticky-top').addClass("bg-light, shadow-sm px-4 pt-2");
         } else {
-            $('.navbar.fixed-top').removeClass("bg-black");
+            $('.navbar.sticky-top').removeClass("bg-light, shadow-sm px-4 pt-2");
         }
     }
 

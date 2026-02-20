@@ -296,7 +296,8 @@ class Header extends HTMLElement {
     </div>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light text-white text-uppercase fs-6 p-3 border-bottom border-light align-items-center fixed-top border-opacity-10">
+    <nav class="navbar navbar-expand-lg navbar-light text-uppercase fs-6 px-3 py-3 border-bottom border-dark align-items-center 
+                sticky-top border-opacity-10 bg-white" style="transition: background-color 0.6s ease-out, padding 0.3s ease-out;">
         <div class="container-fluid justify-content-evenly">
             <div class="row justify-content-between align-items-center w-100 flex-nowrap">
 
