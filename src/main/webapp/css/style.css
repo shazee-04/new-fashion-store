@@ -131,3 +131,11 @@
     max-height: 100vh;
     object-fit: cover;
 }
+
+#new-arrival-slide-container .product-image,
+#best-selling-slide-container .product-image,
+#more-products-slide-container .product-image {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+}
