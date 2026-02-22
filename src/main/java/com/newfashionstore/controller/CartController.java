@@ -1,5 +1,6 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.dto.CartItemDTO;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Cart;
 import com.newfashionstore.entity.Stock;
@@ -14,7 +15,10 @@ import jakarta.ws.rs.core.Response;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Path("/cart")
 public class CartController {
@@ -108,5 +112,91 @@ public class CartController {
         responseDTO.setMessage("Cart count retrieved successfully");
         responseDTO.setData(count);
         return Response.ok().entity(responseDTO).build();
+    }
+
+    @GET
+    @Path("/list")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCartList(@Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+
+        List<CartItemDTO> cartItems = new ArrayList<>();
+        double netTotal = 0.0;
+
+        try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+            if (user != null) {
+                List<Cart> dbCartItems = dbSession.createQuery("FROM Cart c " +
+                                "JOIN FETCH c.stock s " +
+                                "JOIN FETCH s.product p " +
+                                "JOIN FETCH s.color " +
+                                "JOIN FETCH s.size " +
+                                "WHERE c.user.id = :uid", Cart.class)
+                        .setParameter("uid", user.getId())
+                        .list();
+
+                for (Cart c : dbCartItems) {
+                    CartItemDTO dto = buildCartItemDTO(dbSession, c.getStock(), c.getQty());
+                    cartItems.add(dto);
+                    netTotal += dto.getTotalPrice();
+                }
+            } else {
+                HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
+
+                if (sessionCart != null && !sessionCart.isEmpty()) {
+                    List<Stock> stocks = dbSession.createQuery("FROM Stock s " +
+                                    "JOIN FETCH s.product p " +
+                                    "JOIN FETCH s.color " +
+                                    "JOIN FETCH s.size " +
+                                    "WHERE s.id IN :ids", Stock.class)
+                            .setParameter("ids", sessionCart.keySet())
+                            .list();
+
+                    for (Stock s : stocks) {
+                        int qty = sessionCart.get(s.getId());
+                        CartItemDTO dto = buildCartItemDTO(dbSession, s, qty);
+                        cartItems.add(dto);
+                        netTotal += dto.getTotalPrice();
+                    }
+                }
+            }
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("items", cartItems);
+            data.put("netTotal", netTotal);
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Cart items retrieved successfully");
+            responseDTO.setData(data);
+            return Response.ok().entity(responseDTO).build();
+
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to retrieve cart items: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    private CartItemDTO buildCartItemDTO(Session dbSession, Stock stock, int qty) {
+        CartItemDTO dto = new CartItemDTO();
+        dto.setStockId(stock.getId());
+        dto.setTitle(stock.getProduct().getTitle());
+        dto.setDescription(stock.getProduct().getDescription());
+        dto.setColor(stock.getColor().getName());
+        dto.setSize(stock.getSize().getName());
+        dto.setUnitPrice(stock.getPrice());
+        dto.setQty(qty);
+        dto.setRemainingStock(stock.getQuantity());
+        dto.setTotalPrice(stock.getPrice() * qty);
+
+        String imagePath = dbSession.createQuery("SELECT pi.path FROM ProductImage pi " +
+                        "WHERE pi.product.id = :pid ORDER BY pi.id ASC", String.class)
+                .setParameter("pid", stock.getProduct().getId())
+                .setMaxResults(1)
+                .uniqueResult();
+
+        dto.setImagePath(imagePath);
+        return dto;
     }
 }

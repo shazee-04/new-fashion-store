@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 public class CartItemDTO implements Serializable {
     private int stockId;
-    private String productTitle;
+    private String title;
+    private String description;
+    private String imagePath;
     private String color;
     private String size;
     private double unitPrice;
     private int qty;
+    private int remainingStock;
     private double totalPrice;
 
     public CartItemDTO() {
@@ -22,12 +25,28 @@ public class CartItemDTO implements Serializable {
         this.stockId = stockId;
     }
 
-    public String getProductTitle() {
-        return productTitle;
+    public String getTitle() {
+        return title;
     }
 
-    public void setProductTitle(String productTitle) {
-        this.productTitle = productTitle;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getColor() {
@@ -60,6 +79,14 @@ public class CartItemDTO implements Serializable {
 
     public void setQty(int qty) {
         this.qty = qty;
+    }
+
+    public int getRemainingStock() {
+        return remainingStock;
+    }
+
+    public void setRemainingStock(int remainingStock) {
+        this.remainingStock = remainingStock;
     }
 
     public double getTotalPrice() {
