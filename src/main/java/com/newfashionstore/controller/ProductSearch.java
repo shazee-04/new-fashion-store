@@ -1,6 +1,5 @@
 package com.newfashionstore.controller;
 
-import com.newfashionstore.dto.BannerDTO;
 import com.newfashionstore.dto.ProductDTO;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Banner;
@@ -17,7 +16,10 @@ import jakarta.ws.rs.core.Response;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Path("/products")

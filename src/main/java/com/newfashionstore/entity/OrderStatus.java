@@ -1,6 +1,5 @@
 package com.newfashionstore.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
