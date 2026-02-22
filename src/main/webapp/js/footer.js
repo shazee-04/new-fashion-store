@@ -1,7 +1,56 @@
 class Footer extends HTMLElement {
     connectedCallback() {
         this.innerHTML = `
-        
+    <section class="instagram py-5">
+        <div class="container">
+            <div class="row g-3">
+                <h6 class="element-title text-center">Follow us on Instagram</h6>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item1.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item2.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item3.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item4.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item5.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-6 col-sm-4 col-md-2">
+                    <div class="insta-item">
+                        <a href="https://www.instagram.com/" target="_blank">
+                            <img src="assets/images/insta-item6.jpg" alt="instagram" class="insta-image img-fluid">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
     <footer id="footer" class="mt-5">
         <div class="container">
             <div class="row d-flex flex-wrap justify-content-between py-5">
@@ -9,10 +58,11 @@ class Footer extends HTMLElement {
                     <div class="footer-menu footer-menu-001">
                         <div class="footer-intro mb-4">
                             <a href="index.html">
-                                <img src="assets/images/main-logo.png" alt="logo">
+<!--                                <img src="assets/images/main-logo.png" alt="logo">-->
+                                <h5 class="widget-title text-uppercase mb-4">New Fashion</h5>
                             </a>
                         </div>
-                        <p>
+                        <p class="pe-3">
                             Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla iure corrupti accusamus
                             similique ex. Pariatur ab numquam consectetur est repudiandae. Lorem, ipsum.
                         </p>
@@ -20,17 +70,17 @@ class Footer extends HTMLElement {
                             <ul class="list-unstyled d-flex flex-wrap gap-3">
                                 <li>
                                     <a href="#" class="text-secondary">
-                                        <i class="bi bi-facebook" style="font-size: 22px;"></i>
+                                        <i class="bi bi-facebook" style="font-size: 21px;"></i>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" class="text-secondary">
-                                        <i class="bi bi-instagram" style="font-size: 22px;"></i>
+                                        <i class="bi bi-instagram" style="font-size: 21px;"></i>
                                     </a>
                                 </li>
                                 <li>
                                     <a href="#" class="text-secondary">
-                                        <i class="bi bi-whatsapp" style="font-size: 22px;"></i>
+                                        <i class="bi bi-whatsapp" style="font-size: 21px;"></i>
                                     </a>
                                 </li>
                             </ul>
@@ -51,11 +101,10 @@ class Footer extends HTMLElement {
                                 <a href="services.html" class="item-anchor">Services</a>
                             </li>
                             <li class="menu-item">
-                                <a href="single-item.html" class="item-anchor">Single
-                                    item</a>
+                                <a href="cart.html" class="item-anchor">Cart</a>
                             </li>
                             <li class="menu-item">
-                                <a href="contact.html" class="item-anchor">Contact</a>
+                                <a href="wishlist.html" class="item-anchor">Wishlist</a>
                             </li>
                         </ul>
                     </div>
@@ -74,7 +123,7 @@ class Footer extends HTMLElement {
                                 <a href="#" class="item-anchor">Shipping + Delivery</a>
                             </li>
                             <li class="menu-item">
-                                <a href="#" class="item-anchor">Contact Us</a>
+                                <a href="contact.html" class="item-anchor">Contact Us</a>
                             </li>
                             <li class="menu-item">
                                 <a href="#" class="item-anchor">Find us easy</a>
@@ -87,13 +136,13 @@ class Footer extends HTMLElement {
                 </div>
                 <div class="col-md-3 col-sm-6">
                     <div class="footer-menu footer-menu-004 border-animation-left">
-                        <h5 class="widget-title text-uppercase mb-4">Contact Us</h5>
+                        <h5 class="widget-title text-uppercase mb-4">More</h5>
                         <p>Do you have any questions or suggestions?
-                            <a href="#" class="item-anchor">contact@newfashionstore.com</a>
+                            <a href="mailto:" class="item-anchor">contact@newfashionstore.com</a>
                         </p>
                         <p>Do you need support? Give us a call.
-                            <a href="tel:+43 720 11 52 78" class="item-anchor">
-                                +43 987 45 61 23
+                            <a href="tel:" class="item-anchor">
+                                +941 987 6543
                             </a>
                         </p>
                     </div>
@@ -125,9 +174,9 @@ class Footer extends HTMLElement {
             </div>
         </div>
     </footer>
-
         `;
     }
 }
+
 customElements.define('footer-component', Footer);
         
