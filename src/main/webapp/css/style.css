@@ -181,3 +181,88 @@
     height: 420px;
     object-fit: cover;
 }
+
+/* About testimonial cards ----------------------------- */
+.about-testimonials .testimonial-swiper {
+    padding: 0.5rem 0.25rem 1rem;
+}
+
+.about-testimonials .testimonial-swiper .swiper-wrapper {
+    align-items: stretch;
+}
+
+.about-testimonials .testimonial-swiper .swiper-slide {
+    width: 48% !important;
+    opacity: 1;
+    height: auto;
+    display: flex;
+}
+
+.about-testimonials .swiper-slide-next .testimonial-item blockquote,
+.about-testimonials .swiper-slide-prev .testimonial-item blockquote {
+    border: none !important;
+    opacity: 50% !important;
+}
+
+.about-testimonials .testimonial-item {
+    height: 100%;
+    width: 100%;
+}
+
+.about-testimonials .testimonial-item blockquote {
+    margin: 0;
+    height: 100%;
+    background-color: #ffffff;
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.08);
+    padding: 2.5rem 2.25rem;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.about-testimonials .testimonial-item blockquote > p {
+    font-family: var(--heading-font);
+    font-size: 2rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.about-testimonials .review-title {
+    color: var(--bs-primary);
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.about-testimonials .testimonial-swiper-pagination .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(var(--bs-dark-rgb), 0.2);
+    opacity: 1;
+}
+
+.about-testimonials .testimonial-swiper-pagination .swiper-pagination-bullet-active {
+    background-color: var(--bs-primary);
+}
+
+@media only screen and (max-width: 1199px) {
+    .about-testimonials .testimonial-swiper .swiper-slide {
+        width: 64% !important;
+    }
+
+    .about-testimonials .testimonial-item blockquote > p {
+        font-size: 1.2rem;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .about-testimonials .testimonial-swiper .swiper-slide {
+        width: 92% !important;
+    }
+
+    .about-testimonials .testimonial-item blockquote {
+        padding: 2rem 1.5rem;
+        min-height: 260px;
+    }
+}
