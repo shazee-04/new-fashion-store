@@ -5,7 +5,7 @@ class Header extends HTMLElement {
             this.initializeUserMenu();
         });
         const offcanvasCart = document.getElementById('offcanvasCart');
-        offcanvasCart.addEventListener('show.bs.offcanvas', () => {
+        offcanvasCart?.addEventListener('show.bs.offcanvas', () => {
             this.refreshOffcanvasCart();
         });
     }
@@ -206,9 +206,9 @@ class Header extends HTMLElement {
             </button>
         </div>
 
-        <div class="offcanvas-body">
-            <div class="order-md-last">
-                <ul class="list-group mb-3" id="offcanvasCart-items-container">
+        <div class="offcanvas-body p-0 d-flex flex-column">
+            <div class="offcanvas-cart-items-wrapper px-3 pt-2">
+                <ul class="list-group mb-0" id="offcanvasCart-items-container">
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div class="skeleton" style="height: 100px; aspect-ratio: 1/1;"></div>
                         <div class="w-100 ms-3">
@@ -234,15 +234,18 @@ class Header extends HTMLElement {
                         </div>
                     </li>
                 </ul>
+            </div>
 
-                <div class="list-group-item d-flex justify-content-between text-dark py-2 fw-medium">
-                    <span>Total (LKR)</span>
+            <div class="offcanvas-cart-footer border-top px-3 pt-3 pb-3 bg-white">
+                <div class="d-flex justify-content-between text-dark fw-medium mb-2">
+                    <span>TOTAL:</span>
                     <span id="offcanvasCart-total">-</span>
                 </div>
-                <a href="cart.html" class="w-100 btn btn-outline-dark btn-lg">
+                <a href="cart.html" class="w-100 btn btn-outline-dark fs-5 mb-1">
                     View full cart
                     <i class="bi bi-arrow-right"></i>
                 </a>
+                </div>
             </div>
         </div>
     </div>
@@ -500,18 +503,71 @@ class Header extends HTMLElement {
 
         if (!cartItemContainer) return;
 
-        getCartList().then(data => {
-            if (data && data.items != null) {
-                renderCartItems(data.items, data.netTotal);
-            } else {
-                cartItemContainer.innerHTML = '<li class="list-group-item text-center">Your cart is empty.</li>';
-                cartItemCountElement.textContent = '(0)';
-                cartTotalElement.textContent = 'LKR 0';
-            }
+        renderSkeletonItems();
+        if (cartItemCountElement) cartItemCountElement.textContent = '(...)';
+        if (cartTotalElement) cartTotalElement.textContent = 'LKR -';
+
+        getCartList()
+            .then(data => {
+                if (data && data.items != null) {
+                    renderCartItems(data.items, data.netTotal);
+                } else {
+                    cartItemContainer.innerHTML = '<li class="list-group-item text-center">Your cart is empty.</li>';
+                    cartItemCountElement.textContent = '(0)';
+                    cartTotalElement.textContent = 'LKR 0.00';
+                }
+            }).catch(() => {
+            cartItemContainer.innerHTML = '<li class="list-group-item text-center">Unable to load cart.</li>';
+            cartItemCountElement.textContent = '(0)';
+            cartTotalElement.textContent = 'LKR 0.00';
         })
+
+        function formatLkr(value) {
+            const amount = Number(value) || 0;
+            return `LKR ${amount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}`;
+        }
+
+        function renderSkeletonItems() {
+            cartItemContainer.innerHTML = `
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div class="skeleton" style="height: 100px; aspect-ratio: 1/1;"></div>
+                    <div class="w-100 ms-3">
+                        <div class="skeleton mb-3 p-1 pb-3"></div>
+                        <div class="skeleton mb-1 p-2 w-75"></div>
+                        <div class="skeleton mb-3 p-2 w-50"></div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div class="skeleton" style="height: 100px; aspect-ratio: 1/1;"></div>
+                    <div class="w-100 ms-3">
+                        <div class="skeleton mb-3 p-1 pb-3"></div>
+                        <div class="skeleton mb-1 p-2 w-75"></div>
+                        <div class="skeleton mb-3 p-2 w-50"></div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div class="skeleton" style="height: 100px; aspect-ratio: 1/1;"></div>
+                    <div class="w-100 ms-3">
+                        <div class="skeleton mb-3 p-1 pb-3"></div>
+                        <div class="skeleton mb-1 p-2 w-75"></div>
+                        <div class="skeleton mb-3 p-2 w-50"></div>
+                    </div>
+                </li>
+            `;
+        }
 
         function renderCartItems(items, netTotal) {
             cartItemContainer.innerHTML = '';
+
+            if (!items.length) {
+                cartItemContainer.innerHTML = '<li class="list-group-item text-center">Your cart is empty.</li>';
+                cartItemCountElement.innerHTML = '(0)';
+                cartTotalElement.innerHTML = formatLkr(0);
+                return;
+            }
 
             items.forEach((item) => {
                 cartItemContainer.innerHTML += `
@@ -524,15 +580,15 @@ class Header extends HTMLElement {
                             <p class="text-muted cart-item-desc small mb-1">
                                 ${item.description}
                             </p>
-                            <span class="cart-item-qty">${item.qty} x ${item.unitPrice.toFixed(2)}</span>
+                            <span class="cart-item-qty">${item.qty} x ${formatLkr(item.unitPrice)}</span>
                         </div>
                     </div>
-                    <span class="text-muted cart-item-price">LKR ${item.totalPrice.toFixed(2)}</span>
+                    <span class="text-muted cart-item-price">${formatLkr(item.totalPrice)}</span>
                 </li>
                 `;
             });
             cartItemCountElement.innerHTML = `(${items.length})`;
-            cartTotalElement.innerHTML = `LKR ${netTotal.toFixed(2)}`;
+            cartTotalElement.innerHTML = formatLkr(netTotal);
         }
     }
 }
