@@ -4,6 +4,10 @@ class Header extends HTMLElement {
         window.addEventListener("userChanged", () => {
             this.initializeUserMenu();
         });
+        const offcanvasCart = document.getElementById('offcanvasCart');
+        offcanvasCart.addEventListener('show.bs.offcanvas', () => {
+            this.refreshOffcanvasCart();
+        });
     }
 
     render() {
@@ -487,6 +491,49 @@ class Header extends HTMLElement {
 
     refreshWishlistCount() {
         this.setWishlistCount();
+    }
+
+    refreshOffcanvasCart() {
+        const cartItemContainer = this.querySelector('#offcanvasCart-items-container');
+        const cartTotalElement = this.querySelector('#offcanvasCart-total');
+        const cartItemCountElement = this.querySelector('#offcanvasCart-item-count');
+
+        if (!cartItemContainer) return;
+
+        getCartList().then(data => {
+            if (data && data.items != null) {
+                renderCartItems(data.items, data.netTotal);
+            } else {
+                cartItemContainer.innerHTML = '<li class="list-group-item text-center">Your cart is empty.</li>';
+                cartItemCountElement.textContent = '(0)';
+                cartTotalElement.textContent = 'LKR 0';
+            }
+        })
+
+        function renderCartItems(items, netTotal) {
+            cartItemContainer.innerHTML = '';
+
+            items.forEach((item) => {
+                cartItemContainer.innerHTML += `
+                <li class="list-group-item d-flex justify-content-between lh-sm c-pointer">
+                    <div class="d-flex align-items-start gap-2 w-100">
+                        <img src="${item.imagePath}" class="object-fit-cover"
+                            style="aspect-ratio: 1 / 1; height: 100px;" alt="Product image">
+                        <div class="p-1 flex-grow-1">
+                            <h6 class="my-0 cart-item-title">${item.title}</h6>
+                            <p class="text-muted cart-item-desc small mb-1">
+                                ${item.description}
+                            </p>
+                            <span class="cart-item-qty">${item.qty} x ${item.unitPrice.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <span class="text-muted cart-item-price">LKR ${item.totalPrice.toFixed(2)}</span>
+                </li>
+                `;
+            });
+            cartItemCountElement.innerHTML = `(${items.length})`;
+            cartTotalElement.innerHTML = `LKR ${netTotal.toFixed(2)}`;
+        }
     }
 }
 

@@ -46,6 +46,23 @@ async function quickAddToCart(stockId) {
         }
     } catch (error) {
         console.error('Cart error:', error);
-        showToast("Error connecting to server", false);
+        showToast("Server connection failed! Please try again.", false);
     }
+}
+
+async function getCartList() {
+    try {
+        const response = await fetch('api/cart/list');
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            return result.data;
+        } else {
+            showToast(result.message || "Failed fetching cart items!", false);
+        }
+    } catch (error) {
+        console.error('Cart list error:', error);
+        showToast("Server connection failed! Please try again.", false);
+    }
+    return null;
 }
