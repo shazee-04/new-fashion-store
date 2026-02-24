@@ -266,3 +266,126 @@
         min-height: 260px;
     }
 }
+
+/* Wishlist page -------------------------------------- */
+#Wishlist .wishlist-summary-card {
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
+    /* background-color: var(--bs-light); */
+    min-width: 250px;
+}
+
+#Wishlist .summary-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--bs-gray-dark);
+}
+
+#Wishlist .summary-value {
+    font-size: 1.7rem;
+    line-height: 1.2;
+    color: var(--heading-color);
+    font-family: var(--heading-font);
+}
+
+#Wishlist .summary-meta {
+    color: var(--bs-gray-dark);
+}
+
+#Wishlist .wishlist-list-wrapper {
+    min-height: 180px;
+}
+
+#Wishlist .wishlist-card {
+    border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
+    background-color: #fff;
+    border-radius: 2px;
+}
+
+#Wishlist .wishlist-thumb,
+#Wishlist .wishlist-thumb-skeleton {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+#Wishlist .wishlist-thumb-skeleton {
+    opacity: 0.75;
+}
+
+#Wishlist .wishlist-line {
+    height: 10px;
+    border-radius: 999px;
+    opacity: 0.6;
+}
+
+#Wishlist .wishlist-btn-skeleton {
+    width: 100%;
+    max-width: 150px;
+    height: 38px;
+    border-radius: 2px;
+    opacity: 0.65;
+}
+
+#Wishlist .wishlist-description {
+    font-size: 0.92rem;
+    color: var(--bs-gray-dark);
+}
+
+#Wishlist .wishlist-meta {
+    color: var(--bs-body-color);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#Wishlist .wishlist-label {
+    font-size: 0.72rem;
+    color: var(--bs-gray-dark);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.2rem;
+}
+
+#Wishlist .wishlist-price {
+    font-family: var(--heading-font);
+    color: var(--heading-color);
+    font-size: 1.05rem;
+}
+
+#Wishlist .wishlist-sub-price {
+    font-size: 0.88rem;
+    color: var(--bs-gray-dark);
+}
+
+#Wishlist .wishlist-stock-pill {
+    display: inline-block;
+    border: 1px solid;
+    padding: 0.25rem 0.55rem;
+    font-size: 0.82rem;
+}
+
+#Wishlist .wishlist-stock-pill.in-stock {
+    color: #2e7d32;
+    border-color: rgba(46, 125, 50, 0.35);
+    background-color: rgba(46, 125, 50, 0.08);
+}
+
+#Wishlist .wishlist-stock-pill.out-stock {
+    color: #b23b3b;
+    border-color: rgba(178, 59, 59, 0.35);
+    background-color: rgba(178, 59, 59, 0.08);
+}
+
+@media only screen and (max-width: 767px) {
+    #Wishlist .wishlist-summary-card {
+        width: 100%;
+    }
+
+    #Wishlist .wishlist-card {
+        padding: 1rem;
+    }
+
+    #Wishlist .wishlist-btn-skeleton {
+        max-width: 100%;
+    }
+}
