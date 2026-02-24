@@ -15,7 +15,18 @@ public class Color implements Serializable {
     @Column(name = "name", nullable = false, length = 20)
     private String name;
 
+    @Column(name = "code", nullable = false, length = 7)
+    private String code;
+
     public Color() {
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getId() {
