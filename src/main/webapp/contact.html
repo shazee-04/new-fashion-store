@@ -87,20 +87,33 @@
             <div class="inquiry-item col-md-6">
                 <h2 class="fs-3 text-uppercase">Got any questions?</h2>
                 <p>Use the form below to get in touch with us.</p>
-                <form class="form-group flex-wrap" id="form">
+                <form class="form-group flex-wrap" id="contactForm">
                     <div class="form-input col-lg-12 d-flex mb-3">
-                        <input class="form-control ps-3 me-3" name="email" placeholder="Write Your Name Here"
-                               type="text">
-                        <input class="form-control ps-3" name="email" placeholder="Write Your Email Here" type="text">
+                        <label>
+                            <input class="form-control ps-3 me-3" name="name" placeholder="Write Your Name Here"
+                                   type="text">
+                        </label>
+                        <label>
+                            <input class="form-control ps-3" name="email" placeholder="Write Your Email Here"
+                                   type="text">
+                        </label>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <input class="form-control ps-3" name="email" placeholder="Phone Number" type="text">
+                        <label>
+                            <input class="form-control ps-3" name="tele" placeholder="Phone Number" type="text">
+                        </label>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <input class="form-control ps-3" name="email" placeholder="Write Your Subject Here" type="text">
+                        <label>
+                            <input class="form-control ps-3" name="subject" placeholder="Write Your Subject Here"
+                                   type="text">
+                        </label>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <textarea class="form-control ps-3" placeholder="Write Your Message Here" rows="8"></textarea>
+                        <label>
+                            <textarea class="form-control ps-3" placeholder="Write Your Message Here"
+                                      rows="8"></textarea>
+                        </label>
                     </div>
                     <div class="d-grid">
                         <button class="btn btn-primary btn-lg text-uppercase btn-rounded-none">Submit</button>
@@ -183,8 +196,10 @@
                     <h3 class="section-title text-uppercase">Sign Up for our newsletter</h3>
                 </div>
                 <form class="d-flex flex-wrap gap-2" id="form">
-                    <input class="form-control form-control-lg" name="email" placeholder="Your Email Addresss"
-                           type="text">
+                    <label>
+                        <input class="form-control form-control-lg" name="email" placeholder="Your Email Addresss"
+                               type="text">
+                    </label>
                     <button class="btn btn-dark btn-lg text-uppercase w-100">Sign Up</button>
                 </form>
             </div>
