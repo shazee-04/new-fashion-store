@@ -2,6 +2,7 @@ package com.newfashionstore.controller;
 
 import com.newfashionstore.dto.ProductDTO;
 import com.newfashionstore.dto.ResponseDTO;
+import com.newfashionstore.dto.SingleProductDTO;
 import com.newfashionstore.entity.Banner;
 import com.newfashionstore.entity.Product;
 import com.newfashionstore.entity.Stock;
@@ -193,6 +194,96 @@ public class ProductSearch {
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Banner loading failed: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    @GET
+    @Path("/singleProduct")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSingleProductView(
+            @QueryParam("id") int productId,
+            @Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession httpSession = request.getSession();
+        User user = (User) httpSession.getAttribute("user");
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Product product = session.createQuery("FROM Product p " +
+                            "JOIN FETCH p.brand JOIN FETCH p.category " +
+                            "WHERE p.id = :pid AND p.status.id = 1", Product.class)
+                    .setParameter("pid", productId)
+                    .uniqueResult();
+
+            if (product == null) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Product not found or unavailable.");
+                return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+            }
+
+            List<Stock> stockList = session.createQuery("FROM Stock s " +
+                            "JOIN FETCH s.color JOIN FETCH s.size " +
+                            "WHERE s.product.id = :pid", Stock.class)
+                    .setParameter("pid", productId).list();
+
+            List<String> imageList = session.createQuery("SELECT pi.path FROM ProductImage pi " +
+                            "WHERE pi.product.id = :pid", String.class)
+                    .setParameter("pid", productId).list();
+
+            SingleProductDTO dto = new SingleProductDTO();
+            dto.setId(product.getId());
+            dto.setTitle(product.getTitle());
+            dto.setDescription(product.getDescription());
+            dto.setBrand(product.getBrand().getName());
+            dto.setCategory(product.getCategory().getName());
+            dto.setImageList(imageList);
+            dto.setStockList(stockList.stream().map(stock -> {
+                SingleProductDTO.StockDTO stockDTO = new SingleProductDTO.StockDTO();
+                stockDTO.setId(stock.getId());
+                stockDTO.setColorName(stock.getColor().getName());
+                stockDTO.setColorCode(stock.getColor().getCode());
+                stockDTO.setSize(stock.getSize().getName());
+                stockDTO.setPrice(stock.getPrice());
+                stockDTO.setQty(stock.getQuantity());
+                return stockDTO;
+            }).collect(Collectors.toList()));
+
+            if (user != null) {
+                boolean wishlisted = session.createQuery("SELECT COUNT(w) > 0 FROM Wishlist w WHERE w.user.id = :uid AND w.product.id = :pid", Boolean.class)
+                        .setParameter("uid", user.getId())
+                        .setParameter("pid", product.getId())
+                        .uniqueResult();
+                dto.setWishlisted(wishlisted);
+
+                boolean inCart = session.createQuery("SELECT COUNT(c) > 0 FROM Cart c WHERE c.user.id = :uid AND c.stock.product.id = :pid", Boolean.class)
+                        .setParameter("uid", user.getId())
+                        .setParameter("pid", product.getId())
+                        .uniqueResult();
+                dto.setInCart(inCart);
+            } else {
+                dto.setWishlisted(false);
+
+                HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) httpSession.getAttribute("sessionCart");
+
+                int totalQtyInCart = 0;
+                if (sessionCart != null) {
+                    for (Stock stock : stockList) {
+                        if (sessionCart.containsKey(stock.getId())) {
+                            totalQtyInCart += sessionCart.get(stock.getId());
+                        }
+                    }
+                }
+                dto.setQtyInCart(totalQtyInCart);
+                dto.setInCart(totalQtyInCart > 0);
+            }
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Product details loaded successfully!");
+            responseDTO.setData(dto);
+            return Response.ok().entity(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to load product details: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
