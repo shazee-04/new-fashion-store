@@ -202,7 +202,7 @@ public class ProductSearch {
     @Path("/singleProduct")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSingleProductView(
-            @QueryParam("id") int productId,
+            @QueryParam("pId") int productId,
             @Context HttpServletRequest request) {
         ResponseDTO responseDTO = new ResponseDTO();
         HttpSession httpSession = request.getSession();

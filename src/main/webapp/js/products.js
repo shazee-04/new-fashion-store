@@ -168,12 +168,12 @@ function renderProducts(products) {
     products.forEach(p => {
         const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
 
-        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast("Product is out of stock!", false)"`;
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"` : `onclick="showToast('Product is out of stock!', false)"`;
 
         productGrid.innerHTML += `
         <div class="col-md-3 mb-3 product-item link-effect">
           <div class="image-holder position-relative">
-            <a href="single-product.html?id=${p.id}">
+            <a href="single-product.html?pId=${p.id}">
               <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
               onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
             </a>
@@ -182,7 +182,7 @@ function renderProducts(products) {
             </a>
             <div class="product-content">
               <h5 class="element-title text-uppercase fs-5 mt-3">
-                <a href="single-product.html?id=${p.id}">${p.title}</a>
+                <a href="single-product.html?pId=${p.id}">${p.title}</a>
               </h5>
               <a class="text-decoration-none add-to-cart-btn c-pointer"
                 ${cartAction} data-stock-id="${p.defStockId}"
