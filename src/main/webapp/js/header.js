@@ -315,7 +315,7 @@ class Header extends HTMLElement {
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-danger" href="about.html">Sale</a>
+                                    <a class="nav-link text-danger" href="shop.html">Sale</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="about.html">About</a>
