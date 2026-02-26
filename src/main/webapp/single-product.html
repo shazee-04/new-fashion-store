@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>New Fashion Store | shop</title>
+
+    <meta charset="utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="yes" name="mobile-web-app-capable">
+    <meta content="shazee.dev" name="author">
+
+    <meta content="ecommerce,fashion,store,singleproduct,clothing,accessories" name="keywords">
+    <meta
+            content="New Fashion Store - Your one-stop shop for the latest fashion trends. Discover a wide range of clothing, accessories, and more."
+            name="description">
+
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" rel="stylesheet">
+    <script crossorigin="anonymous" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/vendor.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+            href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Marcellus&display=swap"
+            rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" type="text/css">
+
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body class="homepage">
+<header-component></header-component>
+
+<main class="main-content mt-5">
+
+    <!-- Product Detail -->
+    <section class="single-product py-4 py-lg-5" id="product-detail">
+        <div class="container">
+
+            <!-- Skeleton Loader -->
+            <div class="row g-4 g-lg-5 d-none" id="productSkeleton">
+                <div class="col-lg-7">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="skeleton" style="aspect-ratio: 3/4; max-height: 620px;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="skeleton" style="aspect-ratio: 1/1;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="skeleton" style="aspect-ratio: 1/1;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="skeleton" style="aspect-ratio: 1/1;"></div>
+                        </div>
+                        <div class="col-3">
+                            <div class="skeleton" style="aspect-ratio: 1/1;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="skeleton p-2 mb-2" style="width: 80px;"></div>
+                    <div class="skeleton p-3 pt-4 mb-3 w-75"></div>
+                    <div class="skeleton p-2 mb-4" style="width: 120px;"></div>
+                    <div class="skeleton p-2 mb-2 w-100"></div>
+                    <div class="skeleton p-2 mb-2 w-100"></div>
+                    <div class="skeleton p-2 mb-4 w-50"></div>
+                    <hr class="my-4">
+                    <div class="skeleton p-2 mb-3" style="width: 60px;"></div>
+                    <div class="d-flex gap-2 mb-4">
+                        <div class="skeleton rounded-circle" style="width: 32px; height: 32px;"></div>
+                        <div class="skeleton rounded-circle" style="width: 32px; height: 32px;"></div>
+                        <div class="skeleton rounded-circle" style="width: 32px; height: 32px;"></div>
+                    </div>
+                    <div class="skeleton p-2 mb-3" style="width: 50px;"></div>
+                    <div class="d-flex gap-2 mb-4">
+                        <div class="skeleton" style="width: 50px; height: 50px;"></div>
+                        <div class="skeleton" style="width: 50px; height: 50px;"></div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="skeleton" style="width: 130px; height: 48px;"></div>
+                        <div class="skeleton" style="width: 180px; height: 48px;"></div>
+                        <div class="skeleton" style="width: 48px; height: 48px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Not Found -->
+            <div class="text-center py-5 my-5 d-none" id="productNotFound">
+                <i class="bi bi-box-seam" style="font-size: 3.5rem; color: var(--bs-gray-500);"></i>
+                <h3 class="text-uppercase mt-3 mb-2">Product Not Found</h3>
+                <p class="text-muted mb-4">The product you're looking for doesn't exist or has been removed.</p>
+                <a class="btn btn-dark text-uppercase px-4 me-2" href="shop.html">
+                    <i class="bi bi-shop me-1"></i> Browse Shop
+                </a>
+                <a class="btn btn-outline-dark text-uppercase px-4" href="index.html">
+                    <i class="bi bi-house me-1"></i> Go Home
+                </a>
+            </div>
+
+            <!-- Product Content -->
+            <div class="row g-4 g-lg-5 align-items-start" id="productContent">
+
+                <!-- Image Gallery -->
+                <div class="col-lg-7">
+                    <div class="row flex-column-reverse flex-lg-row">
+                        <div class="col-lg-3 d-none d-lg-block p-0">
+                            <div class="swiper product-thumbnail-slider p-0 h-100" id="productThumbnailSlider">
+                                <div class="swiper-wrapper" id="thumbnailSlides">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="swiper product-large-slider" id="productLargeSlider">
+                                <div class="swiper-wrapper" id="mainImageSlides">
+
+                                </div>
+                                <div class="swiper-pagination"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Mobile thumbnail strip -->
+                    <div class="d-flex gap-2 mt-3 d-lg-none overflow-auto" id="mobileThumbnails">
+
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-lg-5">
+                    <div class="product-info border-0 bg-transparent rounded-0 p-0">
+
+                        <!-- Header Row -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                            <div class="d-flex flex-wrap align-items-center gap-2">
+                                <span class="badge bg-dark text-white text-uppercase fw-medium rounded-0 px-2 py-1"
+                                      id="productBrand">AURELIA</span>
+                                <span class="badge border border-secondary-subtle text-dark text-uppercase fw-medium rounded-0 px-2 py-1"
+                                      id="productCategory">Women's Wear</span>
+                            </div>
+                            <div id="stockStatus">
+                  <span class="badge border border-success-subtle text-success text-uppercase fw-medium rounded-0 px-2 py-1"
+                        id="stockText">
+                    In Stock (12 left)
+                  </span>
+                            </div>
+                        </div>
+
+                        <!-- Title -->
+                        <h1 class="product-title fs-1 mt-0 mb-2" id="productTitle" itemprop="name">Linen Blend Relaxed
+                            Shirt Dress</h1>
+
+                        <!-- Rating -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div aria-label="Product rating"
+                                 class="d-flex align-items-center gap-1 mb-0 text-dark fs-6">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                            </div>
+                            <span class="small text-muted">4.5 (28 reviews)</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="product-price mb-2 text-danger">
+                            <span class="fs-2 fw-medium" id="productPrice">LKR 4,950.00</span>
+                        </div>
+                        <p class="small text-muted mb-4"><i class="bi bi-truck me-1"></i> Estimated delivery: 2-4
+                            business days</p>
+
+                        <!-- Description -->
+                        <p class="text-muted mb-4" id="productDescription">Lightweight and breathable shirt dress with a
+                            relaxed silhouette, button-down front, and adjustable waist tie for an effortless everyday
+                            look.</p>
+
+                        <!-- Variants -->
+                        <div class="bg-light-subtle p-2 p-md-3 mb-4">
+                            <!-- Color Options -->
+                            <div class="mb-4" id="colorOptionsWrapper">
+                                <div class="item-title fs-6 fw-normal" style="letter-spacing: 0.02em;">
+                                    <a class="btn-link p-0 text-decoration-none align-baseline" href="#"
+                                       onclick="return false;">Color:</a>
+                                    <span id="selectedColorName">Black</span>
+                                </div>
+                                <div class="swatch d-flex flex-wrap" data-option-index="0" id="colorOptions">
+                                    <div class="swatch-element active" data-value="Black">
+                                        <input checked class="swatch-input color-swatch-input"
+                                               data-color-code="#111111" id="color-black-sample"
+                                               name="option-color" onchange="selectColor(this.value, this)" type="radio"
+                                               value="Black">
+                                        <label class="swatch-label color-link-label" for="color-black-sample">
+                                            <span class="sp-color-dot" style="background-color: #111111;"></span>
+                                            <span>Black</span>
+                                        </label>
+                                    </div>
+                                    <div class="swatch-element" data-value="Olive">
+                                        <input class="swatch-input color-swatch-input" data-color-code="#5f6f52"
+                                               id="color-olive-sample" name="option-color"
+                                               onchange="selectColor(this.value, this)" type="radio"
+                                               value="Olive">
+                                        <label class="swatch-label color-link-label" for="color-olive-sample">
+                                            <span class="sp-color-dot" style="background-color: #5f6f52;"></span>
+                                            <span>Olive</span>
+                                        </label>
+                                    </div>
+                                    <div class="swatch-element" data-value="Beige">
+                                        <input class="swatch-input color-swatch-input" data-color-code="#d8c3a5"
+                                               id="color-beige-sample" name="option-color"
+                                               onchange="selectColor(this.value, this)" type="radio"
+                                               value="Beige">
+                                        <label class="swatch-label color-link-label" for="color-beige-sample">
+                                            <span class="sp-color-dot" style="background-color: #d8c3a5;"></span>
+                                            <span>Beige</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Size Options -->
+                            <div class="mb-0" id="sizeOptionsWrapper">
+                                <div class="item-title fs-6 fw-normal" style="letter-spacing: 0.02em;">
+                                    <a class="btn-link p-0 text-decoration-none align-baseline" href="#"
+                                       onclick="return false;">Size:</a>
+                                    <span id="selectedSizeName">M</span>
+                                </div>
+                                <div class="swatch d-flex flex-wrap" data-option-index="1" id="sizeOptions">
+                                    <div class="swatch-element" data-value="S">
+                                        <input class="swatch-input" id="size-s-sample" name="option-1" onchange="selectSize('S')"
+                                               type="radio"
+                                               value="S">
+                                        <label class="swatch-label square-only" for="size-s-sample">S</label>
+                                    </div>
+                                    <div class="swatch-element" data-value="M">
+                                        <input checked class="swatch-input" id="size-m-sample" name="option-1"
+                                               onchange="selectSize('M')"
+                                               type="radio" value="M">
+                                        <label class="swatch-label square-only" for="size-m-sample">M</label>
+                                    </div>
+                                    <div class="swatch-element" data-value="L">
+                                        <input class="swatch-input" id="size-l-sample" name="option-1" onchange="selectSize('L')"
+                                               type="radio"
+                                               value="L">
+                                        <label class="swatch-label square-only" for="size-l-sample">L</label>
+                                    </div>
+                                    <div class="swatch-element" data-value="XL">
+                                        <input class="swatch-input" id="size-xl-sample" name="option-1" onchange="selectSize('XL')"
+                                               type="radio"
+                                               value="XL">
+                                        <label class="swatch-label square-only" for="size-xl-sample">XL</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity + Actions -->
+                        <div class="product-action mt-1">
+                <span class="cart-count fs-6 text-danger fw-light" id="cartCount">
+                  2 in cart
+                </span>
+                            <div class="sp-action-row">
+                                <!-- Quantity Selector -->
+                                <div aria-label="Quantity selector" class="product-qty sp-qty-control">
+                                    <button class="quantity-left-minus btn btn-light btn-number border-0" data-type="minus"
+                                            type="button">
+                                        <i class="bi bi-dash-lg"></i>
+                                    </button>
+                                    <input class="input-number fw-normal text-center border-0" id="quantity" inputmode="numeric"
+                                           max="100" min="1" name="quantity"
+                                           step="1" type="text" value="1">
+                                    <button class="quantity-right-plus btn btn-light btn-number border-0" data-type="plus"
+                                            type="button">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Add to Cart -->
+                                <button class="btn btn-dark btn-lg text-uppercase px-4 flex-grow-1 flex-md-grow-0" id="addToCartBtn"
+                                        type="button">
+                                    <span>Add to Cart</span>
+                                </button>
+
+                                <!-- Wishlist -->
+                                <button class="btn btn-outline-dark btn-lg d-inline-flex align-items-center justify-content-center p-0" id="wishlistBtn"
+                                        title="Add to Wishlist"
+                                        type="button">
+                                    <i class="bi bi-heart" id="wishlistIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Product Meta -->
+                        <div class="border-top mt-4 pt-4 small">
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="text-dark-emphasis fw-medium"
+                                      style="letter-spacing: 0.02em;">Category:</span>
+                                <a class="text-dark text-decoration-none" href="#" id="metaCategory">Women's Wear</a>
+                            </div>
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="text-dark-emphasis fw-medium" style="letter-spacing: 0.02em;">Brand:</span>
+                                <span class="text-dark" id="metaBrand">AURELIA</span>
+                            </div>
+                            <div class="d-flex gap-2 mb-2">
+                                <span class="text-dark-emphasis fw-medium" style="letter-spacing: 0.02em;">Tags:</span>
+                                <span class="text-dark" id="metaTags">linen, casual, midi</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Info Tabs -->
+    <section class="product-tabs mt-5">
+        <div class="container">
+            <div class="tabs-listing">
+                <nav>
+                    <div class="nav nav-tabs d-flex justify-content-center flex-nowrap" id="nav-tab" role="tablist">
+                        <button aria-controls="nav-home" aria-selected="true"
+                                class="nav-link active text-uppercase px-4 px-md-5 py-3 text-nowrap" data-bs-target="#nav-home" data-bs-toggle="tab" id="nav-home-tab"
+                                role="tab"
+                                type="button">Description
+                        </button>
+                        <button aria-controls="nav-information" aria-selected="false"
+                                class="nav-link text-uppercase px-4 px-md-5 py-3 text-nowrap" data-bs-target="#nav-information" data-bs-toggle="tab" id="nav-information-tab"
+                                role="tab" type="button">Additional Info
+                        </button>
+                        <button aria-controls="nav-shipping" aria-selected="false"
+                                class="nav-link text-uppercase px-4 px-md-5 py-3 text-nowrap" data-bs-target="#nav-shipping" data-bs-toggle="tab" id="nav-shipping-tab"
+                                role="tab" type="button">Shipping & Return
+                        </button>
+                        <button aria-controls="nav-review" aria-selected="false"
+                                class="nav-link text-uppercase px-4 px-md-5 py-3 text-nowrap" data-bs-target="#nav-review" data-bs-toggle="tab" id="nav-review-tab"
+                                role="tab"
+                                type="button">Reviews
+                        </button>
+                    </div>
+                </nav>
+                <div class="tab-content py-5" id="nav-tabContent">
+                    <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-12">
+                                <h5 class="mb-3">Product Description</h5>
+                                <p class="lh-lg" id="tabDescription"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div aria-labelledby="nav-information-tab" class="tab-pane fade" id="nav-information"
+                         role="tabpanel">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-12">
+                                <h5 class="mb-3">Additional Information</h5>
+                                <table class="table table-bordered" id="additionalInfoTable">
+                                    <tbody>
+                                    <tr>
+                                        <th class="text-uppercase small text-muted" style="width: 160px;">Brand</th>
+                                        <td id="infoTableBrand">–</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-uppercase small text-muted">Category</th>
+                                        <td id="infoTableCategory">–</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-uppercase small text-muted">Available Colors</th>
+                                        <td id="infoTableColors">–</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-uppercase small text-muted">Available Sizes</th>
+                                        <td id="infoTableSizes">–</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div aria-labelledby="nav-shipping-tab" class="tab-pane fade" id="nav-shipping" role="tabpanel">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-12">
+                                <h5 class="mb-3">Returns Policy</h5>
+                                <p class="lh-lg">You may return most new, unopened items within 30 days of delivery for
+                                    a full
+                                    refund. We'll also pay the return shipping costs if the return is a result of our
+                                    error.</p>
+                                <h5 class="mb-3 mt-4">Shipping</h5>
+                                <p class="lh-lg">We offer standard and express shipping options. Standard shipping
+                                    typically takes
+                                    5–7 business days. Express shipping takes 2–3 business days. Shipping charges are
+                                    calculated at
+                                    checkout based on your location.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div aria-labelledby="nav-review-tab" class="tab-pane fade" id="nav-review" role="tabpanel">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-12">
+                                <div id="reviewsContainer">
+                                    <p class="text-muted text-center py-4">No reviews yet. Be the first to leave a
+                                        review!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="related-products product-carousel py-5 position-relative open-up" data-aos="zoom-out"
+             id="related-products">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3">
+                <h4 class="text-uppercase">You May Also Like</h4>
+                <a class="btn-link" href="shop-sidebar.html">View All Products</a>
+            </div>
+            <div class="swiper product-swiper overflow-hidden">
+                <div class="swiper-wrapper d-flex">
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-18.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Dark florish onepiece</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$95.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-19.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Baggy Shirt</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$55.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-20.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Cotton off-white shirt</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$65.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-21.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Handmade crop sweater</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$50.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-22.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Handmade crop sweater</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$70.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-23.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Handmade crop sweater</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$70.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="product-item image-zoom-effect link-effect">
+                            <div class="image-holder">
+                                <a href="single-product.html">
+                                    <img alt="product" class="product-image img-fluid"
+                                         src="assets/images/product-thumb-24.jpg">
+                                </a>
+                                <a class="btn-icon btn-wishlist" href="wishlist.html">
+                                    <svg height="24" viewBox="0 0 24 24" width="24">
+                                        <use xlink:href="#heart"></use>
+                                    </svg>
+                                </a>
+                                <div class="product-content">
+                                    <h5 class="text-uppercase fs-5 mt-3">
+                                        <a href="single-product.html">Handmade crop sweater</a>
+                                    </h5>
+                                    <a class="text-decoration-none" data-after="Add to cart" href="cart.html"><span>$70.00</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+            <div class="icon-arrow icon-arrow-left">
+                <svg height="50" viewBox="0 0 24 24" width="50">
+                    <use xlink:href="#angle-left"></use>
+                </svg>
+            </div>
+            <div class="icon-arrow icon-arrow-right">
+                <svg height="50" viewBox="0 0 24 24" width="50">
+                    <use xlink:href="#angle-right"></use>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+<footer-component></footer-component>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/SmoothScroll.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script src="assets/js/script.js"></script>
+
+<script defer src="js/helper.js"></script>
+<script defer src="js/auth.js"></script>
+
+<script defer src="js/header.js"></script>
+<script defer src="js/footer.js"></script>
+
+<script defer src="js/head.js"></script>
+<script defer src="js/script.js"></script>
+<script defer src="js/cart-wishlist.js"></script>
+<!-- <script defer src="js/single-product.js"></script> -->
+
+</body>
+
+</html>
