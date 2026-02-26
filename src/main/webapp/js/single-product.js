@@ -198,7 +198,7 @@ function renderColorOptions() {
                        data-color-code="${color.colorCode}"
                        ${checked}
                        ${disabled}
-                       onchange="selectColor(this.value)">
+                      onclick="toggleColorSelection(event, this)">
                 <label class="swatch-label color-link-label" for="${colorId}">
                     <span class="sp-color-dot" style="background-color: ${color.colorCode};"></span>
                     <a class="btn-link">${color.colorName}</a>
@@ -225,7 +225,7 @@ function renderSizeOptions() {
                        value="${size}"
                        ${checked}
                        ${disabled}
-                       onchange="selectSize('${size}')">
+                       onclick="toggleSizeSelection(event, this)">
                 <label class="swatch-label square-only" for="${sizeId}">
                     <a class="btn-link">${size}</a>
                 </label>
@@ -242,8 +242,7 @@ function selectColor(colorName) {
         selectedSizeName = null;
     }
 
-    document.getElementById('selectedColorName').textContent = colorName || 'Select';
-    document.getElementById('selectedSizeName').textContent = selectedSizeName || 'Select';
+    updateSelectionLabels();
 
     renderColorOptions();
     renderSizeOptions();
@@ -258,12 +257,62 @@ function selectSize(sizeName) {
         selectedColorName = null;
     }
 
-    document.getElementById('selectedColorName').textContent = selectedColorName || 'Select';
-    document.getElementById('selectedSizeName').textContent = sizeName || 'Select';
+    updateSelectionLabels();
 
     renderColorOptions();
     renderSizeOptions();
     syncSelectionState();
+}
+
+function toggleColorSelection(event, inputElement) {
+    if (!inputElement) return;
+
+    event.preventDefault();
+    const colorName = inputElement.value;
+
+    if (isColorDisabled(colorName)) return;
+
+    if (selectedColorName === colorName) {
+        selectedColorName = null;
+    } else {
+        selectedColorName = colorName;
+        if (selectedSizeName && !isCombinationAvailable(selectedColorName, selectedSizeName)) {
+            selectedSizeName = null;
+        }
+    }
+
+    updateSelectionLabels();
+    renderColorOptions();
+    renderSizeOptions();
+    syncSelectionState();
+}
+
+function toggleSizeSelection(event, inputElement) {
+    if (!inputElement) return;
+
+    event.preventDefault();
+    const sizeName = inputElement.value;
+
+    if (isSizeDisabled(sizeName)) return;
+
+    if (selectedSizeName === sizeName) {
+        selectedSizeName = null;
+    } else {
+        selectedSizeName = sizeName;
+        if (selectedColorName && !isCombinationAvailable(selectedColorName, selectedSizeName)) {
+            selectedColorName = null;
+        }
+    }
+
+    updateSelectionLabels();
+    renderColorOptions();
+    renderSizeOptions();
+    syncSelectionState();
+}
+
+function updateSelectionLabels() {
+    document.getElementById('selectedColorName').textContent = selectedColorName || 'Select';
+    document.getElementById('selectedSizeName').textContent = selectedSizeName || 'Select';
 }
 
 // ─── Stock Matching ──────────────────────────────────────────
