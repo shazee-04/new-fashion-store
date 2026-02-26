@@ -139,7 +139,7 @@ function renderMetaAndTabs(data, stockList) {
 function renderImages(imageList, title) {
     const safeImages = Array.isArray(imageList) && imageList.length > 0
         ? imageList
-        : ['assets/images/product-placeholder.jpg'];
+        : ['assets/images/products/product-placeholder.jpg'];
 
     const mainContainer = document.querySelector('.product-large-slider .swiper-wrapper');
     const thumbContainer = document.querySelector('.product-thumbnail-slider .swiper-wrapper');
@@ -152,7 +152,8 @@ function renderImages(imageList, title) {
         <div class="swiper-slide">
             <div class="image-zoom" data-scale="2.5" data-image="${img}">
                 <img src="${img}" alt="${title}" class="img-fluid"
-                     onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                     onerror="this.onerror=null;this.src='assets/images/products/product-placeholder.jpg';
+                     this.parentElement.dataset.image='assets/images/products/product-placeholder.jpg';">
             </div>
         </div>
     `).join('');
@@ -160,7 +161,7 @@ function renderImages(imageList, title) {
     thumbContainer.innerHTML = safeImages.map(img => `
         <div class="swiper-slide">
             <img src="${img}" alt="${title}" class="thumb-image img-fluid"
-                 onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                 onerror="this.onerror=null;this.src='assets/images/products/product-placeholder.jpg';">
         </div>
     `).join('');
 
