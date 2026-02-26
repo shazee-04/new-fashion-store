@@ -66,7 +66,7 @@ function renderNewArrivals(products) {
     newArrivalSwiperWrapper.innerHTML = '';
 
     products.forEach((p) => {
-        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
         const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
             : `onclick="showToast("Product is out of stock!", false)"`;
 
@@ -117,7 +117,7 @@ function renderBestSelling(products) {
     bestSellingSwiperWrapper.innerHTML = '';
 
     products.forEach((p) => {
-        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
         const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
             : `onclick="showToast("Product is out of stock!", false)"`;
 
@@ -168,7 +168,7 @@ function renderMoreProducts(products) {
     moreProductsSwiperWrapper.innerHTML = '';
 
     products.forEach((p) => {
-        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/products/product-placeholder.jpg';
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
         const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
             : `onclick="showToast("Product is out of stock!", false)"`;
 
