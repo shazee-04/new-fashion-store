@@ -216,7 +216,7 @@
     var initScrollNav = function () {
         var scroll = $(window).scrollTop();
 
-        if (scroll >= 100) {
+        if (scroll >= 95) {
             $('.navbar.sticky-top').addClass("bg-light, shadow-sm px-4 pt-2");
         } else {
             $('.navbar.sticky-top').removeClass("bg-light, shadow-sm px-4 pt-2");
