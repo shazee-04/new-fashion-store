@@ -45,7 +45,7 @@
         <div class="container">
 
             <!-- Skeleton Loader -->
-            <div class="row g-4 g-lg-5 d-none" id="productSkeleton">
+            <div class="row g-4 g-lg-5" id="productSkeleton">
                 <div class="col-lg-7">
                     <div class="row flex-column-reverse flex-lg-row">
                         <div class="col-lg-3 d-none d-lg-block p-0">
@@ -125,72 +125,22 @@
             </div>
 
             <!-- Product Content -->
-            <div class="row g-4 g-lg-5 align-items-start" id="productContent">
+            <div class="row g-4 g-lg-5 align-items-start d-none" id="productContent">
                 <!-- Image Gallery -->
                 <div class="col-md-7">
                     <div class="row flex-column-reverse flex-lg-row">
-                        <div class="col-md-12 col-lg-3 bg-light p-2">
+                        <div class="col-md-12 col-lg-3 bg-light bg-opacity-50 p-2">
                             <!-- product-thumbnail-slider -->
                             <div class="swiper product-thumbnail-slider c-grab">
                                 <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <img alt="" class="thumb-image img-fluid"
-                                             src="assets/images/product-thumbnail-1.jpg">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img alt="" class="thumb-image img-fluid"
-                                             src="assets/images/product-thumbnail-2.jpg">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img alt="" class="thumb-image img-fluid"
-                                             src="assets/images/product-thumbnail-3.jpg">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img alt="" class="thumb-image img-fluid"
-                                             src="assets/images/product-thumbnail-4.jpg">
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <img alt="" class="thumb-image img-fluid"
-                                             src="assets/images/product-thumbnail-5.jpg">
-                                    </div>
                                 </div>
                             </div>
                             <!-- / product-thumbnail-slider -->
                         </div>
                         <div class="col-md-12 col-lg-9">
                             <!-- product-large-slider -->
-                            <div class="swiper product-large-slider position-relative">
+                            <div class="swiper product-large-slider bg-light position-relative">
                                 <div class="swiper-wrapper">
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-image="assets/images/product-large-1.jpg"
-                                             data-scale="2.5"><img
-                                                alt="product-large" class="img-fluid"
-                                                src="assets/images/product-large-1.jpg"></div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-image="assets/images/product-large-2.jpg"
-                                             data-scale="2.5"><img
-                                                alt="product-large" class="img-fluid"
-                                                src="assets/images/product-large-2.jpg"></div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-image="assets/images/product-large-3.jpg"
-                                             data-scale="2.5"><img
-                                                alt="product-large" class="img-fluid"
-                                                src="assets/images/product-large-3.jpg"></div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-image="assets/images/product-large-4.jpg"
-                                             data-scale="2.5"><img
-                                                alt="product-large" class="img-fluid"
-                                                src="assets/images/product-large-4.jpg"></div>
-                                    </div>
-                                    <div class="swiper-slide">
-                                        <div class="image-zoom" data-image="assets/images/product-large-5.jpg"
-                                             data-scale="2.5"><img
-                                                alt="product-large" class="img-fluid"
-                                                src="assets/images/product-large-5.jpg"></div>
-                                    </div>
                                 </div>
                                 <div class="swiper-pagination position-absolute p-2 bottom-0"></div>
                             </div>
@@ -207,17 +157,15 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
                             <div class="d-flex flex-wrap align-items-center gap-2">
                   <span class="badge bg-dark text-white text-uppercase fw-medium rounded-0 px-2 py-1"
-                        id="productBrand">AURELIA</span>
+                        id="productBrand"></span>
                                 <span
                                         class="badge border border-secondary-subtle text-dark text-uppercase fw-medium rounded-0 px-2 py-1"
-                                        id="productCategory">Women's Wear</span>
+                                        id="productCategory"></span>
                             </div>
                         </div>
 
                         <!-- Title -->
-                        <h1 class="product-title fs-1 fw-medium lh-sm mt-0 mb-2" id="productTitle" itemprop="name">Linen
-                            Blend Relaxed
-                            Shirt Dress</h1>
+                        <h1 class="product-title fs-1 fw-medium lh-sm mt-0 mb-2" id="productTitle" itemprop="name"></h1>
 
                         <!-- Rating -->
                         <!-- <div class="d-flex align-items-center gap-2 mb-3">
@@ -233,15 +181,13 @@
 
                         <!-- Price -->
                         <div class="product-price mb-2 text-danger">
-                            <span class="fs-3 fw-medium" id="productPrice">LKR 4,950.00</span>
+                            <span class="fs-3 fw-medium" id="productPrice">LKR --</span>
                         </div>
                         <p class="small text-muted mb-4"><i class="bi bi-truck me-1"></i> Estimated delivery: 2-4
                             business days</p>
 
                         <!-- Description -->
-                        <p class="text-muted mb-4" id="productDescription">Lightweight and breathable shirt dress with a
-                            relaxed silhouette, button-down front, and adjustable waist tie for an effortless everyday
-                            look.</p>
+                        <p class="text-muted mb-4" id="productDescription"></p>
 
                         <!-- Variants -->
                         <div class="bg-light-subtle p-2 p-md-3 mb-4">
@@ -250,98 +196,32 @@
                                 <div class="w-100 d-flex justify-content-between align-items-center ">
                                     <div class="item-title text-muted fs-6 fw-medium" style="letter-spacing: 0.02em;">
                                         Color:
-                                        <span id="selectedColorName">Black</span>
+                                        <span id="selectedColorName">Select</span>
                                     </div>
                                     <div id="stockStatus">
                       <span
-                              class="badge border border-success-subtle text-success text-uppercase fw-medium rounded-0 px-2 py-1"
+                              class="badge border border-secondary-subtle text-muted text-uppercase fw-medium rounded-0 px-2 py-1"
                               id="stockText">
-                        In Stock (12 left)
+                        Select color and size
                       </span>
                                     </div>
                                 </div>
-                                <div class="swatch d-flex flex-wrap ps-2" data-option-index="0" id="colorOptions">
-                                    <div class="swatch-element active" data-value="Black">
-                                        <input checked class="swatch-input color-swatch-input" data-color-code="#111111"
-                                               id="color-black-sample" name="option-color"
-                                               onchange="selectColor(this.value, this)"
-                                               type="radio" value="Black">
-                                        <label class="swatch-label color-link-label" for="color-black-sample">
-                                            <a class="btn-link">Black</a>
-                                            <span class="sp-color-dot" style="background-color: #111111;"></span>
-                                        </label>
-                                    </div>
-                                    <div class="swatch-element" data-value="Olive">
-                                        <input class="swatch-input color-swatch-input" data-color-code="#5f6f52"
-                                               id="color-olive-sample"
-                                               name="option-color" onchange="selectColor(this.value, this)" type="radio"
-                                               value="Olive">
-                                        <label class="swatch-label color-link-label" for="color-olive-sample">
-                                            <a class="btn-link">Olive</a>
-                                            <span class="sp-color-dot" style="background-color: #5f6f52;"></span>
-                                        </label>
-                                    </div>
-                                    <div class="swatch-element" data-value="Beige">
-                                        <input class="swatch-input color-swatch-input" data-color-code="#d8c3a5"
-                                               id="color-beige-sample"
-                                               name="option-color" onchange="selectColor(this.value, this)" type="radio"
-                                               value="Beige">
-                                        <label class="swatch-label color-link-label" for="color-beige-sample">
-                                            <a class="btn-link">Beige</a>
-                                            <span class="sp-color-dot" style="background-color: #d8c3a5;"></span>
-                                        </label>
-                                    </div>
-                                </div>
+                                <div class="swatch d-flex flex-wrap ps-2" data-option-index="0" id="colorOptions"></div>
                             </div>
 
                             <!-- Size Options -->
                             <div class="mb-0" id="sizeOptionsWrapper">
                                 <div class="item-title text-muted fs-6 fw-medium" style="letter-spacing: 0.02em;">
                                     Size:
-                                    <span id="selectedSizeName">M</span>
+                                    <span id="selectedSizeName">Select</span>
                                 </div>
-                                <div class="swatch d-flex flex-wrap ps-2" data-option-index="1" id="sizeOptions">
-                                    <div class="swatch-element" data-value="S">
-                                        <input class="swatch-input" id="size-s-sample" name="option-1"
-                                               onchange="selectSize('S')"
-                                               type="radio" value="S">
-                                        <label class="swatch-label square-only" for="size-s-sample">
-                                            <a class="btn-link">S</a>
-                                        </label>
-                                    </div>
-                                    <div class="swatch-element" data-value="M">
-                                        <input checked class="swatch-input" id="size-m-sample" name="option-1"
-                                               onchange="selectSize('M')"
-                                               type="radio" value="M">
-                                        <label class="swatch-label square-only" for="size-m-sample">
-                                            <a class="btn-link">M</a>
-                                        </label>
-                                    </div>
-                                    <div class="swatch-element" data-value="L">
-                                        <input class="swatch-input" id="size-l-sample" name="option-1"
-                                               onchange="selectSize('L')"
-                                               type="radio" value="L">
-                                        <label class="swatch-label square-only" for="size-l-sample">
-                                            <a class="btn-link">L</a>
-                                        </label>
-                                    </div>
-                                    <div class="swatch-element" data-value="XL">
-                                        <input class="swatch-input" id="size-xl-sample" name="option-1"
-                                               onchange="selectSize('XL')"
-                                               type="radio" value="XL">
-                                        <label class="swatch-label square-only" for="size-xl-sample">
-                                            <a class="btn-link">XL</a>
-                                        </label>
-                                    </div>
-                                </div>
+                                <div class="swatch d-flex flex-wrap ps-2" data-option-index="1" id="sizeOptions"></div>
                             </div>
                         </div>
 
                         <!-- Quantity + Actions -->
                         <div class="product-action mt-1">
-                <span class="cart-count fs-6 text-danger fw-light" id="cartCount">
-                  2 in cart
-                </span>
+                            <span class="cart-count fs-6 text-danger fw-light" id="cartCount"></span>
                             <div class="sp-action-row">
                                 <!-- Quantity Selector -->
                                 <div aria-label="Quantity selector" class="product-qty sp-qty-control">
@@ -381,15 +261,15 @@
                             <div class="d-flex gap-2 mb-2">
                                 <span class="text-dark-emphasis fw-medium"
                                       style="letter-spacing: 0.02em;">Category:</span>
-                                <a class="text-dark text-decoration-none" href="#" id="metaCategory">Women's Wear</a>
+                                <a class="text-dark text-decoration-none" href="#" id="metaCategory">–</a>
                             </div>
                             <div class="d-flex gap-2 mb-2">
                                 <span class="text-dark-emphasis fw-medium" style="letter-spacing: 0.02em;">Brand:</span>
-                                <span class="text-dark" id="metaBrand">AURELIA</span>
+                                <span class="text-dark" id="metaBrand">–</span>
                             </div>
                             <div class="d-flex gap-2 mb-2">
                                 <span class="text-dark-emphasis fw-medium" style="letter-spacing: 0.02em;">Tags:</span>
-                                <span class="text-dark" id="metaTags">linen, casual, midi</span>
+                                <span class="text-dark" id="metaTags">–</span>
                             </div>
                         </div>
 
@@ -690,7 +570,7 @@
 <script defer src="js/head.js"></script>
 <script defer src="js/script.js"></script>
 <script defer src="js/cart-wishlist.js"></script>
-<!-- <script defer src="js/single-product.js"></script> -->
+<script defer src="js/single-product.js"></script>
 
 </body>
 
