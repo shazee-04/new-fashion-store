@@ -63,6 +63,7 @@ async function loadSingleProduct() {
         renderSizeOptions();
         renderMetaAndTabs(data, currentStockList);
         updateStockStatus(null);
+        loadRelatedProducts(data);
 
         skeletonContainer.classList.add('d-none');
         productContainer.classList.remove('d-none');
@@ -444,4 +445,65 @@ function notify(message, isSuccess) {
     if (typeof showToast === 'function') {
         showToast(message, isSuccess);
     }
+}
+
+// ─── Load More Products (Related) ───────────────────────────
+
+async function loadRelatedProducts(data) {
+    const brand = data.brand || '';
+    const category = data.category || '';
+
+    try {
+        const response = await fetch("api/products/search?category=" +
+            encodeURIComponent(category) + "&brand=" +
+            encodeURIComponent(brand) + "&size=8");
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderRelatedProducts(result.data.products);
+        }
+    } catch (error) {
+        console.error("Failed to load related products:", error);
+    }
+}
+
+async function renderRelatedProducts(products) {
+    const relatedContainer = document.getElementById('related-slide-container');
+
+    if (!relatedContainer) return;
+
+    relatedContainer.innerHTML = '';
+
+    products.forEach(p => {
+        const thumbUrl = p.images && p.images.length > 0 ? p.images[0] : 'assets/images/product-placeholder.jpg';
+        const cartAction = p.defStockId ? `onclick="quickAddToCart(${p.defStockId})"`
+            : `onclick="showToast("Product is out of stock!", false)"`;
+
+        relatedContainer.innerHTML += `
+        <div class="swiper-slide">
+            <div class="product-item image-zoom-effect link-effect">
+                <div class="image-holder position-relative">
+                    <a href="single-product.html?id=${p.id}">
+                        <img src="${thumbUrl}" alt="${p.title}" class="product-image img-fluid"
+                        onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
+                    </a>
+                    <a onclick="addToWishlist(${p.id})" class="btn-icon btn-wishlist c-pointer 
+                                ${p.wishlisted ? 'text-danger' : ''}" data-product-id="${p.id}">
+                      <svg width="24" height="24" viewBox="0 0 24 24"><use xlink:href="#heart"></use></svg>
+                    </a>
+                    <div class="product-content">
+                        <h5 class="element-title text-uppercase fs-5 mt-3">
+                            <a href="single-product.html?id=${p.id}">${p.title}</a>
+                        </h5>
+                        <a class="text-decoration-none add-to-cart-btn c-pointer"
+                                  ${cartAction} data-stock-id="${p.defStockId}"
+                                  data-after="Add to cart"><span>LKR${p.minPrice.toFixed(2)}</span>
+                           </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
 }
