@@ -255,6 +255,12 @@ public class ProductSearch {
                         .uniqueResult();
                 dto.setWishlisted(wishlisted);
 
+                Long qtyInCart = session.createQuery("SELECT COALESCE(SUM(c.qty), 0) FROM Cart c WHERE c.user.id = :uid AND c.stock.product.id = :pid", Long.class)
+                        .setParameter("uid", user.getId())
+                        .setParameter("pid", product.getId())
+                        .uniqueResult();
+                dto.setQtyInCart(qtyInCart.intValue());
+
                 boolean inCart = session.createQuery("SELECT COUNT(c) > 0 FROM Cart c WHERE c.user.id = :uid AND c.stock.product.id = :pid", Boolean.class)
                         .setParameter("uid", user.getId())
                         .setParameter("pid", product.getId())
