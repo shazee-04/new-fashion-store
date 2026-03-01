@@ -96,6 +96,15 @@ function renderStaticProductInfo(data) {
     const quantityInput = document.getElementById('quantity');
     quantityInput.value = 1;
     quantityInput.max = 100;
+
+    const wishlistBtn = document.getElementById('wishlistBtn');
+    if (wishlistBtn) {
+        if (data.wishlisted) {
+            wishlistBtn.innerHTML = `<i class="bi bi-heart-fill text-danger"></i>`;
+        } else {
+            wishlistBtn.innerHTML = `<i class="bi bi-heart"></i>`;
+        }
+    }
 }
 
 function initializeVariantCatalog(stockList) {
