@@ -1,3 +1,4 @@
+let productId = null;
 let currentStockList = [];
 let selectedStockId = null;
 let selectedColorName = null;
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadSingleProduct() {
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('pId');
+    productId = urlParams.get('pId');
 
     const productContainer = document.getElementById('productContent');
     const skeletonContainer = document.getElementById('productSkeleton');
@@ -62,13 +63,15 @@ async function loadSingleProduct() {
         renderColorOptions();
         renderSizeOptions();
         renderMetaAndTabs(data, currentStockList);
+        setQtyInCart(data.qtyInCart)
         updateStockStatus(null);
-        loadRelatedProducts(data);
 
         skeletonContainer.classList.add('d-none');
         productContainer.classList.remove('d-none');
         if (tabsSection) tabsSection.classList.remove('d-none');
         if (relatedSection) relatedSection.classList.remove('d-none');
+
+        loadRelatedProducts(data);
     } catch (error) {
         console.error('Error loading product:', error);
         skeletonContainer.classList.add('d-none');
@@ -133,6 +136,32 @@ function renderMetaAndTabs(data, stockList) {
     document.getElementById('infoTableCategory').textContent = data.category || '–';
     document.getElementById('infoTableColors').textContent = uniqueColors.join(', ') || '–';
     document.getElementById('infoTableSizes').textContent = uniqueSizes.join(', ') || '–';
+}
+
+function setQtyInCart(qty) {
+    const cartCountEl = document.getElementById('cartCount');
+    cartCountEl.innerHTML = '';
+
+    if (cartCountEl && qty && qty > 0) {
+        cartCountEl.innerHTML = `${qty} in cart.`;
+    }
+}
+
+function updateQtyInCart(qty) {
+    const cartCountEl = document.getElementById('cartCount');
+
+    if (!cartCountEl) {
+        return;
+    }
+
+    let currentQty = parseInt(cartCountEl.textContent) || 0;
+    let newQty = currentQty + qty;
+
+    if (newQty > 0) {
+        cartCountEl.textContent = `${newQty} in cart.`;
+    } else {
+        cartCountEl.textContent = '';
+    }
 }
 
 // ─── Image Gallery ───────────────────────────────────────────
@@ -429,15 +458,53 @@ function syncSelectionState() {
 // ─── Cart/Wishlist (disabled for now) ───────────────────────
 
 function initActionButtons() {
+    const quantityInput = document.getElementById('quantity');
+    const incrementBtn = document.getElementById('incrementQty');
+    const decrementBtn = document.getElementById('decrementQty');
+
+    quantityInput.addEventListener('change', () => {
+        let currentValue = parseInt(quantityInput.value);
+        if (isNaN(currentValue) || currentValue < 1) {
+            quantityInput.value = 1;
+        } else if (currentValue > parseInt(quantityInput.max)) {
+            quantityInput.value = quantityInput.max;
+        }
+    });
+
+    incrementBtn.addEventListener('click', () => {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue < parseInt(quantityInput.max)) {
+            quantityInput.value = currentValue + 1;
+        }
+    });
+
+    decrementBtn.addEventListener('click', () => {
+        let currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    });
+
     const addToCartBtn = document.getElementById('addToCartBtn');
     const wishlistBtn = document.getElementById('wishlistBtn');
 
     if (addToCartBtn) {
-        addToCartBtn.onclick = null;
+        addToCartBtn.addEventListener('click', (e) => {
+            let qty = parseInt(quantityInput.value);
+
+            addToCart(selectedStockId, qty)
+                .then((result) => {
+                    if (result) {
+                        updateQtyInCart(qty);
+                    }
+                });
+        })
     }
 
     if (wishlistBtn) {
-        wishlistBtn.onclick = null;
+        wishlistBtn.addEventListener('click', () => {
+            addToWishlist(productId)
+        })
     }
 }
 
