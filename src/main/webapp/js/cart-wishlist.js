@@ -7,7 +7,7 @@ async function addToWishlist(productId) {
     }
 
     try {
-        const response = await fetch(`api/wishlist/add?pId=${productId}`,
+        const response = await fetch(`api/wishlist/add?pId=${encodeURIComponent(productId)}`,
             {
                 method: 'POST',
                 headers: {
@@ -34,13 +34,39 @@ async function quickAddToCart(stockId) {
     if (!stockId || stockId === 0) return;
 
     try {
-        const response = await fetch(`api/cart/add?stockId=${stockId}&qty=1`, {
+        const response = await fetch(`api/cart/add?stockId=${encodeURIComponent(stockId)}&qty=1`, {
             method: 'POST'
         });
         const result = await response.json();
         if (response.ok && result.success) {
             showToast(result.message, true);
             document.querySelector('header-component')?.refreshCartCount();
+        } else {
+            showToast(result.message || "Failed adding item to cart!", false);
+        }
+    } catch (error) {
+        console.error('Cart error:', error);
+        showToast("Server connection failed! Please try again.", false);
+    }
+}
+
+async function addToCart(stockId, qty) {
+    if (!stockId || stockId === 0 || !qty || qty <= 0) {
+        showToast("Please select a valid product option!", false);
+        return;
+    }
+
+    try {
+        const response =
+            await fetch(`api/cart/add?stockId=${encodeURIComponent(stockId)}&qty=${encodeURIComponent(qty)}`,
+                {
+                    method: 'POST'
+                });
+        const result = await response.json();
+        if (response.ok && result.success) {
+            showToast(result.message, true);
+            document.querySelector('header-component')?.refreshCartCount();
+            return true;
         } else {
             showToast(result.message || "Failed adding item to cart!", false);
         }
