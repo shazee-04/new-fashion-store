@@ -35,12 +35,30 @@ public class CartController {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        if (user != null) {
-            try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
-                Transaction t = dbSession.beginTransaction();
+        try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction t = dbSession.beginTransaction();
 
-                Stock stock = dbSession.get(Stock.class, stockId);
+            Stock stock = dbSession.get(Stock.class, stockId);
 
+            if (stock == null) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Product variant item not found!");
+                return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+            }
+
+            if (qty <= 0) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Quantity must be greater than zero!");
+                return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+            }
+
+            if (stock.getQuantity() < qty) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Insufficient stock!");
+                return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+            }
+
+            if (user != null) {
                 Cart cartItem = (Cart) dbSession.createQuery("FROM Cart WHERE user.id = :uid AND stock.id = :sid")
                         .setParameter("uid", user.getId())
                         .setParameter("sid", stockId)
@@ -60,24 +78,24 @@ public class CartController {
                 t.commit();
                 responseDTO.setSuccess(true);
                 responseDTO.setMessage("Item added to cart successfully");
-            } catch (Exception e) {
-                responseDTO.setSuccess(false);
-                responseDTO.setMessage("Adding to cart failed: " + e.getMessage());
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
-            }
-        } else {
-            HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
-            if (sessionCart == null) {
-                sessionCart = new HashMap<>();
-            }
+            } else {
+                HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
+                if (sessionCart == null) {
+                    sessionCart = new HashMap<>();
+                }
 
-            sessionCart.put(stockId, sessionCart.getOrDefault(stockId, 0) + qty);
-            session.setAttribute("sessionCart", sessionCart);
+                sessionCart.put(stockId, sessionCart.getOrDefault(stockId, 0) + qty);
+                session.setAttribute("sessionCart", sessionCart);
 
-            responseDTO.setSuccess(true);
-            responseDTO.setMessage("Item added. Log in to save cart!");
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Item added. Log in to save cart!");
+            }
+            return Response.ok().entity(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Adding to cart failed: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
-        return Response.ok().entity(responseDTO).build();
     }
 
     @GET
