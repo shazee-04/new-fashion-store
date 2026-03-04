@@ -33,7 +33,7 @@ public class MailServiceProvider {
                 return new PasswordAuthentication(Env.get("mail.username"), Env.get("mail.password"));
             }
         };
-        // Using a standard queue; let the executor handle the "offer" logic
+
         executor = new ThreadPoolExecutor(2, 5, 5,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new ThreadPoolExecutor.AbortPolicy());
 
@@ -42,7 +42,7 @@ public class MailServiceProvider {
 
     public void sendMail(Runnable mailable) {
         if (executor != null && !executor.isShutdown()) {
-            executor.execute(mailable); // This is safer than manual queue offering
+            executor.execute(mailable);
         }
     }
 
@@ -73,7 +73,6 @@ public class MailServiceProvider {
         this.authenticator = authenticator;
     }
 
-    // Thread-safe Singleton
     private static class Holder {
         private static final MailServiceProvider INSTANCE = new MailServiceProvider();
     }
