@@ -90,34 +90,37 @@
                 <form class="row g-3" id="contactForm" novalidate>
                     <div class="col-12 col-md-6">
                         <label class="w-100">
-                            <input class="form-control ps-3" name="name" placeholder="Write Your Name Here" type="text">
+                            <input class="form-control ps-3" id="name" placeholder="Write Your Name Here" type="text">
                         </label>
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="w-100">
-                            <input class="form-control ps-3" name="email" placeholder="Write Your Email Here"
+                            <input class="form-control ps-3" id="email" placeholder="Write Your Email Here *"
                                    type="email">
                         </label>
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="w-100">
-                            <input class="form-control ps-3" name="tele" placeholder="Phone Number" type="tel">
+                            <input class="form-control ps-3" id="tele" placeholder="Phone Number" type="tel">
                         </label>
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="w-100">
-                            <input class="form-control ps-3" name="subject" placeholder="Write Your Subject Here"
+                            <input class="form-control ps-3" id="subject" placeholder="Write Your Subject Here"
                                    type="text">
                         </label>
                     </div>
                     <div class="col-12">
                         <label class="w-100">
-                            <textarea class="form-control ps-3" name="message" placeholder="Write Your Message Here"
-                                      rows="6"></textarea>
+                            <textarea class="form-control ps-3" id="message" placeholder="Write Your Message Here *"
+                                      rows="7"></textarea>
                         </label>
                     </div>
                     <div class="col-12 d-grid">
-                        <button class="btn btn-primary btn-lg text-uppercase btn-rounded-none" type="submit">Submit
+                        <button class="btn btn-primary btn-lg text-uppercase btn-rounded-none"
+                                id="contactFormBtn"
+                                type="submit">
+                            Submit
                         </button>
                     </div>
                 </form>
@@ -254,6 +257,7 @@
 <script defer src="js/head.js"></script>
 <script defer src="js/script.js"></script>
 <script defer src="js/cart-wishlist.js"></script>
+<script defer src="js/contact.js"></script>
 
 </body>
 </html>
