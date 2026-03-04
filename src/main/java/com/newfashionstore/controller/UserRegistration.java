@@ -7,7 +7,7 @@ import com.newfashionstore.entity.User;
 import com.newfashionstore.entity.UserType;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
-import com.newfashionstore.util.Vaidator;
+import com.newfashionstore.util.Validator;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -28,7 +28,7 @@ public class UserRegistration {
         ResponseDTO responseDTO = new ResponseDTO();
 
         // Validate DTO ---
-        String violations = Vaidator.validateUserDTO(userDTO);
+        String violations = Validator.validateUserDTO(userDTO);
         if (violations != null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ResponseDTO(false, violations))

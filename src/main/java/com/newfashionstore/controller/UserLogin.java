@@ -8,7 +8,7 @@ import com.newfashionstore.entity.Stock;
 import com.newfashionstore.entity.User;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
-import com.newfashionstore.util.Vaidator;
+import com.newfashionstore.util.Validator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.Consumes;
@@ -43,7 +43,7 @@ public class UserLogin {
         }
 
         // Validate DTO ---
-        String violations = Vaidator.validateLoginDTO(loginDTO);
+        String violations = Validator.validateLoginDTO(loginDTO);
         if (violations != null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new ResponseDTO(false, violations))
