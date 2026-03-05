@@ -6,6 +6,7 @@ import com.newfashionstore.util.Mailable;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class ContactEmail implements Mailable {
 
@@ -37,42 +38,82 @@ public class ContactEmail implements Mailable {
             message.setSubject("Contact Form Submission: " + subject);
 
             String appName = Env.get("app.name");
+            String safeName = StringEscapeUtils.escapeHtml4(name);
+            String safeEmail = StringEscapeUtils.escapeHtml4(email);
+            String safeTel = StringEscapeUtils.escapeHtml4(tele);
+            String safeContent = StringEscapeUtils.escapeHtml4(content).replace("\n", "<br>");
             String emailContent =
-                    "<html>" +
+                    "<!DOCTYPE html>" +
+                            "<html>" +
                             "<head>" +
                             "  <meta charset='UTF-8'>" +
+                            "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
                             "  <title>New Website Inquiry</title>" +
                             "</head>" +
-                            "<body style='margin:0; padding:0; background-color:#f4f6f8; font-family:Arial, sans-serif;'>" +
-                            "  <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f4f6f8; padding:20px 0;'>" +
-                            "    <tr>" +
-                            "      <td align='center'>" +
-                            "        <table width='600' cellpadding='0' cellspacing='0' style='background:#ffffff; border-radius:8px; box-shadow:0 4px 10px rgba(0,0,0,0.05); overflow:hidden;'>" +
-                            "          <tr>" +
-                            "            <td style='background:#0d6efd; padding:20px; text-align:center; color:#ffffff;'>" +
-                            "              <h2 style='margin:0; font-size:22px;'>New Website Inquiry</h2>" +
-                            "            </td>" +
-                            "          </tr>" +
-                            "          <tr>" +
-                            "            <td style='padding:25px; color:#333333; font-size:14px; line-height:1.6;'>" +
-                            "              <p style='margin:0 0 10px;'><strong>Name:</strong> " + name + "</p>" +
-                            "              <p style='margin:0 0 10px;'><strong>Email:</strong> " + email + "</p>" +
-                            "              <p style='margin:0 0 10px;'><strong>Tel:</strong> " + tele + "</p>" +
-                            "              <p style='margin:20px 0 8px; font-weight:bold;'>Message:</p>" +
-                            "              <div style='background:#f8f9fa; padding:15px; border-left:4px solid #0d6efd; border-radius:4px;'>" +
-                            "                " + content.replace("\n", "<br>") +
-                            "              </div>" +
-                            "            </td>" +
-                            "          </tr>" +
-                            "          <tr>" +
-                            "            <td style='background:#f1f1f1; padding:15px; text-align:center; font-size:12px; color:#777;'>" +
-                            "              This email was sent from " + appName + "'s contact form." +
-                            "            </td>" +
-                            "          </tr>" +
-                            "        </table>" +
-                            "      </td>" +
-                            "    </tr>" +
-                            "  </table>" +
+
+                            "<body style='margin:0; padding:0; background-color:#eef2f7; font-family:Segoe UI, Arial, sans-serif;'>" +
+
+                            "<table width='100%' cellpadding='0' cellspacing='0' style='padding:30px 15px;'>" +
+                            "<tr><td align='center'>" +
+
+                            "<table width='100%' style='max-width:650px; background:#ffffff; border-radius:10px; overflow:hidden; border:1px solid #e5e7eb;' cellpadding='0' cellspacing='0'>" +
+
+                            // Header
+                            "<tr>" +
+                            "<td style='background:linear-gradient(90deg,#0d6efd,#0b5ed7); padding:25px; text-align:center; color:white;'>" +
+                            "<h2 style='margin:0; font-size:22px; font-weight:600;'>New Website Inquiry</h2>" +
+                            "</td>" +
+                            "</tr>" +
+
+                            // Body
+                            "<tr>" +
+                            "<td style='padding:30px; color:#333; font-size:14px; line-height:1.7;'>" +
+
+                            "<table width='100%' cellpadding='0' cellspacing='0'>" +
+
+                            "<tr>" +
+                            "<td style='padding:8px 0;'><strong>Name:</strong></td>" +
+                            "<td style='padding:8px 0;'>" + safeName + "</td>" +
+                            "</tr>" +
+
+                            "<tr>" +
+                            "<td style='padding:8px 0;'><strong>Email:</strong></td>" +
+                            "<td style='padding:8px 0;'>" + safeEmail + "</td>" +
+                            "</tr>" +
+
+                            "<tr>" +
+                            "<td style='padding:8px 0;'><strong>Telephone:</strong></td>" +
+                            "<td style='padding:8px 0;'>" + safeTel + "</td>" +
+                            "</tr>" +
+
+                            "</table>" +
+
+                            "<hr style='margin:25px 0; border:none; border-top:1px solid #e5e7eb;'>" +
+
+                            "<p style='margin-bottom:10px; font-weight:600;'>Message:</p>" +
+
+                            "<div style='background:#f9fafb; padding:18px; border-radius:6px; border-left:4px solid #0d6efd;'>" +
+                            safeContent +
+                            "</div>" +
+
+                            "<div style='margin-top:30px; text-align:center;'>" +
+                            "<a href='mailto:" + safeEmail + "' " +
+                            "style='background:#0d6efd; color:white; text-decoration:none; padding:12px 22px; border-radius:5px; display:inline-block; font-size:14px;'>Reply to Sender</a>" +
+                            "</div>" +
+
+                            "</td>" +
+                            "</tr>" +
+
+                            // Footer
+                            "<tr>" +
+                            "<td style='background:#f3f4f6; padding:18px; text-align:center; font-size:12px; color:#6b7280;'>" +
+                            "This email was sent from <strong>" + appName + "</strong>'s contact form." +
+                            "</td>" +
+                            "</tr>" +
+
+                            "</table>" +
+                            "</td></tr></table>" +
+
                             "</body>" +
                             "</html>";
 
@@ -83,5 +124,15 @@ public class ContactEmail implements Mailable {
         } catch (MessagingException e) {
             this.onFailure(e);
         }
+    }
+
+    @Override
+    public void onSuccess() {
+        System.out.println("\u001B[32m[EMAIL SENT] Successfully delivered to: " + email + "\u001B[0m");
+    }
+
+    @Override
+    public void onFailure(Exception e) {
+        System.err.println("\u001B[31m[EMAIL FAILED] Could not deliver to " + email + " - " + e.getMessage() + "\u001B[0m");
     }
 }
