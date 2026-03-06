@@ -136,4 +136,51 @@ public class ContactController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
+
+    @POST
+    @Path("/newsletter/unsubscribe")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response unsubscribeNewsletter(Subscriber subscriber) {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        if (subscriber == null || subscriber.getEmail() == null || subscriber.getEmail().isBlank()) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Please provide a valid email address!");
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+        }
+
+        if (!Validator.isValidEmail(subscriber.getEmail())) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Please provide a valid email address!");
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+        }
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Subscriber existingSubscriber = session.createQuery("FROM Subscriber s WHERE s.email = :email", Subscriber.class)
+                    .setParameter("email", subscriber.getEmail())
+                    .uniqueResult();
+
+            if (existingSubscriber != null) {
+                existingSubscriber.setStatus(session.get(Status.class, 2));
+                session.merge(existingSubscriber);
+                transaction.commit();
+
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Unsubscribed from newsletter successfully!");
+                return Response.status(Response.Status.OK).entity(responseDTO).build();
+            } else {
+                transaction.rollback();
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Email not found in subscription list!");
+                return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+            }
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to unsubscribe from newsletter: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
 }
