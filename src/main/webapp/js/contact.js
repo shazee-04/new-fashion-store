@@ -55,4 +55,39 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     }
 });
 
+document.getElementById('newsletterForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('newsletterFormBtn').disabled = true;
+
+    const email = document.getElementById('newsletterEmail').value.trim();
+    if (email) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showToast('Please enter a valid email address!', false);
+            document.getElementById('newsletterFormBtn').disabled = true;
+            return;
+        }
+    }
+    try {
+        const response = await fetch('api/contact/newsletter/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: email})
+        })
+        const result = await response.json();
+        if (response.ok && result.success) {
+            showToast(result.message || 'Subscribed to newsletter!', true);
+            document.getElementById('newsletterForm').reset();
+        } else {
+            showToast(result.message || 'Failed to subscribe to newsletter!', false);
+        }
+    } catch (error) {
+        console.error('Newsletter subscription error:', error);
+        showToast('Server connection failed! Please try again.', false);
+    } finally {
+        document.getElementById('newsletterFormBtn').disabled = false;
+    }
+})
+
 
