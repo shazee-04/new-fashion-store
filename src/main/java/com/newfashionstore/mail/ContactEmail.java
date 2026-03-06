@@ -51,7 +51,7 @@ public class ContactEmail implements Mailable {
                             "  <title>New Website Inquiry</title>" +
                             "</head>" +
 
-                            "<body style='margin:0; padding:0; background-color:#eef2f7; font-family:Segoe UI, Arial, sans-serif;'>" +
+                            "<body style='margin:0; padding:0; background-color:#eef2f7;'>" +
 
                             "<table width='100%' cellpadding='0' cellspacing='0' style='padding:30px 15px;'>" +
                             "<tr><td align='center'>" +
@@ -61,13 +61,13 @@ public class ContactEmail implements Mailable {
                             // Header
                             "<tr>" +
                             "<td style='background:linear-gradient(90deg,#0d6efd,#0b5ed7); padding:25px; text-align:center; color:white;'>" +
-                            "<h2 style='margin:0; font-size:22px; font-weight:600;'>New Website Inquiry</h2>" +
+                            "<h2 style='margin:0; font-size:22px;'>New Website Inquiry</h2>" +
                             "</td>" +
                             "</tr>" +
 
                             // Body
                             "<tr>" +
-                            "<td style='padding:30px; color:#333; font-size:14px; line-height:1.7;'>" +
+                            "<td style='padding:30px; color:#333; font-size:14px; line-height:1;'>" +
 
                             "<table width='100%' cellpadding='0' cellspacing='0'>" +
 
