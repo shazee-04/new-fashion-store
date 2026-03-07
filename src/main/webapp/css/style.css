@@ -281,174 +281,57 @@
 }
 
 /* Wishlist page -------------------------------------- */
-#Wishlist .wishlist-summary-card {
-    border: 1px solid rgba(var(--bs-dark-rgb), 0.1);
-    min-width: 250px;
-}
-
 #Wishlist .summary-label {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     letter-spacing: 0.08em;
-    color: var(--bs-gray-dark);
+    color: var(--bs-secondary-color);
 }
 
 #Wishlist .summary-value {
-    font-size: 1.7rem;
+    font-size: 1.75rem;
     line-height: 1.2;
     color: var(--heading-color);
     font-family: var(--heading-font);
 }
 
 #Wishlist .summary-meta {
-    color: var(--bs-gray-dark);
+    color: var(--bs-secondary-color);
 }
 
-#Wishlist .wishlist-list-wrapper {
-    min-height: 180px;
+#Wishlist .wishlist-row-item {
+    border-bottom: 1px solid rgba(var(--bs-dark-rgb), 0.12);
 }
 
-#Wishlist .wishlist-card {
-    border: 1px solid rgba(var(--bs-dark-rgb), 0.08);
-    background-color: #fff;
-    border-radius: 2px;
-    overflow: hidden;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-#Wishlist .wishlist-card:hover {
-    border-color: rgba(var(--bs-dark-rgb), 0.2);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-#Wishlist .wishlist-card-img-col {
-    overflow: hidden;
-}
-
-#Wishlist .wishlist-thumb {
+#Wishlist .wishlist-product-thumb {
     width: 100%;
-    height: 100%;
-    min-height: 160px;
+    max-width: 170px;
+    aspect-ratio: 4 / 5;
     object-fit: cover;
-    transition: transform 0.3s ease;
 }
 
-#Wishlist .wishlist-card:hover .wishlist-thumb {
-    transform: scale(1.03);
-}
-
-#Wishlist .wishlist-card-body {
-    padding: 1.25rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-#Wishlist .wishlist-card-title {
-    font-size: 1rem;
-    letter-spacing: 0.04em;
-    line-height: 1.4;
-}
-
-#Wishlist .wishlist-card-title a:hover {
-    opacity: 0.7;
-}
-
-#Wishlist .wishlist-remove-btn {
-    background: none;
-    border: none;
-    color: var(--bs-gray-dark);
-    padding: 0.25rem;
-    cursor: pointer;
-    line-height: 1;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
-    flex-shrink: 0;
-}
-
-#Wishlist .wishlist-remove-btn:hover {
-    color: #b23b3b;
-}
-
-#Wishlist .wishlist-description {
-    font-size: 0.88rem;
-    color: var(--bs-gray-dark);
+#Wishlist .wishlist-item-description {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    line-clamp: 2;
+    line-clamp: 3;
 }
 
-#Wishlist .wishlist-meta {
-    color: var(--bs-body-color);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
+#Wishlist .wishlist-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-clamp: 1;
 }
 
-#Wishlist .wishlist-meta-tag {
-    background-color: rgba(var(--bs-dark-rgb), 0.04);
-    padding: 0.2rem 0.55rem;
-    border-radius: 2px;
-    font-size: 0.82rem;
-}
-
-#Wishlist .wishlist-label {
-    font-size: 0.68rem;
-    color: var(--bs-gray-dark);
-    letter-spacing: 0.08em;
-    margin-bottom: 0.15rem;
-}
-
-#Wishlist .wishlist-price {
-    font-family: var(--heading-font);
-    color: var(--heading-color);
-    font-size: 1.02rem;
-    white-space: nowrap;
-}
-
-#Wishlist .wishlist-stock-pill {
-    display: inline-block;
-    border: 1px solid;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.78rem;
-    white-space: nowrap;
-}
-
-#Wishlist .wishlist-stock-pill.in-stock {
-    color: #2e7d32;
-    border-color: rgba(46, 125, 50, 0.35);
-    background-color: rgba(46, 125, 50, 0.06);
-}
-
-#Wishlist .wishlist-stock-pill.out-stock {
-    color: #b23b3b;
-    border-color: rgba(178, 59, 59, 0.35);
-    background-color: rgba(178, 59, 59, 0.06);
-}
-
-#Wishlist .wishlist-cart-btn {
-    padding: 0.45rem 1.2rem;
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
+#Wishlist .wishlist-row-item .btn {
+    letter-spacing: 0.03em;
 }
 
 @media only screen and (max-width: 767px) {
-    #Wishlist .wishlist-summary-card {
-        width: 100%;
-    }
-
-    #Wishlist .wishlist-card-body {
-        padding: 0.85rem 1rem;
-    }
-
-    #Wishlist .wishlist-cart-btn {
-        width: 100%;
-    }
-
-    #Wishlist .wishlist-price {
-        font-size: 0.95rem;
+    #Wishlist .wishlist-product-thumb {
+        max-width: 96px;
     }
 }
 
