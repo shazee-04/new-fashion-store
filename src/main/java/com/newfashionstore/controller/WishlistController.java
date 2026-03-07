@@ -164,4 +164,49 @@ public class WishlistController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
+
+    @DELETE
+    @Path("/remove")
+    @Secure
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeFromWishlist(@QueryParam("pId") int productId, @Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession httpSession = request.getSession();
+
+        User user = (User) httpSession.getAttribute("user");
+
+        if (productId == 0 || productId < 0) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Product ID is required.");
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+        }
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Wishlist wishlist = session.createQuery("FROM Wishlist " +
+                            "WHERE user.id = :uid " +
+                            "AND product.id = :pid", Wishlist.class)
+                    .setParameter("uid", user.getId())
+                    .setParameter("pid", productId)
+                    .setMaxResults(1)
+                    .uniqueResult();
+
+            if (wishlist != null) {
+                session.remove(wishlist);
+                transaction.commit();
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Item removed from wishlist.");
+                return Response.ok(responseDTO).build();
+            } else {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Item not found in wishlist.");
+                return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+            }
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage(e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
 }

@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
-
     loadWishlistItems();
 });
 
@@ -155,15 +154,11 @@ async function removeFromWishlist(productId) {
     if (!productId) return;
 
     try {
-        const endpoint = `api/wishlist/remove?pId=${encodeURIComponent(productId)}`;
-        let response = await fetch(endpoint, {method: 'DELETE'});
-
-        if (response.status === 405) {
-            response = await fetch(endpoint, {method: 'POST'});
-        }
-
-        const raw = await response.text();
-        const result = raw ? JSON.parse(raw) : {};
+        const response = await fetch(`api/wishlist/remove?pId=${encodeURIComponent(productId)}`,
+            {
+                method: 'DELETE'
+            });
+        const result = await response.json();
 
         if (response.ok && result.success) {
             const removedItem = wishlistState.items.find(item => Number(item?.productId) === Number(productId));
@@ -176,10 +171,9 @@ async function removeFromWishlist(productId) {
             renderWishlistState();
             showToast(result.message || 'Item removed from wishlist.', true);
             document.querySelector('header-component')?.refreshWishlistCount();
-            return;
+        } else {
+            showToast(result.message || 'Failed removing item from wishlist!', false);
         }
-
-        showToast(result.message || 'Failed removing item from wishlist!', false);
     } catch (error) {
         console.error('Wishlist remove error:', error);
         showToast('Server connection failed! Please try again.', false);
