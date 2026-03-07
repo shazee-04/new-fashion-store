@@ -153,6 +153,9 @@ function renderWishlistItems(items) {
 async function removeFromWishlist(productId) {
     if (!productId) return;
 
+    const confirmed = await confirmModal('Are you sure you want to remove this item from your wishlist?');
+    if (!confirmed) return;
+
     try {
         const response = await fetch(`api/wishlist/remove?pId=${encodeURIComponent(productId)}`,
             {
