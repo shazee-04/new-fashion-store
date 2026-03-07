@@ -11,6 +11,46 @@ function showToast(message, isSuccess) {
     }).showToast();
 }
 
+// Modal toast
+function confirmModal(message, cancelText = "Cancel", confirmText = "Ok") {
+    return new Promise((resolve) => {
+        const modal = document.createElement("div");
+        modal.classList.add("modal", "fade");
+        modal.tabIndex = -1;
+
+        modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-0">
+              <div class="modal-header py-2 px-3">
+                <span class="modal-title text-dark fs-5 mt-2">Confirm</span>
+              </div>
+              <div class="modal-body text-muted fs-6 py-4 my-2 px-3">
+                ${message}
+              </div>
+              <div class="modal-footer py-2 px-3">
+                <button id="cancelBtn" class="btn btn-light px-4">${cancelText}</button>
+                <button id="confirmBtn" class="btn btn-dark px-4">${confirmText}</button>
+              </div>
+            </div>
+        </div>
+        `;
+        document.body.appendChild(modal);
+
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        modal.querySelector("#cancelBtn").onclick = () => {
+            resolve(false);
+            bsModal.hide();
+            modal.remove();
+        };
+        modal.querySelector("#confirmBtn").onclick = () => {
+            resolve(true);
+            bsModal.hide();
+            modal.remove();
+        };
+    });
+}
+
 // Loading toast
 function getLoadingToast(message) {
     return Toastify({
@@ -86,13 +126,13 @@ function getCookie(name) {
 
 // Update browser URL with filters
 function updateBrowserURL({
-    page,
-    searchText,
-    categories,
-    brands,
-    minPrice,
-    maxPrice
-}) {
+                              page,
+                              searchText,
+                              categories,
+                              brands,
+                              minPrice,
+                              maxPrice
+                          }) {
     const params = new URLSearchParams();
 
     if (page > 0) params.set('page', page);
