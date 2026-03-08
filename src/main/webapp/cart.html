@@ -183,9 +183,12 @@
                                             data-type="minus" type="button">
                                         <i class="bi bi-dash-lg"></i>
                                     </button>
-                                    <input class="form-control input-number text-center text-dark shadow-none border-light" max="100"
-                                           min="1"
-                                           name="quantity" type="text" value="1">
+                                    <label>
+                                        <input class="form-control input-number text-center text-dark shadow-none border-light"
+                                               max="100"
+                                               min="1"
+                                               name="quantity" type="text" value="1">
+                                    </label>
                                     <button class="quantity-right-plus btn btn-sm btn-light btn-number"
                                             data-field="" data-type="plus"
                                             type="button">
@@ -230,7 +233,9 @@
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button class="btn btn-dark btn-lg text-uppercase" id="cartCheckoutBtn">Check out</button>
+                            <a class="btn btn-dark btn-lg text-uppercase" href="checkout.html" id="cartCheckoutBtn">
+                                Check out
+                            </a>
                         </div>
                     </div>
                 </div>
