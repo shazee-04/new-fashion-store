@@ -3,6 +3,7 @@ package com.newfashionstore.dto;
 import java.io.Serializable;
 
 public class CartItemDTO implements Serializable {
+    private int productId;
     private int stockId;
     private String title;
     private String description;
@@ -15,6 +16,14 @@ public class CartItemDTO implements Serializable {
     private double totalPrice;
 
     public CartItemDTO() {
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
     }
 
     public int getStockId() {
