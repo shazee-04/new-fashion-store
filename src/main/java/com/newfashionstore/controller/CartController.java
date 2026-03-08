@@ -154,8 +154,13 @@ public class CartController {
                         .setParameter("uid", user.getId())
                         .list();
 
-                for (Cart c : dbCartItems) {
-                    CartItemDTO dto = buildCartItemDTO(dbSession, c.getStock(), c.getQty());
+                for (Cart cart : dbCartItems) {
+                    CartItemDTO dto = buildCartItemDTO(
+                            dbSession,
+                            cart.getStock(),
+                            cart.getStock().getProduct().getId(),
+                            cart.getQty()
+                    );
                     cartItems.add(dto);
                     netTotal += dto.getTotalPrice();
                 }
@@ -163,7 +168,7 @@ public class CartController {
                 HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
 
                 if (sessionCart != null && !sessionCart.isEmpty()) {
-                    List<Stock> stocks = dbSession.createQuery("FROM Stock s " +
+                    List<Stock> stockList = dbSession.createQuery("FROM Stock s " +
                                     "JOIN FETCH s.product p " +
                                     "JOIN FETCH s.color " +
                                     "JOIN FETCH s.size " +
@@ -171,9 +176,13 @@ public class CartController {
                             .setParameter("ids", sessionCart.keySet())
                             .list();
 
-                    for (Stock s : stocks) {
-                        int qty = sessionCart.get(s.getId());
-                        CartItemDTO dto = buildCartItemDTO(dbSession, s, qty);
+                    for (Stock stock : stockList) {
+                        CartItemDTO dto = buildCartItemDTO(
+                                dbSession,
+                                stock,
+                                stock.getProduct().getId(),
+                                sessionCart.get(stock.getId())
+                        );
                         cartItems.add(dto);
                         netTotal += dto.getTotalPrice();
                     }
@@ -188,7 +197,6 @@ public class CartController {
             responseDTO.setMessage("Cart items retrieved successfully");
             responseDTO.setData(data);
             return Response.ok().entity(responseDTO).build();
-
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Failed to retrieve cart items: " + e.getMessage());
@@ -196,8 +204,9 @@ public class CartController {
         }
     }
 
-    private CartItemDTO buildCartItemDTO(Session dbSession, Stock stock, int qty) {
+    private CartItemDTO buildCartItemDTO(Session dbSession, Stock stock, int pId, int qty) {
         CartItemDTO dto = new CartItemDTO();
+        dto.setProductId(stock.getProduct().getId());
         dto.setStockId(stock.getId());
         dto.setTitle(stock.getProduct().getTitle());
         dto.setDescription(stock.getProduct().getDescription());
@@ -216,5 +225,83 @@ public class CartController {
 
         dto.setImagePath(imagePath);
         return dto;
+    }
+
+    @DELETE
+    @Path("/remove")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeFromCart(@QueryParam("stockId") int stockId,
+                                   @QueryParam("qty") @DefaultValue("0") int qty,
+                                   @Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
+
+        if (stockId <= 0) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Invalid stock ID!");
+            return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+        }
+
+        try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+            if (user != null) {
+                Transaction transaction = dbSession.beginTransaction();
+                Cart cartItem = dbSession.createQuery(
+                                "FROM Cart WHERE user.id = :uid AND stock.id = :sid", Cart.class)
+                        .setParameter("uid", user.getId())
+                        .setParameter("sid", stockId)
+                        .uniqueResult();
+
+                if (cartItem == null) {
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("Cart item not found!");
+                    return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+                }
+
+                if (qty <= 0) {
+                    dbSession.remove(cartItem);
+                    transaction.commit();
+                    responseDTO.setSuccess(true);
+                    responseDTO.setMessage("Item removed from cart successfully");
+                    return Response.ok(responseDTO).build();
+                }
+
+                if (cartItem.getQty() > qty) {
+                    cartItem.setQty(cartItem.getQty() - qty);
+                    dbSession.merge(cartItem);
+                } else {
+                    dbSession.remove(cartItem);
+                }
+                transaction.commit();
+            } else {
+                Map<Integer, Integer> sessionCart =
+                        (Map<Integer, Integer>) session.getAttribute("sessionCart");
+                if (sessionCart == null || !sessionCart.containsKey(stockId)) {
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("Cart item not found in session!");
+                    return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
+                }
+
+                if (qty > 0) {
+                    int currentQty = sessionCart.get(stockId);
+                    if (currentQty > qty) {
+                        sessionCart.put(stockId, currentQty - qty);
+                    } else {
+                        sessionCart.remove(stockId);
+                    }
+                } else {
+                    sessionCart.remove(stockId);
+                }
+                session.setAttribute("sessionCart", sessionCart);
+            }
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Item removed from cart successfully");
+            return Response.ok(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to remove item from cart: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
     }
 }
