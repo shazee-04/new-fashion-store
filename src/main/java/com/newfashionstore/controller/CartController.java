@@ -42,13 +42,19 @@ public class CartController {
 
             if (stock == null) {
                 responseDTO.setSuccess(false);
-                responseDTO.setMessage("Product variant item not found!");
+                responseDTO.setMessage("Product variant not found!");
                 return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
             }
 
             if (qty <= 0) {
                 responseDTO.setSuccess(false);
                 responseDTO.setMessage("Quantity must be greater than zero!");
+                return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+            }
+
+            if (stock.getProduct().getStatus().getId() != 1) {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Product is not available!");
                 return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
             }
 
@@ -172,7 +178,7 @@ public class CartController {
                                     "JOIN FETCH s.product p " +
                                     "JOIN FETCH s.color " +
                                     "JOIN FETCH s.size " +
-                                    "WHERE s.id IN :ids", Stock.class)
+                                    "WHERE s.id IN :ids AND p.status.id = 1", Stock.class)
                             .setParameter("ids", sessionCart.keySet())
                             .list();
 
@@ -216,6 +222,7 @@ public class CartController {
         dto.setQty(qty);
         dto.setRemainingStock(stock.getQuantity());
         dto.setTotalPrice(stock.getPrice() * qty);
+        dto.setAvailable(stock.getProduct().getStatus().getId() == 1);
 
         String imagePath = dbSession.createQuery("SELECT pi.path FROM ProductImage pi " +
                         "WHERE pi.product.id = :pid ORDER BY pi.id ASC", String.class)

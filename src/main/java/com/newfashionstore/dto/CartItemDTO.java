@@ -14,6 +14,7 @@ public class CartItemDTO implements Serializable {
     private int qty;
     private int remainingStock;
     private double totalPrice;
+    private boolean available;
 
     public CartItemDTO() {
     }
@@ -104,5 +105,13 @@ public class CartItemDTO implements Serializable {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }
