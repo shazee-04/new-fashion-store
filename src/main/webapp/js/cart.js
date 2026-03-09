@@ -1,13 +1,20 @@
+document.addEventListener('DOMContentLoaded', () => {
+    initCartEventDelegation();
+    loadCartItems();
+});
+
+document.getElementById('cartCheckoutBtn').addEventListener('click', (e) => {
+    if (cartState.items.length === 0) {
+        e.preventDefault();
+        showToast('Your cart is empty! Please add items before checkout.', false);
+    }
+})
+
 const cartState = {
     items: [],
     netTotal: 0,
     isUpdating: false
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-    initCartEventDelegation();
-    loadCartItems();
-});
 
 async function loadCartItems() {
     const loadingContainer = document.getElementById('cartLoading');
@@ -66,7 +73,8 @@ function normalizeCartItem(item) {
         color: item?.color || '-',
         remainingStock: Number(item?.remainingStock || 0),
         unitPrice,
-        totalPrice: Number(item?.totalPrice || unitPrice * qty)
+        totalPrice: Number(item?.totalPrice || unitPrice * qty),
+        available: item?.available || false
     };
 }
 
@@ -103,10 +111,20 @@ function renderCartItems(items) {
         row.className = 'list-group-item px-0 py-3 cart-row-item';
         row.setAttribute('data-stock-id', String(item.stockId));
 
+        const stockWarning = item.remainingStock > 5
+            ? 'in stock'
+            : (item.remainingStock > 0 ? `only ${item.remainingStock} left` : 'out of stock');
+        const stockClass = item.remainingStock > 5
+            ? 'text-success'
+            : (item.remainingStock > 0 ? 'text-warning' : 'text-danger');
+        const availabilityText = item.available
+            ? `<span class="py-1 fs-9 ${stockClass}">${stockWarning}</span>`
+            : '<span class="bi bi-exclamation-circle fs-9 py-1 text-danger"> Unavailable</span>';
         row.innerHTML = `
 			<div class="row g-3 g-md-4 align-items-center">
 				<div class="col-4 col-md-2">
-					<a href="single-product.html?pId=${encodeURIComponent(item.productId)}" class="d-block">
+					<a href="single-product.html?pId=${encodeURIComponent(item.productId)}" 
+					    class="d-block ${item.available ? '' : 'opacity-25'}">
 						<img src="${item.imagePath}" alt="${item.title}"
 							 class="img-fluid border cart-product-thumb"
 							 onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
@@ -114,6 +132,9 @@ function renderCartItems(items) {
 				</div>
 
 				<div class="col-8 col-md-4">
+					<p class="fs-8 mb-0 text-uppercase">
+					    ${availabilityText}
+					</p>
 					<h5 class="h6 text-uppercase mb-1">
 						<a href="single-product.html?pId=${encodeURIComponent(item.productId)}" 
 							class="fs-5 text-dark text-decoration-none cart-title">
