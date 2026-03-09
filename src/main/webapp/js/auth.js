@@ -22,7 +22,7 @@ const Auth = {
             .finally(() => {
                 sessionStorage.removeItem('user');
                 window.dispatchEvent(new Event('userChanged'));
-                redirectToast("Logging out!", "index.html", 1000, true);
+                redirectToast("Logging out!", "login.html", 1000, true);
             })
     },
 
