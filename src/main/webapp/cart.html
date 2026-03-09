@@ -44,202 +44,181 @@
         <div class="row mb-4">
             <h2 class="text-uppercase mb-2 mt-0">My Cart</h2>
         </div>
-        <div class="row g-4 align-items-start py-3">
-            <div class="col-lg-8">
-                <div class="d-none d-md-block border-bottom pb-2 mb-2">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <h6 class="text-uppercase text-muted mb-0">Product</h6>
-                        </div>
-                        <div class="col-md-3 text-md-center">
-                            <h6 class="text-uppercase text-muted mb-0">Quantity</h6>
-                        </div>
-                        <div class="col-md-2 text-md-center">
-                            <h6 class="text-uppercase text-muted mb-0">Total</h6>
-                        </div>
-                        <div class="col-md-1 text-md-end d-none">
-                            <h6 class="text-uppercase text-muted mb-0">Remove</h6>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="list-group list-group-flush" id="cartSkeletons">
-                    <div class="list-group-item px-0 py-3 cart-row-item">
-                        <div class="row g-3 g-md-4 align-items-center">
-                            <div class="col-4 col-md-2">
-                                <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
+        <div id="cartLoading">
+            <div class="row g-4 align-items-start py-3">
+                <div class="col-lg-8">
+                    <div class="d-none d-md-block border-bottom pb-2 mb-2">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted mb-0">Product</h6>
                             </div>
-
-                            <div class="col-8 col-md-4">
-                                <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
-                                <div class="d-flex gap-2 mb-2">
-                                    <div class="skeleton" style="height: 24px; width: 72px;"></div>
-                                    <div class="skeleton" style="height: 24px; width: 88px;"></div>
-                                </div>
-                                <div class="skeleton" style="height: 14px; width: 55%;"></div>
+                            <div class="col-md-3 text-md-center">
+                                <h6 class="text-uppercase text-muted mb-0">Quantity</h6>
                             </div>
-
-                            <div class="col-6 col-md-3">
-                                <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
+                            <div class="col-md-2 text-md-center">
+                                <h6 class="text-uppercase text-muted mb-0">Total</h6>
                             </div>
-
-                            <div class="col-4 col-md-2 text-md-center">
-                                <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
-                            </div>
-
-                            <div class="col-2 col-md-1 text-end">
-                                <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                            <div class="col-md-1 text-md-end d-none">
+                                <h6 class="text-uppercase text-muted mb-0">Remove</h6>
                             </div>
                         </div>
                     </div>
 
-                    <div class="list-group-item px-0 py-3 cart-row-item">
-                        <div class="row g-3 g-md-4 align-items-center">
-                            <div class="col-4 col-md-2">
-                                <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
-                            </div>
-
-                            <div class="col-8 col-md-4">
-                                <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
-                                <div class="d-flex gap-2 mb-2">
-                                    <div class="skeleton" style="height: 24px; width: 72px;"></div>
-                                    <div class="skeleton" style="height: 24px; width: 88px;"></div>
+                    <div class="list-group list-group-flush" id="cartSkeletons">
+                        <div class="list-group-item px-0 py-3 cart-row-item">
+                            <div class="row g-3 g-md-4 align-items-center">
+                                <div class="col-4 col-md-2">
+                                    <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
                                 </div>
-                                <div class="skeleton" style="height: 14px; width: 55%;"></div>
-                            </div>
 
-                            <div class="col-6 col-md-3">
-                                <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
-                            </div>
+                                <div class="col-8 col-md-4">
+                                    <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
+                                    <div class="d-flex gap-2 mb-2">
+                                        <div class="skeleton" style="height: 24px; width: 72px;"></div>
+                                        <div class="skeleton" style="height: 24px; width: 88px;"></div>
+                                    </div>
+                                    <div class="skeleton" style="height: 14px; width: 55%;"></div>
+                                </div>
 
-                            <div class="col-4 col-md-2 text-md-center">
-                                <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
-                            </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
+                                </div>
 
-                            <div class="col-2 col-md-1 text-end">
-                                <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                                <div class="col-4 col-md-2 text-md-center">
+                                    <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
+                                </div>
+
+                                <div class="col-2 col-md-1 text-end">
+                                    <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="list-group-item px-0 py-3 cart-row-item">
-                        <div class="row g-3 g-md-4 align-items-center">
-                            <div class="col-4 col-md-2">
-                                <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
-                            </div>
-
-                            <div class="col-8 col-md-4">
-                                <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
-                                <div class="d-flex gap-2 mb-2">
-                                    <div class="skeleton" style="height: 24px; width: 72px;"></div>
-                                    <div class="skeleton" style="height: 24px; width: 88px;"></div>
+                        <div class="list-group-item px-0 py-3 cart-row-item">
+                            <div class="row g-3 g-md-4 align-items-center">
+                                <div class="col-4 col-md-2">
+                                    <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
                                 </div>
-                                <div class="skeleton" style="height: 14px; width: 55%;"></div>
-                            </div>
 
-                            <div class="col-6 col-md-3">
-                                <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
-                            </div>
+                                <div class="col-8 col-md-4">
+                                    <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
+                                    <div class="d-flex gap-2 mb-2">
+                                        <div class="skeleton" style="height: 24px; width: 72px;"></div>
+                                        <div class="skeleton" style="height: 24px; width: 88px;"></div>
+                                    </div>
+                                    <div class="skeleton" style="height: 14px; width: 55%;"></div>
+                                </div>
 
-                            <div class="col-4 col-md-2 text-md-center">
-                                <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
-                            </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
+                                </div>
 
-                            <div class="col-2 col-md-1 text-end">
-                                <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                                <div class="col-4 col-md-2 text-md-center">
+                                    <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
+                                </div>
+
+                                <div class="col-2 col-md-1 text-end">
+                                    <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="list-group list-group-flush d-none" id="cartItems">
-                    <div class="list-group-item px-0 py-3 cart-row-item">
-                        <div class="row g-3 g-md-4 align-items-center">
-                            <div class="col-4 col-md-2">
-                                <a class="d-block" href="single-product.html">
-                                    <img alt="Iphone 13" class="img-fluid border cart-product-thumb"
-                                         src="assets/images/products/product-thumb-11.jpg">
-                                </a>
-                            </div>
-
-                            <div class="col-8 col-md-4">
-                                <h5 class="h6 text-uppercase mb-1">
-                                    <a class="fs-5 text-dark text-decoration-none cart-title"
-                                       href="single-product.html">
-                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, eos!
-                                    </a>
-                                </h5>
-                                <p class="fs-8 mb-0 text-uppercase">
-                                    <span class="p-1 px-2 btn fs-9 btn-primary">Size: M</span>
-                                    <span class="p-1 px-2 btn fs-9 btn-primary">Color: Red</span>
-                                </p>
-                                <p class="small mb-0">LKR 1500.00</p>
-                            </div>
-
-                            <div class="col-6 col-md-3">
-                                <div class="input-group product-qty mx-md-auto">
-                                    <button class="quantity-left-minus btn btn-sm btn-light btn-number"
-                                            data-field=""
-                                            data-type="minus" type="button">
-                                        <i class="bi bi-dash-lg"></i>
-                                    </button>
-                                    <label>
-                                        <input class="form-control input-number text-center text-dark shadow-none border-light"
-                                               max="100"
-                                               min="1"
-                                               name="quantity" type="text" value="1">
-                                    </label>
-                                    <button class="quantity-right-plus btn btn-sm btn-light btn-number"
-                                            data-field="" data-type="plus"
-                                            type="button">
-                                        <i class="bi bi-plus-lg"></i>
-                                    </button>
+                        <div class="list-group-item px-0 py-3 cart-row-item">
+                            <div class="row g-3 g-md-4 align-items-center">
+                                <div class="col-4 col-md-2">
+                                    <div class="skeleton cart-product-thumb" style="height: 170px;"></div>
                                 </div>
-                            </div>
 
-                            <div class="col-4 col-md-2 text-md-center">
-                                <span class="text-dark">LKR 1500.00</span>
-                            </div>
+                                <div class="col-8 col-md-4">
+                                    <div class="skeleton mb-2" style="height: 20px; width: 90%;"></div>
+                                    <div class="d-flex gap-2 mb-2">
+                                        <div class="skeleton" style="height: 24px; width: 72px;"></div>
+                                        <div class="skeleton" style="height: 24px; width: 88px;"></div>
+                                    </div>
+                                    <div class="skeleton" style="height: 14px; width: 55%;"></div>
+                                </div>
 
-                            <div class="col-2 col-md-1 text-end">
-                                <a aria-label="Remove item" class="btn btn-light border-0 p-1 px-2"
-                                   href="cart.html#">
-                                    <i class="bi bi-x-lg text-danger"></i>
-                                </a>
+                                <div class="col-6 col-md-3">
+                                    <div class="skeleton mx-md-auto" style="height: 38px; max-width: 140px;"></div>
+                                </div>
+
+                                <div class="col-4 col-md-2 text-md-center">
+                                    <div class="skeleton mx-md-auto" style="height: 16px; width: 100px;"></div>
+                                </div>
+
+                                <div class="col-2 col-md-1 text-end">
+                                    <div class="skeleton ms-auto" style="height: 32px; width: 32px;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="text-center py-5 my-5 d-none" id="cartEmpty">
-                    <h4 class="mb-3">Your cart is empty</h4>
-                    <p class="text-muted mb-4">Looks like you haven’t added any products yet.</p>
-                    <a class="btn btn-dark text-uppercase" href="shop.html">Continue Shopping</a>
+                <div class="col-lg-4">
+                    <div class="card border-0 rounded-0 cart-summary-card">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="skeleton mb-3" style="height: 12px; width: 32%;"></div>
+                            <div class="skeleton mb-2" style="height: 14px; width: 100%;"></div>
+                            <div class="skeleton mb-4" style="height: 22px; width: 45%;"></div>
+                            <div class="skeleton" style="height: 48px; width: 100%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-4">
-                <div class="card border-0 rounded-0 cart-summary-card">
-                    <div class="card-body p-3 p-md-4">
-                        <div
-                                class="d-flex justify-content-between align-items-start pb-3">
+        <div class="d-none" id="cartContent">
+            <div class="row g-4 align-items-start py-3">
+                <div class="col-lg-8">
+                    <div class="d-none d-md-block border-bottom pb-2 mb-2">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase text-muted mb-0">Product</h6>
+                            </div>
+                            <div class="col-md-3 text-md-center">
+                                <h6 class="text-uppercase text-muted mb-0">Quantity</h6>
+                            </div>
+                            <div class="col-md-2 text-md-center">
+                                <h6 class="text-uppercase text-muted mb-0">Total</h6>
+                            </div>
+                            <div class="col-md-1 text-md-end d-none">
+                                <h6 class="text-uppercase text-muted mb-0">Remove</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="list-group list-group-flush d-none" id="cartItems">
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card border-0 rounded-0 cart-summary-card">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex justify-content-between align-items-start pb-3">
                                 <span class="text-uppercase small text-dark d-flex flex-column">
                                     Subtotal
                                     <span class="fs-8 text-lowercase text-muted">
                                         Taxes and shipping calculated at checkout
                                     </span>
                                 </span>
-                            <span class="text-dark fw-medium" id="cartNetTotal">LKR 0.00</span>
-                        </div>
+                                <span class="text-dark fw-medium" id="cartNetTotal">LKR 0.00</span>
+                            </div>
 
-                        <div class="d-grid gap-2">
-                            <a class="btn btn-dark btn-lg text-uppercase" href="checkout.html" id="cartCheckoutBtn">
-                                Check out
-                            </a>
+                            <div class="d-grid gap-2">
+                                <a class="btn btn-dark btn-lg text-uppercase" href="checkout.html" id="cartCheckoutBtn">
+                                    Check out
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="text-center py-5 my-5 d-none" id="cartEmpty">
+            <h4 class="mb-3">Your cart is empty</h4>
+            <p class="text-muted mb-4">Looks like you haven’t added any products yet.</p>
+            <a class="btn btn-dark text-uppercase" href="shop.html">Continue Shopping</a>
         </div>
     </div>
 </section>

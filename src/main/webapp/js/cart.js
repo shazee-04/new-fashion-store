@@ -5,20 +5,18 @@ const cartState = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (!Auth.isLoggedIn()) {
-        window.location.href = 'login.html';
-        return;
-    }
     initCartEventDelegation();
     loadCartItems();
 });
 
 async function loadCartItems() {
-    const skeletonContainer = document.getElementById('cartSkeletons');
+    const loadingContainer = document.getElementById('cartLoading');
+    const contentContainer = document.getElementById('cartContent');
     const itemsContainer = document.getElementById('cartItems');
     const emptyContainer = document.getElementById('cartEmpty');
 
-    skeletonContainer?.classList.remove('d-none');
+    loadingContainer?.classList.remove('d-none');
+    contentContainer?.classList.add('d-none');
     itemsContainer?.classList.add('d-none');
     emptyContainer?.classList.add('d-none');
 
@@ -73,19 +71,22 @@ function normalizeCartItem(item) {
 }
 
 function renderCartState() {
-    const skeletonContainer = document.getElementById('cartSkeletons');
+    const loadingContainer = document.getElementById('cartLoading');
+    const contentContainer = document.getElementById('cartContent');
     const itemsContainer = document.getElementById('cartItems');
     const emptyContainer = document.getElementById('cartEmpty');
 
     updateCartSummary(cartState.items.length, cartState.netTotal);
-    skeletonContainer?.classList.add('d-none');
+    loadingContainer?.classList.add('d-none');
 
     if (cartState.items.length === 0) {
+        contentContainer?.classList.add('d-none');
         itemsContainer?.classList.add('d-none');
         emptyContainer?.classList.remove('d-none');
         return;
     }
 
+    contentContainer?.classList.remove('d-none');
     renderCartItems(cartState.items);
     itemsContainer?.classList.remove('d-none');
     emptyContainer?.classList.add('d-none');
