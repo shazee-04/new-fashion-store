@@ -36,7 +36,7 @@ public class CartController {
         User user = (User) session.getAttribute("user");
 
         try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction t = dbSession.beginTransaction();
+            Transaction transaction = dbSession.beginTransaction();
 
             Stock stock = dbSession.get(Stock.class, stockId);
 
@@ -60,30 +60,44 @@ public class CartController {
 
             if (stock.getQuantity() < qty) {
                 responseDTO.setSuccess(false);
-                responseDTO.setMessage("Insufficient stock!");
+                responseDTO.setMessage("Insufficient available stock!");
                 return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
             }
 
             if (user != null) {
-                Cart cartItem = (Cart) dbSession.createQuery("FROM Cart WHERE user.id = :uid AND stock.id = :sid")
+                Cart cartItem = dbSession.createQuery("FROM Cart " +
+                                "WHERE user.id = :uid AND stock.id = :sid", Cart.class)
                         .setParameter("uid", user.getId())
                         .setParameter("sid", stockId)
                         .uniqueResult();
 
-                if (cartItem != null) {
-                    cartItem.setQty(cartItem.getQty() + qty);
-//                    dbSession.update(cartItem);
-                } else {
+                if (cartItem == null) {
                     Cart newCart = new Cart();
                     newCart.setUser(user);
                     newCart.setStock(stock);
                     newCart.setQty(qty);
                     dbSession.persist(newCart);
+
+                    transaction.commit();
+                    responseDTO.setSuccess(true);
+                    responseDTO.setMessage("Item added to cart successfully");
+                    return Response.status(Response.Status.OK).entity(responseDTO).build();
                 }
 
-                t.commit();
+                int newQty = cartItem.getQty() + qty;
+                int maxQty = stock.getQuantity();
+                if (newQty > maxQty) {
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("Insufficient available stock!");
+                    return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+                }
+                cartItem.setQty(newQty);
+                dbSession.merge(cartItem);
+                transaction.commit();
+
                 responseDTO.setSuccess(true);
                 responseDTO.setMessage("Item added to cart successfully");
+                return Response.status(Response.Status.OK).entity(responseDTO).build();
             } else {
                 HashMap<Integer, Integer> sessionCart = (HashMap<Integer, Integer>) session.getAttribute("sessionCart");
                 if (sessionCart == null) {
@@ -95,8 +109,8 @@ public class CartController {
 
                 responseDTO.setSuccess(true);
                 responseDTO.setMessage("Item added. Log in to save cart!");
+                return Response.ok().entity(responseDTO).build();
             }
-            return Response.ok().entity(responseDTO).build();
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Adding to cart failed: " + e.getMessage());
