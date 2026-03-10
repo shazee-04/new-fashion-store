@@ -1,5 +1,6 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.annotations.Secure;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.*;
 import com.newfashionstore.util.HibernateUtil;
@@ -20,9 +21,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Path("/checkout")
-public class Checkout {
+@Secure
+public class CheckoutController {
 
     @POST
+    @Path("/payhere")
     @Produces(MediaType.APPLICATION_JSON)
     public Response placeOrder(@QueryParam("addressId") int addressId,
                                @Context HttpServletRequest request) {
