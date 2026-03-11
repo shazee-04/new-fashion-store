@@ -4,10 +4,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById('cartCheckoutBtn').addEventListener('click', (e) => {
+    e.preventDefault();
     if (cartState.items.length === 0) {
-        e.preventDefault();
         showToast('Your cart is empty! Please add items before checkout.', false);
     }
+    validateCartList().then(result => {
+        if (result === true) {
+            window.location.href = 'checkout.html';
+            return;
+        }
+        if (result === null) {
+            return;
+        }
+        const data = result.data || {};
+        (data.noStock || []).forEach((id) => {
+            const row = document.querySelector(`.cart-row-item[data-stock-id="${id}"]`);
+            if (row) {
+                row.classList.add("no-stock-item");
+            }
+        });
+        (data.unavailable || []).forEach((id) => {
+            const row = document.querySelector(`.cart-row-item[data-stock-id="${id}"]`);
+            if (row) {
+                row.classList.add("unavailable-item");
+            }
+        });
+    });
 })
 
 const cartState = {
