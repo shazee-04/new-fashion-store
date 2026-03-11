@@ -381,6 +381,18 @@
     padding-inline: 0.65rem;
 }
 
+#Cart .unavailable-item {
+    padding-inline: 10px !important;
+    background-color: #ffeeee;
+    transition: background-color .2s ease, padding-inline .2s ease;
+}
+
+#Cart .no-stock-item {
+    padding-inline: 10px !important;
+    background-color: #ffeeee;
+    transition: background-color .2s ease, padding-inline .2s ease;
+}
+
 /* Checkout page -------------------------------------- */
 #Checkout .checkout-summary-card {
     background-color: #f8f8f8;
