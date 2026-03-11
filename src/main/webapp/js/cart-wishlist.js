@@ -92,3 +92,21 @@ async function getCartList() {
     }
     return null;
 }
+
+async function validateCartList() {
+    try {
+        const response = await fetch('api/cart/validate');
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            return true;
+        } else {
+            showToast(result.message || "Failed validating cart items!", false);
+            return result;
+        }
+    } catch (error) {
+        console.error('Cart validation error:', error);
+        showToast("Server connection failed! Please try again.", false);
+    }
+    return null;
+}
