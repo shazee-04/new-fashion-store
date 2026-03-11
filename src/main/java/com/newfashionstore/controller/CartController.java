@@ -1,5 +1,6 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.annotations.Secure;
 import com.newfashionstore.dto.CartItemDTO;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Cart;
@@ -174,12 +175,11 @@ public class CartController {
                         .setParameter("uid", user.getId())
                         .list();
 
-                for (Cart cart : dbCartItems) {
+                for (Cart cartItem : dbCartItems) {
                     CartItemDTO dto = buildCartItemDTO(
                             dbSession,
-                            cart.getStock(),
-                            cart.getStock().getProduct().getId(),
-                            cart.getQty()
+                            cartItem.getStock(),
+                            cartItem.getQty()
                     );
                     cartItems.add(dto);
                     netTotal += dto.getTotalPrice();
@@ -200,7 +200,6 @@ public class CartController {
                         CartItemDTO dto = buildCartItemDTO(
                                 dbSession,
                                 stock,
-                                stock.getProduct().getId(),
                                 sessionCart.get(stock.getId())
                         );
                         cartItems.add(dto);
@@ -224,7 +223,7 @@ public class CartController {
         }
     }
 
-    private CartItemDTO buildCartItemDTO(Session dbSession, Stock stock, int pId, int qty) {
+    private CartItemDTO buildCartItemDTO(Session dbSession, Stock stock, int qty) {
         CartItemDTO dto = new CartItemDTO();
         dto.setProductId(stock.getProduct().getId());
         dto.setStockId(stock.getId());
@@ -322,6 +321,51 @@ public class CartController {
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Failed to remove item from cart: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    @GET
+    @Path("/validate")
+    @Secure
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response validateCart(@Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession session = request.getSession();
+
+        User user = (User) session.getAttribute("user");
+        List<String> issues = new ArrayList<>();
+
+        try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
+            List<Cart> cartItems = dbSession.createQuery("FROM Cart c " +
+                            "JOIN FETCH c.stock s " +
+                            "JOIN FETCH s.product p " +
+                            "JOIN FETCH p.status " +
+                            "WHERE c.user.id = :uid", Cart.class)
+                    .setParameter("uid", user.getId())
+                    .list();
+
+            for (Cart cartItem : cartItems) {
+                Stock stock = cartItem.getStock();
+                if (stock.getProduct().getStatus().getId() != 1) {
+                    issues.add("Product " + stock.getProduct().getTitle() + " is not available.");
+                } else if (stock.getQuantity() < cartItem.getQty()) {
+                    issues.add("Insufficient stock for " + stock.getProduct().getTitle() + ".");
+                }
+            }
+
+            if (issues.isEmpty()) {
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Cart is valid and ready for checkout.");
+            } else {
+                responseDTO.setSuccess(false);
+                responseDTO.setMessage("Cart validation failed.");
+                responseDTO.setData(issues);
+            }
+            return Response.ok(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to validate cart: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
