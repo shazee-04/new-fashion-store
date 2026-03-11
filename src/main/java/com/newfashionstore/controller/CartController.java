@@ -335,6 +335,8 @@ public class CartController {
 
         User user = (User) session.getAttribute("user");
         List<String> issues = new ArrayList<>();
+        List<Integer> outOfStockItems = new ArrayList<>();
+        List<Integer> unavailableItems = new ArrayList<>();
 
         try (Session dbSession = HibernateUtil.getSessionFactory().openSession()) {
             List<Cart> cartItems = dbSession.createQuery("FROM Cart c " +
@@ -349,8 +351,10 @@ public class CartController {
                 Stock stock = cartItem.getStock();
                 if (stock.getProduct().getStatus().getId() != 1) {
                     issues.add("Product " + stock.getProduct().getTitle() + " is not available.");
+                    unavailableItems.add(stock.getId());
                 } else if (stock.getQuantity() < cartItem.getQty()) {
                     issues.add("Insufficient stock for " + stock.getProduct().getTitle() + ".");
+                    outOfStockItems.add(stock.getId());
                 }
             }
 
@@ -358,9 +362,14 @@ public class CartController {
                 responseDTO.setSuccess(true);
                 responseDTO.setMessage("Cart is valid and ready for checkout.");
             } else {
+                Map<String, Object> data = new HashMap<>();
+                data.put("issues", issues);
+                data.put("noStock", outOfStockItems);
+                data.put("unavailable", unavailableItems);
+
                 responseDTO.setSuccess(false);
-                responseDTO.setMessage("Cart validation failed.");
-                responseDTO.setData(issues);
+                responseDTO.setMessage("Some items are not available! Please review your cart.");
+                responseDTO.setData(data);
             }
             return Response.ok(responseDTO).build();
         } catch (Exception e) {
