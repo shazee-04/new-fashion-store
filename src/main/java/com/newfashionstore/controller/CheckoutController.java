@@ -6,10 +6,7 @@ import com.newfashionstore.entity.*;
 import com.newfashionstore.util.HibernateUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -102,6 +99,27 @@ public class CheckoutController {
         } catch (Exception ex) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(new ResponseDTO(false, "Checkout failed! Please try again.")).build();
+        }
+    }
+
+    @GET
+    @Path("/payment-methods")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPaymentMethods() {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<PaymentMethod> paymentMethods = session.createQuery(
+                    "FROM PaymentMethod", PaymentMethod.class).list();
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Payment methods retrieved successfully.");
+            responseDTO.setData(paymentMethods);
+            return Response.ok(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to retrieve payment methods: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
 }
