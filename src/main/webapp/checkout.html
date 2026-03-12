@@ -52,6 +52,23 @@
                     <div class="card-body py-3 py-md-4 py-xl-5 px-0">
                         <h4 class="fs-4 text-dark mb-4 text-uppercase">Billing Details</h4>
                         <div class="row g-3 g-md-4">
+                            <div class="col-12 d-none" id="addressSelectorWrap">
+                                <label class="form-label" for="addressSelect">Saved Addresses</label>
+                                <select aria-label="Saved addresses" class="form-select text-dark bg-light"
+                                        id="addressSelect">
+                                    <option value="">Add New Address</option>
+                                </select>
+                                <span class="d-flex align-items-center mt-1">
+                                    <input checked class="form-check-input shadow-none mt-0" id="saveAddressOption"
+                                           type="checkbox">
+                                    <label class="form-check-label ps-2 fs-8 text-uppercase text-muted"
+                                           for="saveAddressOption"
+                                           style="line-height: normal;">
+                                        Save address
+                                    </label>
+                                </span>
+                            </div>
+
                             <div class="col-md-6">
                                 <label class="form-label" for="fname">First Name*</label>
                                 <input class="form-control" id="fname" name="firstname" required type="text">
@@ -62,19 +79,13 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label" for="cname">Company Name (Optional)</label>
-                                <input class="form-control" id="cname" name="companyname" type="text">
+                                <label class="form-label" for="email">Email Address*</label>
+                                <input class="form-control" id="email" name="email" required type="email">
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label" for="country">Country / Region*</label>
-                                <select aria-label="Country / Region" class="form-select" id="country" required>
-                                    <option hidden selected value="">Select country</option>
-                                    <option value="us">United States</option>
-                                    <option value="uk">UK</option>
-                                    <option value="au">Australia</option>
-                                    <option value="ca">Canada</option>
-                                </select>
+                            <div class="col-md-12">
+                                <label class="form-label" for="phone">Phone*</label>
+                                <input class="form-control" id="phone" name="phone" required type="text">
                             </div>
 
                             <div class="col-12">
@@ -87,21 +98,10 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label class="form-label" for="city">Town / City*</label>
-                                <input class="form-control" id="city" name="city" required type="text">
-                            </div>
-
-                            <div class="col-md-6">
-                                <label class="form-label" for="state">State*</label>
-                                <select aria-label="State" class="form-select" id="state" required>
-                                    <option hidden selected value="">Select state</option>
-                                    <option value="fl">Florida</option>
-                                    <option value="ny">New York</option>
-                                    <option value="il">Chicago</option>
-                                    <option value="tx">Texas</option>
-                                    <option value="sj">San Jose</option>
-                                    <option value="hs">Houston</option>
-                                </select>
+                                <label class="form-label" for="city">City*</label>
+                                <input aria-label="city" class="form-control" id="city" list="cityOptions" name="city"
+                                       required type="text">
+                                <datalist id="cityOptions"></datalist>
                             </div>
 
                             <div class="col-md-6">
@@ -109,14 +109,11 @@
                                 <input class="form-control" id="zip" name="zip" required type="text">
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label" for="phone">Phone*</label>
-                                <input class="form-control" id="phone" name="phone" required type="text">
-                            </div>
-
                             <div class="col-12">
-                                <label class="form-label" for="email">Email Address*</label>
-                                <input class="form-control" id="email" name="email" required type="email">
+                                <label class="form-label" for="country">Country*</label>
+                                <select aria-label="Country" class="form-select" disabled id="country">
+                                    <option selected>Sri Lanka</option>
+                                </select>
                             </div>
 
                             <div class="col-12 mt-5 border-top py-4">
@@ -135,22 +132,20 @@
                     <div class="card-body p-3 p-md-4 py-xl-5">
                         <h4 class="fs-4 text-dark mb-4 text-uppercase">Order Summary</h4>
 
-                        <div
-                                class="d-flex align-items-center py-1 text-dark text-uppercase small checkout-summary-row border-animation-left">
+                        <div class="d-flex align-items-center py-1 text-dark text-uppercase checkout-summary-row border-animation-left">
                             <a class="item-anchor link-underline mb-0" data-bs-toggle="collapse"
                                href="#collapseCartList">
-                                <span>3 Products. 12 items</span>
+                                <span class="d-flex align-items-center fw-light text-muted fs-7">
+                                    <span id="checkoutCartCount">0 Products. 0 items</span>
+                                    <i class="bi bi-chevron-left fs-9 ps-1"></i>
+                                </span>
                             </a>
                         </div>
                         <div class="collapse" id="collapseCartList">
-                            <div class="px-2 pb-3">
+                            <div class="px-2 pb-3" id="checkoutCartList">
                                 <div class="d-flex justify-content-between align-items-center fs-7 text-uppercase">
-                                    <span>Product 1</span>
-                                    <span>LKR 1,000.00</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center fs-7 text-uppercase">
-                                    <span>Product 1</span>
-                                    <span>LKR 1,000.00</span>
+                                    <span>No items</span>
+                                    <span>LKR 0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -158,61 +153,34 @@
                         <div
                                 class="d-flex justify-content-between align-items-center pb-1 text-dark text-uppercase small checkout-summary-row">
                             <span>Subtotal</span>
-                            <span class="fw-normal">LKR 2,370.00</span>
+                            <span class="fw-normal" id="checkoutSubtotal">LKR 0.00</span>
                         </div>
                         <div
-                                class="d-flex justify-content-between align-items-cente text-dark text-uppercase small checkout-summary-row">
+                                class="d-flex justify-content-between align-items-center text-dark text-uppercase small checkout-summary-row">
                             <span>Shipping Fee</span>
-                            <span class="fw-normal">LKR 350.00</span>
+                            <span class="fw-normal" id="checkoutShippingFee">LKR 350.00</span>
                         </div>
                         <div
                                 class="d-flex justify-content-between align-items-center py-3 text-dark border-bottom text-uppercase small checkout-summary-row">
                             <span class="fw-medium">Total</span>
-                            <span class="fw-medium">$2,370.00</span>
+                            <span class="fw-medium" id="checkoutTotal">LKR 0.00</span>
                         </div>
 
-                        <div class="list-group list-group-flush mt-4">
-                            <label class="list-group-item payment-option" for="paymentPayHere">
-                                <input checked class="form-check-input flex-shrink-0" id="paymentPayHere"
-                                       name="paymentMethod" type="radio" value="bank-transfer">
+                        <div class="list-group list-group-flush mt-4 mb-3" id="paymentMethodsList">
+                            <label class="list-group-item payment-option" for="paymentLoading">
+                                <input checked class="form-check-input flex-shrink-0" id="paymentLoading"
+                                       name="paymentMethod" type="radio" value="">
                                 <div class="d-flex align-items-center justify-content-between w-100 gap-2">
-                                        <span class="fs-6 text-dark text-uppercase" style="line-height: normal;">
-                                            PayHere (Online)
-                                        </span>
-                                    <span>
-                                            <img alt="PayHere" class="ms-2" height="32"
-                                                 src="assets/images/brand/other/payhere.png">
-                                        </span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="list-group list-group-flush">
-                            <label class="list-group-item payment-option" for="paymentKOKO">
-                                <input checked class="form-check-input flex-shrink-0" id="paymentKOKO"
-                                       name="paymentMethod" type="radio" value="bank-transfer">
-                                <div class="d-flex align-items-center justify-content-between w-100 gap-2">
-                                        <span class="fs-6 text-dark text-uppercase" style="line-height: normal;">
-                                            KOKO (Online | Installments)
-                                        </span>
-                                </div>
-                            </label>
-                        </div>
-
-                        <div class="list-group list-group-flush mb-3">
-                            <label class="list-group-item payment-option" for="paymentCOD">
-                                <input checked class="form-check-input flex-shrink-0" id="paymentCOD"
-                                       name="paymentMethod" type="radio" value="bank-transfer">
-                                <div class="d-flex align-items-center justify-content-between w-100 gap-2">
-                                        <span class="fs-6 text-dark text-uppercase" style="line-height: normal;">
-                                            Cash on Delivery (COD)
-                                        </span>
+                                    <span class="fs-6 text-dark text-uppercase" style="line-height: normal;">
+                                        Loading payment methods...
+                                    </span>
                                 </div>
                             </label>
                         </div>
 
                         <div class="d-grid">
-                            <button class="btn btn-dark btn-lg text-uppercase" name="submit" type="submit">Place an
+                            <button class="btn btn-dark btn-lg text-uppercase" id="checkoutSubmitBtn" name="submit"
+                                    type="submit">Place an
                                 order
                             </button>
                         </div>
