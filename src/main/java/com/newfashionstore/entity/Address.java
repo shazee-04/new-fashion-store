@@ -21,8 +21,8 @@ public class Address implements Serializable {
     @Column(name = "postal_code", length = 10)
     private String postalCode;
 
-    @Column(name = "is_default")
-    private Boolean isDefault = false;
+    @Column(name = "is_primary", nullable = false)
+    private Boolean isPrimary = false;
 
     // Relationships
     @ManyToOne
@@ -68,12 +68,12 @@ public class Address implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public Boolean getDefault() {
-        return isDefault;
+    public Boolean getPrimary() {
+        return isPrimary;
     }
 
-    public void setDefault(Boolean aDefault) {
-        isDefault = aDefault;
+    public void setPrimary(Boolean primary) {
+        isPrimary = primary;
     }
 
     public User getUser() {
