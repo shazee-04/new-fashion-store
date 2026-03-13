@@ -20,7 +20,7 @@ public class OrderItem implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private Orders order;
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "stock_id", nullable = false)
@@ -53,11 +53,11 @@ public class OrderItem implements Serializable {
         this.unitPrice = unitPrice;
     }
 
-    public Orders getOrder() {
+    public Order getOrder() {
         return order;
     }
 
-    public void setOrder(Orders order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 
