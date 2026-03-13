@@ -14,11 +14,11 @@ public class CityDTO implements Serializable {
         this.id = id;
     }
 
-    public String getCity() {
+    public String getName() {
         return name;
     }
 
-    public void setCity(String city) {
-        this.name = city;
+    public void setName(String name) {
+        this.name = name;
     }
 }
