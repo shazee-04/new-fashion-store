@@ -1,5 +1,6 @@
 const checkoutState = {
     addresses: [],
+    cities: [],
     paymentMethods: [],
     selectedAddressId: null,
     cartItems: [],
@@ -21,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initializeCheckout() {
     try {
+        await loadCities();
+
         await Promise.all([
             loadProfileData(),
             loadPaymentMethods(),
@@ -70,7 +73,6 @@ async function loadProfileData() {
     checkoutState.addresses = addresses;
 
     renderAddressSelector(addresses);
-    populateCityOptions(addresses);
 
     const primaryAddress = addresses.find(address => Boolean(address?.primary));
     const initialAddress = primaryAddress || addresses[0] || null;
@@ -83,6 +85,46 @@ async function loadProfileData() {
     }
 
     updateSaveAddressOptionState();
+}
+
+async function loadCities() {
+    const result = await requestJson('api/content/city/list', {method: 'GET'});
+    if (!result.success) {
+        showToast(result.message || 'Failed loading cities.', false);
+        renderCityOptions([]);
+        return;
+    }
+
+    const payloadCities = Array.isArray(result?.data)
+        ? result.data
+        : Array.isArray(result?.data?.cities)
+            ? result.data.cities
+            : [];
+
+    checkoutState.cities = payloadCities.map(city => ({
+        id: Number(city?.id || 0),
+        city: String(city?.city || city?.name || '').trim()
+    })).filter(city => city.id || city.city);
+
+    renderCityOptions(checkoutState.cities);
+}
+
+function renderCityOptions(cities) {
+    const citySelect = document.getElementById('city');
+    if (!citySelect) return;
+
+    const currentValue = String(citySelect.value || '');
+    const options = ['<option hidden value="">Select city</option>'];
+
+    (cities || []).forEach(city => {
+        options.push(`<option value="${Number(city.id || 0)}">${escapeHtml(city.city || '')}</option>`);
+    });
+
+    citySelect.innerHTML = options.join('');
+
+    if (currentValue) {
+        citySelect.value = currentValue;
+    }
 }
 
 function renderAddressSelector(addresses) {
@@ -114,22 +156,6 @@ function renderAddressSelector(addresses) {
     select.innerHTML = options.join('');
 }
 
-function populateCityOptions(addresses) {
-    const cityOptions = document.getElementById('cityOptions');
-    if (!cityOptions) return;
-
-    const uniqueCities = new Set();
-    (addresses || []).forEach(address => {
-        const city = String(address?.city?.city || '').trim();
-        if (city) uniqueCities.add(city);
-    });
-
-    cityOptions.innerHTML = [...uniqueCities]
-        .sort((left, right) => left.localeCompare(right))
-        .map(city => `<option value="${escapeHtml(city)}"></option>`)
-        .join('');
-}
-
 function fillFormWithAddress(address) {
     setInputValue('fname', address?.firstName || '');
     setInputValue('lname', address?.lastName || '');
@@ -137,8 +163,31 @@ function fillFormWithAddress(address) {
     setInputValue('phone', address?.mobile || '');
     setInputValue('addressLine1', address?.lineOne || '');
     setInputValue('addressLine2', address?.lineTwo || '');
-    setInputValue('city', address?.city?.city || '');
+    setCityValue(address?.city);
     setInputValue('zip', address?.postalCode || '');
+}
+
+function setCityValue(cityData) {
+    const citySelect = document.getElementById('city');
+    if (!citySelect) return;
+
+    const cityId = String(cityData?.id || '');
+    const cityName = String(cityData?.name || '').trim();
+
+    if (cityId && [...citySelect.options].some(option => option.value === cityId)) {
+        citySelect.value = cityId;
+        return;
+    }
+
+    if (cityName) {
+        const matchedOption = [...citySelect.options].find(option => option.textContent?.trim().toLowerCase() === cityName.toLowerCase());
+        if (matchedOption) {
+            citySelect.value = matchedOption.value;
+            return;
+        }
+    }
+
+    citySelect.value = '';
 }
 
 function prefillFromSessionUser() {
@@ -306,12 +355,13 @@ async function handleCheckoutSubmit() {
         }
 
         const payload = {
-            paymentMethodId,
+            paymentMethodId: paymentMethodId,
             orderNotes: String(document.getElementById('orderNotes')?.value || '').trim(),
             address: addressPayload
         };
+        console.log(payload);
 
-        const checkoutResult = await requestJson('api/checkout/pay', {
+        const checkoutResult = await requestJson('api/checkout/place-order1', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -344,10 +394,12 @@ function getAddressPayload() {
     const mobile = String(document.getElementById('phone')?.value || '').trim();
     const lineOne = String(document.getElementById('addressLine1')?.value || '').trim();
     const lineTwo = String(document.getElementById('addressLine2')?.value || '').trim();
-    const city = String(document.getElementById('city')?.value || '').trim();
+    const citySelect = document.getElementById('city');
+    const cityId = Number(citySelect?.value || 0);
+    const cityText = String(citySelect?.selectedOptions?.[0]?.textContent || '').trim();
     const postalCode = String(document.getElementById('zip')?.value || '').trim();
 
-    if (!firstName || !lastName || !email || !mobile || !lineOne || !city || !postalCode) {
+    if (!firstName || !lastName || !email || !mobile || !lineOne || !cityId || !postalCode) {
         return null;
     }
 
@@ -360,7 +412,8 @@ function getAddressPayload() {
         lineOne,
         lineTwo,
         postalCode,
-        city,
+        cityId,
+        city: cityText,
         primary: checkoutState.addresses.length === 0
     };
 }
