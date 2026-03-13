@@ -4,11 +4,11 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
-public class Orders implements Serializable {
-
+public class Order implements Serializable {
     @Id
     @Column(name = "id")
     private String id;
@@ -19,8 +19,9 @@ public class Orders implements Serializable {
     @Column(name = "total_amount", nullable = false)
     private double totalAmount;
 
-    @Column(name = "payment_type", nullable = false, length = 20)
-    private String paymentType;
+    @ManyToOne
+    @JoinColumn(name = "payment_method_id", nullable = false)
+    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -34,8 +35,8 @@ public class Orders implements Serializable {
     @JoinColumn(name = "order_status_id", nullable = false)
     private OrderStatus orderStatus;
 
-    public Orders() {
-    }
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
     @PrePersist
     protected void onCreate() {
@@ -66,12 +67,12 @@ public class Orders implements Serializable {
         this.totalAmount = totalAmount;
     }
 
-    public String getPaymentType() {
-        return paymentType;
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setPaymentType(String paymentType) {
-        this.paymentType = paymentType;
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 
     public User getUser() {
@@ -96,5 +97,13 @@ public class Orders implements Serializable {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 }
