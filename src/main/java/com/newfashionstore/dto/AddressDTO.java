@@ -1,19 +1,44 @@
 package com.newfashionstore.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
 import java.io.Serializable;
 
 public class AddressDTO implements Serializable {
     private int id;
+
     private int userId;
-    private String lineOne;
-    private String lineTwo;
-    private String postalCode;
-    private boolean primary;
-    private CityDTO city;
+
+    @NotBlank(message = "first name is required")
     private String firstName;
+
+    @NotBlank(message = "last name is required")
     private String lastName;
-    private String mobile;
+
+    @Email(message = "please provide a valid email address")
+    @NotBlank(message = "please provide a valid email address")
     private String email;
+
+    @Pattern(regexp = "^07[0-9]{8}$", message = "please provide a valid mobile")
+    private String mobile;
+
+    @NotBlank(message = "address line one is required")
+    private String lineOne;
+
+    private String lineTwo;
+
+    @NotBlank(message = "postal code is required")
+    private String postalCode;
+
+    @NotNull(message = "City is required")
+    private Integer cityId;
+
+    private CityDTO city;
+
+    private boolean primary;
 
     public int getId() {
         return id;
@@ -29,6 +54,38 @@ public class AddressDTO implements Serializable {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getLineOne() {
@@ -55,12 +112,12 @@ public class AddressDTO implements Serializable {
         this.postalCode = postalCode;
     }
 
-    public boolean isPrimary() {
-        return primary;
+    public Integer getCityId() {
+        return cityId;
     }
 
-    public void setPrimary(boolean primary) {
-        this.primary = primary;
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
     }
 
     public CityDTO getCity() {
@@ -71,35 +128,11 @@ public class AddressDTO implements Serializable {
         this.city = city;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public boolean isPrimary() {
+        return primary;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 }
