@@ -14,16 +14,15 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+    private int id;
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(name = "order_number", updatable = false, nullable = false)
     private UUID orderNumber;
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "total_amount", nullable = false)
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
 
     @Column(name = "order_notes", length = 500)
@@ -51,13 +50,16 @@ public class Order implements Serializable {
     @PrePersist
     protected void onCreate() {
         this.orderDate = LocalDateTime.now();
+        if (this.orderNumber == null) {
+            this.orderNumber = UUID.randomUUID();
+        }
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
