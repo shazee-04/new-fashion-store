@@ -10,13 +10,13 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class PayHereUtil {
-    public static final String APP_CURRENCY = "LKR";
-    public static final String APP_COUNTRY = "Sri Lanka";
     public static final int PAYMENT_SUCCESS = 2;
     public static final int PAYMENT_PENDING = 0;
     public static final int PAYMENT_CANCEL = -1;
-    private static final String MERCHANT_ID = "1234432";
-    private static final String MERCHANT_SECRET = "MzY4NDEyMzcyMzE4MDg2NDIwMDM5MDY2MzkzNTMzNDU5MDc4NDUw";
+    public static final String APP_CURRENCY = Env.get("app.currency");
+    public static final String APP_COUNTRY = Env.get("app.country");
+    private static final String MERCHANT_ID = Env.get("payhere.merchant.id");
+    private static final String MERCHANT_SECRET = Env.get("payhere.merchant.secret");
 
     public static String getMerchantId() {
         return MERCHANT_ID;
