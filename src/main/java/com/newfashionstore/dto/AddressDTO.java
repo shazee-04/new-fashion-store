@@ -1,5 +1,6 @@
 package com.newfashionstore.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,9 +34,8 @@ public class AddressDTO implements Serializable {
     @NotBlank(message = "postal code is required")
     private String postalCode;
 
-    @NotNull(message = "City is required")
-    private Integer cityId;
-
+    @Valid
+    @NotNull
     private CityDTO city;
 
     private boolean primary;
@@ -110,14 +110,6 @@ public class AddressDTO implements Serializable {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
-    }
-
-    public Integer getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(Integer cityId) {
-        this.cityId = cityId;
     }
 
     public CityDTO getCity() {
