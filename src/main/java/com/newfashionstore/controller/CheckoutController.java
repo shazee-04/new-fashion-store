@@ -131,10 +131,9 @@ public class CheckoutController {
 
                 grandTotal = grandTotal.add(itemTotal);
 
+                // Update stock quantity
                 stock.setQuantity(stock.getQuantity() - cart.getQty());
                 session.merge(stock);
-
-                session.remove(cart);
             }
 
             order.setTotalAmount(grandTotal.add(shippingFee));
@@ -161,7 +160,7 @@ public class CheckoutController {
                 params.put("merchant_id", PayHereUtil.getMerchantId());
                 params.put("return_url", baseUrl + "/order-tracking.html");
                 params.put("cancel_url", baseUrl + "/checkout.html");
-                params.put("notify_url", baseUrl + "/api/checkout/payhere/notify");
+                params.put("notify_url", baseUrl + "/api/pay/payhere/notify");
                 params.put("order_id", orderId);
                 params.put("items", "Order " + orderId);
                 params.put("amount", amountFormatted);
@@ -208,12 +207,5 @@ public class CheckoutController {
             responseDTO.setMessage("Failed to retrieve payment methods: " + e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
-    }
-
-    @POST
-    @Path("/payhere/notify")
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response payHereNotify(@Context HttpServletRequest request) {
-        return Response.ok().build();
     }
 }
