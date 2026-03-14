@@ -20,7 +20,6 @@ import org.hibernate.Transaction;
 
 @Path("/contact")
 public class ContactController {
-    private Response.Status status;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
