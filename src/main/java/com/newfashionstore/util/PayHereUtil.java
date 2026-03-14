@@ -13,8 +13,8 @@ public class PayHereUtil {
     public static final int PAYMENT_SUCCESS = 2;
     public static final int PAYMENT_PENDING = 0;
     public static final int PAYMENT_CANCEL = -1;
-    public static final String APP_CURRENCY = Env.get("app.currency");
-    public static final String APP_COUNTRY = Env.get("app.country");
+    public static final String APP_CURRENCY = defaultIfBlank(Env.get("payhere.currency"), "LKR");
+    public static final String APP_COUNTRY = defaultIfBlank(Env.get("payhere.country"), "Sri Lanka");
     private static final String MERCHANT_ID = Env.get("payhere.merchant.id");
     private static final String MERCHANT_SECRET = Env.get("payhere.merchant.secret");
 
@@ -23,6 +23,13 @@ public class PayHereUtil {
     }
 
     public static String generateHash(String orderId, double amount) {
+        if (MERCHANT_ID == null || MERCHANT_ID.trim().isEmpty()) {
+            throw new IllegalStateException("Missing payhere.merchant.id");
+        }
+        if (MERCHANT_SECRET == null || MERCHANT_SECRET.trim().isEmpty()) {
+            throw new IllegalStateException("Missing payhere.merchant.secret");
+        }
+
         DecimalFormat df = new DecimalFormat("0.00");
         df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         String amountFormatted = df.format(amount);
@@ -53,9 +60,21 @@ public class PayHereUtil {
             return false;
         }
 
+        if (MERCHANT_ID == null || MERCHANT_ID.trim().isEmpty()) {
+            return false;
+        }
+
+        if (MERCHANT_SECRET == null || MERCHANT_SECRET.trim().isEmpty()) {
+            return false;
+        }
+
+        if (!MERCHANT_ID.equals(merchantId)) {
+            return false;
+        }
+
         String secretHash = md5(PayHereUtil.MERCHANT_SECRET).toUpperCase();
         String localSignature = md5(merchantId + orderId + payHereAmount + payHereCurrency + statusCode + secretHash).toUpperCase();
-        return localSignature.equals(md5Sig);
+        return localSignature.equalsIgnoreCase(md5Sig);
     }
 
     private static String md5(String input) {
@@ -72,5 +91,13 @@ public class PayHereUtil {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("MD5 ERROR", e);
         }
+    }
+
+    private static String defaultIfBlank(String value, String fallback) {
+        if (value == null) {
+            return fallback;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? fallback : trimmed;
     }
 }

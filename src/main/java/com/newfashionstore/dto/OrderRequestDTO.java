@@ -23,12 +23,12 @@ public class OrderRequestDTO implements Serializable {
         this.paymentMethodId = paymentMethodId;
     }
 
-    public String getMerchantId() {
+    public String getOrderNotes() {
         return orderNotes;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.orderNotes = merchantId;
+    public void setOrderNotes(String orderNotes) {
+        this.orderNotes = orderNotes;
     }
 
     public AddressDTO getAddress() {

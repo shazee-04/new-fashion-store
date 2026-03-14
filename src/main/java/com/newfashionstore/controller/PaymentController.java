@@ -34,57 +34,63 @@ public class PaymentController {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
-            Order order = session.get(Order.class, Integer.parseInt(orderId));
-
-            if (order == null) {
-                transaction.rollback();
-                return Response.status(Response.Status.NOT_FOUND)
-                        .entity("Order not found for Order ID: " + orderId).build();
-            }
-
-            int status;
             try {
-                status = Integer.parseInt(statusCode);
-            } catch (NumberFormatException e) {
-                transaction.rollback();
-                return Response.status(Response.Status.BAD_REQUEST)
-                        .entity("Invalid status_code").build();
-            }
+                Order order = session.get(Order.class, Integer.parseInt(orderId));
 
-            if (status == PayHereUtil.PAYMENT_SUCCESS) {
-                order.setOrderStatus(session.get(OrderStatus.class, 2));
-
-                List<Cart> cartItems = session.createQuery("from Cart c where c.user.id = :uid", Cart.class)
-                        .setParameter("uid", order.getUser().getId())
-                        .list();
-
-                // Clear cart
-                for (Cart cart : cartItems) {
-                    session.remove(cart);
+                if (order == null) {
+                    transaction.rollback();
+                    return Response.status(Response.Status.NOT_FOUND)
+                            .entity("Order not found for Order ID: " + orderId).build();
                 }
 
-                session.merge(order);
+                int status;
+                try {
+                    status = Integer.parseInt(statusCode);
+                } catch (NumberFormatException e) {
+                    transaction.rollback();
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity("Invalid status_code").build();
+                }
 
-                // Confirmation email
-                // MailServiceProvider.getInstance().sendMail(new OrderConfirmationEmail(order));
-            } else if (status == PayHereUtil.PAYMENT_PENDING) {
-                // Payment is pending; do not fail the order or restore stock.
-                session.merge(order);
-            } else {
-                order.setOrderStatus(session.get(OrderStatus.class, 5));
+                if (status == PayHereUtil.PAYMENT_SUCCESS) {
+                    order.setOrderStatus(session.get(OrderStatus.class, 2));
 
-                // Restore stock for cancelled/failed/chargedback payments
-                order.getOrderItems().forEach(orderItem -> {
-                    Stock stock = session.get(Stock.class, orderItem.getStock().getId(), LockMode.PESSIMISTIC_WRITE);
-                    int updatedQty = stock.getQuantity() + orderItem.getQty();
-                    stock.setQuantity(updatedQty);
-                    session.merge(stock);
-                });
+                    List<Cart> cartItems = session.createQuery("from Cart c where c.user.id = :uid", Cart.class)
+                            .setParameter("uid", order.getUser().getId())
+                            .list();
 
-                session.merge(order);
+                    // Clear cart
+                    for (Cart cart : cartItems) {
+                        session.remove(cart);
+                    }
+
+                    session.merge(order);
+
+                    // Confirmation email
+                    // MailServiceProvider.getInstance().sendMail(new OrderConfirmationEmail(order));
+                } else if (status == PayHereUtil.PAYMENT_PENDING) {
+                    // Payment is pending; do not fail the order or restore stock.
+                    session.merge(order);
+                } else {
+                    order.setOrderStatus(session.get(OrderStatus.class, 5));
+
+                    // Restore stock for canceled/failed/chargedback payments
+                    order.getOrderItems().forEach(orderItem -> {
+                        Stock stock = session.get(Stock.class, orderItem.getStock().getId(), LockMode.PESSIMISTIC_WRITE);
+                        int updatedQty = stock.getQuantity() + orderItem.getQty();
+                        stock.setQuantity(updatedQty);
+                        session.merge(stock);
+                    });
+
+                    session.merge(order);
+                }
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw e;
             }
-            transaction.commit();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("Error processing payment notification: " + e.getMessage()).build();

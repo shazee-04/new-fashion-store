@@ -53,6 +53,11 @@ function bindCheckoutEvents() {
             checkoutState.selectedAddressSnapshot = null;
             checkoutState.isAddressDirty = false;
             prefillFromSessionUser();
+            // Start fresh for new address entry (avoid duplicating a previously selected saved address)
+            setInputValue('addressLine1', '');
+            setInputValue('addressLine2', '');
+            setInputValue('zip', '');
+            setInputValue('city', '');
             clearAutofillIndicators(ADDRESS_FIELD_IDS);
             return;
         }
@@ -388,7 +393,6 @@ async function handleCheckoutSubmit() {
             orderNotes: String(getEl('orderNotes')?.value || '').trim(),
             address: addressPayload
         };
-        console.log(payload);
 
         const checkoutResult = await requestJson('api/checkout/place-order', {
             method: 'POST',
@@ -465,15 +469,31 @@ async function saveAddress(addressPayload) {
 function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) {
     if (Number(paymentMethodId) === 1) {
         const payHereParams = preparePayHerePaymentParams(checkoutResult?.data?.params);
-        if (payHereParams && window.payhere && typeof window.payhere.startPayment === 'function') {
-            attachPayHereHandlers();
-            window.payhere.startPayment(payHereParams);
-            return true;
+        if (!payHereParams) {
+            console.error('PayHere payment params missing/invalid. Raw params:', checkoutResult?.data?.params);
+            showToast('Order placed, but PayHere parameters are missing. Please try again.', false);
+            redirectToOrderTracking();
+            return false;
         }
 
-        showToast('Order placed, but PayHere is not available right now.', true);
-        redirectToOrderTracking();
-        return false;
+        if (!window.payhere) {
+            const payhereScript = document.querySelector('script[src*="payhere.lk/lib/payhere.js"]');
+            console.error('PayHere SDK (window.payhere) is not available. Script tag:', payhereScript);
+            showToast('Order placed, but PayHere failed to load in your browser. Check your network/adblock.', false);
+            redirectToOrderTracking();
+            return false;
+        }
+
+        if (typeof window.payhere.startPayment !== 'function') {
+            console.error('PayHere SDK loaded, but startPayment is not a function. payhere:', window.payhere);
+            showToast('Order placed, but PayHere is not ready right now. Please refresh and try again.', false);
+            redirectToOrderTracking();
+            return false;
+        }
+
+        attachPayHereHandlers();
+        window.payhere.startPayment(payHereParams);
+        return true;
     }
 
     if (Number(paymentMethodId) === 2) {
@@ -491,7 +511,7 @@ function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) 
     const redirectUrl = checkoutResult?.data?.redirectUrl || checkoutResult?.data?.paymentUrl || checkoutResult?.data?.url;
     if (redirectUrl) {
         window.location.href = redirectUrl;
-        return;
+        return true;
     }
 
     const formHtml = checkoutResult?.data?.formHtml;
@@ -502,7 +522,7 @@ function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) 
         if (form) {
             document.body.appendChild(form);
             form.submit();
-            return;
+            return true;
         }
     }
 
@@ -510,7 +530,7 @@ function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) 
     const fields = checkoutResult?.data?.fields;
     if (actionUrl && fields && typeof fields === 'object') {
         submitExternalPostForm(actionUrl, fields);
-        return;
+        return true;
     }
 
     showToast(checkoutResult.message || 'Checkout successful!', true);
@@ -558,10 +578,6 @@ function preparePayHerePaymentParams(rawParams) {
     }
 
     const params = {...rawParams};
-
-    // For PayHere JS popup (onsite checkout), their docs highlight keeping these undefined.
-    params.return_url = undefined;
-    params.cancel_url = undefined;
 
     if (typeof params.amount === 'number') {
         params.amount = params.amount.toFixed(2);

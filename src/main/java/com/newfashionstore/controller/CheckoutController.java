@@ -42,6 +42,9 @@ public class CheckoutController {
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
+            try {
+                Map<String, Object> payHereParams = null;
+                String payHereHash = null;
 
             List<Cart> cartItems = session.createQuery(
                             "FROM Cart c " +
@@ -87,6 +90,11 @@ public class CheckoutController {
             order.setOrderDate(LocalDateTime.now());
             order.setPaymentMethod(paymentMethod);
             order.setAddress(address);
+                String notes = dto.getOrderNotes();
+                if (notes != null) {
+                    notes = notes.trim();
+                    order.setOrderNotes(notes.isEmpty() ? null : notes);
+                }
 
             int statusId = paymentMethod.getId() == 3 ? 2 : 1;
             order.setOrderStatus(session.get(OrderStatus.class, statusId));
@@ -139,52 +147,78 @@ public class CheckoutController {
             order.setTotalAmount(grandTotal.add(shippingFee));
             session.merge(order);
 
-            transaction.commit();
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("orderId", order.getId());
-
             if (paymentMethod.getId() == 1) {
+                String merchantId = PayHereUtil.getMerchantId();
+                if (merchantId == null || merchantId.isBlank()) {
+                    transaction.rollback();
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("PayHere is not configured (missing merchant id).");
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+                }
+
+                session.flush();
+
                 BigDecimal paymentAmount = grandTotal.add(shippingFee);
                 String orderId = String.valueOf(order.getId());
-                String hash = PayHereUtil.generateHash(orderId, paymentAmount.doubleValue());
 
-                result.put("payhereHash", hash);
+                try {
+                    payHereHash = PayHereUtil.generateHash(orderId, paymentAmount.doubleValue());
+                } catch (Exception e) {
+                    transaction.rollback();
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("PayHere is not configured correctly (hash generation failed).");
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+                }
 
                 String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                         + request.getContextPath();
 
-                Map<String, Object> params = new HashMap<>();
                 String amountFormatted = paymentAmount.setScale(2, RoundingMode.HALF_UP).toPlainString();
-                params.put("sandbox", true);
-                params.put("merchant_id", PayHereUtil.getMerchantId());
-                params.put("return_url", baseUrl + "/order-tracking.html");
-                params.put("cancel_url", baseUrl + "/checkout.html");
-                params.put("notify_url", baseUrl + "/api/pay/payhere/notify");
-                params.put("order_id", orderId);
-                params.put("items", "Order " + orderId);
-                params.put("amount", amountFormatted);
-                params.put("currency", PayHereUtil.APP_CURRENCY);
-                params.put("first_name", user.getFirstName());
-                params.put("last_name", user.getLastName());
-                params.put("email", user.getEmail());
-                params.put("phone", user.getMobile());
+                payHereParams = new HashMap<>();
+                payHereParams.put("sandbox", true);
+                payHereParams.put("merchant_id", merchantId);
+                payHereParams.put("return_url", baseUrl + "/order-tracking.html");
+                payHereParams.put("cancel_url", baseUrl + "/checkout.html");
+                payHereParams.put("notify_url", baseUrl + "/api/pay/payhere/notify");
+                payHereParams.put("order_id", orderId);
+                payHereParams.put("items", "Order " + orderId);
+                payHereParams.put("amount", amountFormatted);
+                payHereParams.put("currency", PayHereUtil.APP_CURRENCY);
+                payHereParams.put("first_name", dto.getAddress().getFirstName());
+                payHereParams.put("last_name", dto.getAddress().getLastName());
+                payHereParams.put("email", dto.getAddress().getEmail());
+                payHereParams.put("phone", dto.getAddress().getMobile());
+
                 String addressText = address.getLine1();
                 if (address.getLine2() != null && !address.getLine2().isBlank()) {
                     addressText = addressText + ", " + address.getLine2();
                 }
-                params.put("address", addressText);
-                params.put("city", address.getCity().getName());
-                params.put("country", PayHereUtil.APP_COUNTRY);
-                params.put("hash", hash);
-
-                result.put("params", params);
+                payHereParams.put("address", addressText);
+                payHereParams.put("city", address.getCity().getName());
+                payHereParams.put("country", PayHereUtil.APP_COUNTRY);
+                payHereParams.put("hash", payHereHash);
             }
 
-            responseDTO.setSuccess(true);
-            responseDTO.setMessage("Order placed successfully!");
-            responseDTO.setData(result);
-            return Response.ok().entity(responseDTO).build();
+                transaction.commit();
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("orderId", order.getId());
+
+                if (paymentMethod.getId() == 1) {
+                    result.put("payhereHash", payHereHash);
+                    result.put("params", payHereParams);
+                }
+
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Order placed successfully!");
+                responseDTO.setData(result);
+                return Response.ok().entity(responseDTO).build();
+            } catch (Exception e) {
+                if (transaction != null && transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw e;
+            }
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Failed to place order: " + e.getMessage());
