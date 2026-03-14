@@ -43,7 +43,16 @@ public class PaymentController {
                         .entity("Order not found for Order ID: " + orderId).build();
             }
 
-            if (Integer.parseInt(statusCode) == PayHereUtil.PAYMENT_SUCCESS) {
+            int status;
+            try {
+                status = Integer.parseInt(statusCode);
+            } catch (NumberFormatException e) {
+                transaction.rollback();
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("Invalid status_code").build();
+            }
+
+            if (status == PayHereUtil.PAYMENT_SUCCESS) {
                 order.setOrderStatus(session.get(OrderStatus.class, 2));
 
                 List<Cart> cartItems = session.createQuery("from Cart c where c.user.id = :uid", Cart.class)
@@ -59,10 +68,13 @@ public class PaymentController {
 
                 // Confirmation email
                 // MailServiceProvider.getInstance().sendMail(new OrderConfirmationEmail(order));
+            } else if (status == PayHereUtil.PAYMENT_PENDING) {
+                // Payment is pending; do not fail the order or restore stock.
+                session.merge(order);
             } else {
                 order.setOrderStatus(session.get(OrderStatus.class, 5));
 
-                // Restore stock
+                // Restore stock for cancelled/failed/chargedback payments
                 order.getOrderItems().forEach(orderItem -> {
                     Stock stock = session.get(Stock.class, orderItem.getStock().getId(), LockMode.PESSIMISTIC_WRITE);
                     int updatedQty = stock.getQuantity() + orderItem.getQty();

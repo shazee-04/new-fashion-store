@@ -38,14 +38,24 @@ public class PayHereUtil {
     }
 
     public static boolean validateNotify(MultivaluedMap<String, String> form) {
+        if (form == null) {
+            return false;
+        }
+
         String merchantId = form.getFirst("merchant_id");
         String orderId = form.getFirst("order_id");
         String payHereAmount = form.getFirst("payhere_amount");
         String payHereCurrency = form.getFirst("payhere_currency");
         String statusCode = form.getFirst("status_code");
         String md5Sig = form.getFirst("md5sig");
-        String localSignature = md5(merchantId + orderId + payHereAmount + payHereCurrency + statusCode + md5(PayHereUtil.MERCHANT_SECRET).toUpperCase()).toUpperCase();
-        return localSignature.equals(md5Sig) && Integer.parseInt(statusCode) == PayHereUtil.PAYMENT_SUCCESS;
+
+        if (merchantId == null || orderId == null || payHereAmount == null || payHereCurrency == null || statusCode == null || md5Sig == null) {
+            return false;
+        }
+
+        String secretHash = md5(PayHereUtil.MERCHANT_SECRET).toUpperCase();
+        String localSignature = md5(merchantId + orderId + payHereAmount + payHereCurrency + statusCode + secretHash).toUpperCase();
+        return localSignature.equals(md5Sig);
     }
 
     private static String md5(String input) {

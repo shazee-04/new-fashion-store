@@ -169,7 +169,11 @@ public class CheckoutController {
                 params.put("last_name", user.getLastName());
                 params.put("email", user.getEmail());
                 params.put("phone", user.getMobile());
-                params.put("address", address.getLine1());
+                String addressText = address.getLine1();
+                if (address.getLine2() != null && !address.getLine2().isBlank()) {
+                    addressText = addressText + ", " + address.getLine2();
+                }
+                params.put("address", addressText);
                 params.put("city", address.getCity().getName());
                 params.put("country", PayHereUtil.APP_COUNTRY);
                 params.put("hash", hash);

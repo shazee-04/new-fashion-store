@@ -464,7 +464,7 @@ async function saveAddress(addressPayload) {
 
 function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) {
     if (Number(paymentMethodId) === 1) {
-        const payHereParams = checkoutResult?.data?.params;
+        const payHereParams = preparePayHerePaymentParams(checkoutResult?.data?.params);
         if (payHereParams && window.payhere && typeof window.payhere.startPayment === 'function') {
             attachPayHereHandlers();
             window.payhere.startPayment(payHereParams);
@@ -528,8 +528,16 @@ function redirectToOrderTracking(delayMs = 900) {
 function attachPayHereHandlers() {
     if (!window.payhere) return;
 
-    window.payhere.onCompleted = function () {
-        window.location.href = 'order-tracking.html';
+    // Payment completed (can be success or failure). Final status must be verified via notify_url on backend.
+    window.payhere.onCompleted = function onCompleted(orderId) {
+        const safeOrderId = String(orderId ?? '').trim();
+        if (safeOrderId) {
+            console.log(`PayHere completed. OrderID: ${safeOrderId}`);
+        } else {
+            console.log('PayHere completed.');
+        }
+        showToast('Payment completed. Verifying order status...', false);
+        redirectToOrderTracking(500);
     };
 
     window.payhere.onDismissed = function () {
@@ -542,6 +550,51 @@ function attachPayHereHandlers() {
         const message = String(error || '').trim();
         showToast(message ? `Payment failed: ${message}` : 'Payment failed.', false);
     };
+}
+
+function preparePayHerePaymentParams(rawParams) {
+    if (!rawParams || typeof rawParams !== 'object') {
+        return null;
+    }
+
+    const params = {...rawParams};
+
+    // For PayHere JS popup (onsite checkout), their docs highlight keeping these undefined.
+    params.return_url = undefined;
+    params.cancel_url = undefined;
+
+    if (typeof params.amount === 'number') {
+        params.amount = params.amount.toFixed(2);
+    }
+
+    const requiredKeys = [
+        'merchant_id',
+        'notify_url',
+        'order_id',
+        'items',
+        'amount',
+        'currency',
+        'hash',
+        'first_name',
+        'last_name',
+        'email',
+        'phone',
+        'address',
+        'city',
+        'country'
+    ];
+
+    const missing = requiredKeys.filter(key => {
+        const value = params[key];
+        return value === null || value === undefined || String(value).trim() === '';
+    });
+
+    if (missing.length > 0) {
+        console.warn('PayHere params missing required keys:', missing);
+        return null;
+    }
+
+    return params;
 }
 
 function restoreCheckoutUi() {
