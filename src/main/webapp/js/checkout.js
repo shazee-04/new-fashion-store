@@ -3,10 +3,13 @@ const checkoutState = {
     cities: [],
     paymentMethods: [],
     selectedAddressId: null,
+    selectedAddressSnapshot: null,
+    isAddressDirty: false,
     cartItems: [],
     netTotal: 0,
     shippingFee: 350,
-    isSubmitting: false
+    isSubmitting: false,
+    isProgrammaticFill: false
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -38,13 +41,16 @@ async function initializeCheckout() {
 function bindCheckoutEvents() {
     const addressSelect = document.getElementById('addressSelect');
     const checkoutForm = document.getElementById('checkoutForm');
+    const useNewAddressOption = document.getElementById('useNewAddressOption');
 
     addressSelect?.addEventListener('change', () => {
         const selectedId = Number(addressSelect.value || 0);
         if (!selectedId) {
             checkoutState.selectedAddressId = null;
+            checkoutState.selectedAddressSnapshot = null;
+            checkoutState.isAddressDirty = false;
             prefillFromSessionUser();
-            updateSaveAddressOptionState();
+            updateUseNewAddressUi();
             return;
         }
 
@@ -53,7 +59,17 @@ function bindCheckoutEvents() {
 
         checkoutState.selectedAddressId = selectedAddress.id;
         fillFormWithAddress(selectedAddress);
-        updateSaveAddressOptionState();
+        checkoutState.isAddressDirty = false;
+        updateUseNewAddressUi();
+    });
+
+    useNewAddressOption?.addEventListener('change', updateUseNewAddressUi);
+
+    const addressFieldIds = ['fname', 'lname', 'email', 'phone', 'addressLine1', 'addressLine2', 'city', 'zip'];
+    addressFieldIds.forEach(fieldId => {
+        const element = document.getElementById(fieldId);
+        element?.addEventListener('input', handlePossibleSavedAddressEdit);
+        element?.addEventListener('change', handlePossibleSavedAddressEdit);
     });
 
     checkoutForm?.addEventListener('submit', async event => {
@@ -83,8 +99,6 @@ async function loadProfileData() {
         if (addressSelect) addressSelect.value = String(initialAddress.id);
         fillFormWithAddress(initialAddress);
     }
-
-    updateSaveAddressOptionState();
 }
 
 async function loadCities() {
@@ -146,7 +160,7 @@ function renderAddressSelector(addresses) {
     sorted.forEach(address => {
         const lineOne = escapeHtml(address?.lineOne || '');
         const lineTwo = escapeHtml(address?.lineTwo || '');
-        const city = escapeHtml(address?.city?.city || '');
+        const city = escapeHtml(address?.city?.city || address?.city?.name || '');
         const postalCode = escapeHtml(address?.postalCode || '');
         const primaryTag = address?.primary ? ' (Primary)' : '';
         const label = `${lineOne}${lineTwo ? `, ${lineTwo}` : ''}${city ? `, ${city}` : ''}${postalCode ? ` ${postalCode}` : ''}${primaryTag}`;
@@ -157,6 +171,7 @@ function renderAddressSelector(addresses) {
 }
 
 function fillFormWithAddress(address) {
+    checkoutState.isProgrammaticFill = true;
     setInputValue('fname', address?.firstName || '');
     setInputValue('lname', address?.lastName || '');
     setInputValue('email', address?.email || '');
@@ -165,6 +180,22 @@ function fillFormWithAddress(address) {
     setInputValue('addressLine2', address?.lineTwo || '');
     setCityValue(address?.city);
     setInputValue('zip', address?.postalCode || '');
+
+    checkoutState.isProgrammaticFill = false;
+    checkoutState.selectedAddressSnapshot = getAddressSnapshotFromForm();
+    checkoutState.isAddressDirty = false;
+    updateUseNewAddressUi();
+
+    flashAutofill([
+        document.getElementById('fname'),
+        document.getElementById('lname'),
+        document.getElementById('email'),
+        document.getElementById('phone'),
+        document.getElementById('addressLine1'),
+        document.getElementById('addressLine2'),
+        document.getElementById('city'),
+        document.getElementById('zip')
+    ]);
 }
 
 function setCityValue(cityData) {
@@ -172,7 +203,7 @@ function setCityValue(cityData) {
     if (!citySelect) return;
 
     const cityId = String(cityData?.id || '');
-    const cityName = String(cityData?.name || '').trim();
+    const cityName = String(cityData?.city || cityData?.name || '').trim();
 
     if (cityId && [...citySelect.options].some(option => option.value === cityId)) {
         citySelect.value = cityId;
@@ -338,21 +369,27 @@ async function handleCheckoutSubmit() {
         return;
     }
 
-    const shouldSaveAddress = Boolean(document.getElementById('saveAddressOption')?.checked);
     checkoutState.isSubmitting = true;
+    setCheckoutProcessing(true);
     if (submitButton) {
         submitButton.disabled = true;
         submitButton.textContent = 'Processing...';
     }
 
+    let keepDisabled = false;
+
     try {
-        if (shouldSaveAddress) {
-            const saveResult = await saveAddress(addressPayload);
-            if (!saveResult.success) {
-                showToast(saveResult.message || 'Failed saving address.', false);
-                return;
-            }
+        const addressOk = await ensureAddressSaved(addressPayload);
+        if (!addressOk) {
+            return;
         }
+
+        if (!checkoutState.selectedAddressId) {
+            showToast('Failed to prepare address for checkout.', false);
+            return;
+        }
+
+        addressPayload.id = checkoutState.selectedAddressId;
 
         const payload = {
             paymentMethodId: paymentMethodId,
@@ -361,7 +398,7 @@ async function handleCheckoutSubmit() {
         };
         console.log(payload);
 
-        const checkoutResult = await requestJson('api/checkout/place-order1', {
+        const checkoutResult = await requestJson('api/checkout/place-order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -374,15 +411,18 @@ async function handleCheckoutSubmit() {
             return;
         }
 
-        handleCheckoutSuccess(checkoutResult);
+        keepDisabled = Boolean(handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload));
     } catch (error) {
         console.error('Checkout submit error:', error);
         showToast('Server connection failed! Please try again.', false);
     } finally {
         checkoutState.isSubmitting = false;
-        if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Place order';
+        if (!keepDisabled) {
+            setCheckoutProcessing(false);
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Place order';
+            }
         }
     }
 }
@@ -404,7 +444,7 @@ function getAddressPayload() {
     }
 
     return {
-        id: checkoutState.selectedAddressId || undefined,
+        id: checkoutState.selectedAddressId || 0,
         firstName,
         lastName,
         email,
@@ -412,14 +452,16 @@ function getAddressPayload() {
         lineOne,
         lineTwo,
         postalCode,
-        cityId,
-        city: cityText,
+        city: {
+            id: cityId,
+            name: cityText
+        },
         primary: checkoutState.addresses.length === 0
     };
 }
 
 async function saveAddress(addressPayload) {
-    return requestJson('api/profile/address/save', {
+    return requestJson('api/profile/address/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -428,23 +470,40 @@ async function saveAddress(addressPayload) {
     });
 }
 
-function updateSaveAddressOptionState() {
-    const saveAddressOption = document.getElementById('saveAddressOption');
-    if (!saveAddressOption) return;
+function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) {
+    const orderId = Number(checkoutResult?.data?.orderId || 0);
 
-    if (checkoutState.selectedAddressId) {
-        saveAddressOption.checked = false;
-        saveAddressOption.disabled = true;
-        return;
+    if (Number(paymentMethodId) === 1) {
+        const payHereParams = checkoutResult?.data?.params;
+        if (payHereParams && window.payhere && typeof window.payhere.startPayment === 'function') {
+            attachPayHereHandlers();
+            window.payhere.startPayment(payHereParams);
+            return true;
+        }
+
+        showToast('Order placed, but PayHere is not available right now.', true);
+        setTimeout(() => {
+            window.location.href = 'order-tracking.html';
+        }, 900);
+        return false;
     }
 
-    saveAddressOption.disabled = false;
-    if (!saveAddressOption.checked) {
-        saveAddressOption.checked = true;
+    if (Number(paymentMethodId) === 2) {
+        showToast(checkoutResult.message || 'Order placed.', true);
+        setTimeout(() => {
+            window.location.href = 'order-tracking.html';
+        }, 900);
+        return false;
     }
-}
 
-function handleCheckoutSuccess(checkoutResult) {
+    if (Number(paymentMethodId) === 3) {
+        showToast(checkoutResult.message || 'Order placed (COD).', true);
+        setTimeout(() => {
+            window.location.href = 'order-tracking.html';
+        }, 900);
+        return false;
+    }
+
     const redirectUrl = checkoutResult?.data?.redirectUrl || checkoutResult?.data?.paymentUrl || checkoutResult?.data?.url;
     if (redirectUrl) {
         window.location.href = redirectUrl;
@@ -474,7 +533,258 @@ function handleCheckoutSuccess(checkoutResult) {
     setTimeout(() => {
         window.location.href = 'order-tracking.html';
     }, 900);
+
+    return false;
 }
+
+function attachPayHereHandlers() {
+    if (!window.payhere) return;
+
+    window.payhere.onCompleted = function () {
+        window.location.href = 'order-tracking.html';
+    };
+
+    window.payhere.onDismissed = function () {
+        restoreCheckoutUi();
+        showToast('Payment cancelled.', false);
+    };
+
+    window.payhere.onError = function (error) {
+        restoreCheckoutUi();
+        const message = String(error || '').trim();
+        showToast(message ? `Payment failed: ${message}` : 'Payment failed.', false);
+    };
+}
+
+function restoreCheckoutUi() {
+    setCheckoutProcessing(false);
+    const submitButton = document.getElementById('checkoutSubmitBtn');
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Place order';
+    }
+}
+
+function setCheckoutProcessing(isProcessing) {
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (!checkoutForm) return;
+
+    checkoutForm.querySelectorAll('input, select, textarea, button').forEach(element => {
+        const htmlElement = element;
+        if (htmlElement?.id === 'checkoutSubmitBtn') return;
+        htmlElement.disabled = Boolean(isProcessing);
+    });
+
+    const submitButton = document.getElementById('checkoutSubmitBtn');
+    if (submitButton) submitButton.disabled = Boolean(isProcessing);
+}
+
+function handlePossibleSavedAddressEdit() {
+    if (checkoutState.isProgrammaticFill) return;
+    if (!checkoutState.selectedAddressId) return;
+    if (!checkoutState.selectedAddressSnapshot) return;
+
+    const current = getAddressSnapshotFromForm();
+    checkoutState.isAddressDirty = !isSameSnapshot(current, checkoutState.selectedAddressSnapshot);
+    updateUseNewAddressUi();
+}
+
+function updateUseNewAddressUi() {
+    const wrap = document.getElementById('useNewAddressWrap');
+    const checkbox = document.getElementById('useNewAddressOption');
+    if (!wrap || !checkbox) return;
+
+    const show = Boolean(checkoutState.selectedAddressId && checkoutState.isAddressDirty);
+    wrap.classList.toggle('d-none', !show);
+
+    if (!show) {
+        checkbox.checked = false;
+    }
+}
+
+function getAddressSnapshotFromForm() {
+    const citySelect = document.getElementById('city');
+    const cityId = Number(citySelect?.value || 0);
+    const cityName = String(citySelect?.selectedOptions?.[0]?.textContent || '').trim();
+
+    return normalizeSnapshot({
+        firstName: String(document.getElementById('fname')?.value || '').trim(),
+        lastName: String(document.getElementById('lname')?.value || '').trim(),
+        email: String(document.getElementById('email')?.value || '').trim(),
+        mobile: String(document.getElementById('phone')?.value || '').trim(),
+        lineOne: String(document.getElementById('addressLine1')?.value || '').trim(),
+        lineTwo: String(document.getElementById('addressLine2')?.value || '').trim(),
+        postalCode: String(document.getElementById('zip')?.value || '').trim(),
+        cityId,
+        cityName
+    });
+}
+
+function normalizeSnapshot(snapshot) {
+    return {
+        firstName: String(snapshot?.firstName || '').trim(),
+        lastName: String(snapshot?.lastName || '').trim(),
+        email: String(snapshot?.email || '').trim(),
+        mobile: String(snapshot?.mobile || '').trim(),
+        lineOne: String(snapshot?.lineOne || '').trim(),
+        lineTwo: String(snapshot?.lineTwo || '').trim(),
+        postalCode: String(snapshot?.postalCode || '').trim(),
+        cityId: Number(snapshot?.cityId || 0),
+        cityName: String(snapshot?.cityName || '').trim().toLowerCase()
+    };
+}
+
+function isSameSnapshot(left, right) {
+    if (!left || !right) return false;
+    return (
+        left.firstName === right.firstName &&
+        left.lastName === right.lastName &&
+        left.email === right.email &&
+        left.mobile === right.mobile &&
+        left.lineOne === right.lineOne &&
+        left.lineTwo === right.lineTwo &&
+        left.postalCode === right.postalCode &&
+        left.cityId === right.cityId &&
+        left.cityName === right.cityName
+    );
+}
+
+async function ensureAddressSaved(addressPayload) {
+    const snapshotNow = getAddressSnapshotFromForm();
+    const useNewAddress = Boolean(document.getElementById('useNewAddressOption')?.checked);
+
+    if (checkoutState.selectedAddressId) {
+        if (!checkoutState.isAddressDirty) {
+            return true;
+        }
+
+        if (!useNewAddress) {
+            const updatePayload = {
+                ...addressPayload,
+                id: checkoutState.selectedAddressId
+            };
+
+            const updateResult = await updateAddress(updatePayload);
+            if (!updateResult.success) {
+                showToast(updateResult.message || 'Failed updating address.', false);
+                return false;
+            }
+
+            applyAddressUpdateToState(updatePayload);
+            checkoutState.selectedAddressSnapshot = snapshotNow;
+            checkoutState.isAddressDirty = false;
+            updateUseNewAddressUi();
+            return true;
+        }
+    }
+
+    const savePayload = {
+        ...addressPayload,
+        id: 0
+    };
+
+    const saveResult = await saveAddress(savePayload);
+    if (!saveResult.success) {
+        showToast(saveResult.message || 'Failed saving address.', false);
+        return false;
+    }
+
+    const savedId = Number(
+        saveResult?.data?.addressId ||
+        saveResult?.data?.id ||
+        saveResult?.data?.savedAddressId ||
+        saveResult?.data?.address?.id ||
+        (typeof saveResult?.data === 'number' ? saveResult.data : 0) ||
+        0
+    );
+
+    if (!savedId) {
+        showToast('Address saved, but missing address id from server.', false);
+        return false;
+    }
+
+    checkoutState.selectedAddressId = savedId;
+    checkoutState.selectedAddressSnapshot = snapshotNow;
+    checkoutState.isAddressDirty = false;
+
+    const savedAddressForUi = {
+        id: savedId,
+        firstName: addressPayload.firstName,
+        lastName: addressPayload.lastName,
+        email: addressPayload.email,
+        mobile: addressPayload.mobile,
+        lineOne: addressPayload.lineOne,
+        lineTwo: addressPayload.lineTwo,
+        postalCode: addressPayload.postalCode,
+        city: {
+            id: Number(addressPayload?.city?.id || 0),
+            name: String(addressPayload?.city?.name || addressPayload?.city?.city || '').trim()
+        },
+        primary: false
+    };
+
+    checkoutState.addresses = [...(checkoutState.addresses || []), savedAddressForUi];
+    renderAddressSelector(checkoutState.addresses);
+
+    const addressSelect = document.getElementById('addressSelect');
+    if (addressSelect) addressSelect.value = String(savedId);
+    updateUseNewAddressUi();
+
+    return true;
+}
+
+async function updateAddress(addressPayload) {
+    return requestJson('api/profile/address/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(addressPayload)
+    });
+}
+
+function applyAddressUpdateToState(addressPayload) {
+    const addressId = Number(addressPayload?.id || 0);
+    if (!addressId) return;
+
+    const updated = {
+        id: addressId,
+        firstName: addressPayload.firstName,
+        lastName: addressPayload.lastName,
+        email: addressPayload.email,
+        mobile: addressPayload.mobile,
+        lineOne: addressPayload.lineOne,
+        lineTwo: addressPayload.lineTwo,
+        postalCode: addressPayload.postalCode,
+        city: {
+            id: Number(addressPayload?.city?.id || 0),
+            name: String(addressPayload?.city?.name || addressPayload?.city?.city || '').trim()
+        }
+    };
+
+    checkoutState.addresses = (checkoutState.addresses || []).map(address => {
+        if (Number(address?.id || 0) !== addressId) return address;
+        return {
+            ...address,
+            ...updated
+        };
+    });
+
+    renderAddressSelector(checkoutState.addresses);
+    const addressSelect = document.getElementById('addressSelect');
+    if (addressSelect) addressSelect.value = String(addressId);
+}
+
+function flashAutofill(elements) {
+    (elements || []).forEach(element => {
+        if (!element) return;
+        element.classList.add('checkout-autofill');
+        window.setTimeout(() => {
+            element.classList.remove('checkout-autofill');
+        }, 1200);
+    });
+}
+
 
 function submitExternalPostForm(actionUrl, fields) {
     const form = document.createElement('form');
