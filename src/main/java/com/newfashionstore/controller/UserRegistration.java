@@ -7,7 +7,8 @@ import com.newfashionstore.entity.User;
 import com.newfashionstore.entity.UserType;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
-import com.newfashionstore.util.Validator;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -24,16 +25,8 @@ public class UserRegistration {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerUser(UserDTO userDTO) {
+    public Response registerUser(@Valid @NotNull UserDTO userDTO) {
         ResponseDTO responseDTO = new ResponseDTO();
-
-        // Validate DTO ---
-        String violations = Validator.validateUserDTO(userDTO);
-        if (violations != null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ResponseDTO(false, violations))
-                    .build();
-        }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();

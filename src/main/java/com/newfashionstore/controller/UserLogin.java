@@ -8,9 +8,10 @@ import com.newfashionstore.entity.Stock;
 import com.newfashionstore.entity.User;
 import com.newfashionstore.util.Encryption;
 import com.newfashionstore.util.HibernateUtil;
-import com.newfashionstore.util.Validator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -31,7 +32,7 @@ public class UserLogin {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response loginUser(LoginDTO loginDTO, @Context HttpServletRequest request) {
+    public Response loginUser(@Valid @NotNull LoginDTO loginDTO, @Context HttpServletRequest request) {
         ResponseDTO responseDTO = new ResponseDTO();
 
         // Redirect if already logged in ---
@@ -40,14 +41,6 @@ public class UserLogin {
             responseDTO.setSuccess(true);
             responseDTO.setMessage("Already logged in.");
             return Response.ok(responseDTO).build();
-        }
-
-        // Validate DTO ---
-        String violations = Validator.validateLoginDTO(loginDTO);
-        if (violations != null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ResponseDTO(false, violations))
-                    .build();
         }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
