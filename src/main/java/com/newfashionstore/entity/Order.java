@@ -6,13 +6,19 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
 public class Order implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private String id;
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID orderNumber;
 
     @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
@@ -53,6 +59,14 @@ public class Order implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public UUID getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(UUID orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public LocalDateTime getOrderDate() {
