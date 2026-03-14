@@ -7,5 +7,6 @@ public class AppConfig extends ResourceConfig {
         packages("com.newfashionstore.controller");
         packages("com.newfashionstore.filter");
         packages("com.newfashionstore.util");
+        register(org.glassfish.jersey.media.multipart.MultiPartFeature.class);
     }
 }
