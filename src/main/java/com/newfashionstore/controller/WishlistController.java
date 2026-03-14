@@ -25,52 +25,6 @@ import java.util.Map;
 @Path("/wishlist")
 public class WishlistController {
 
-    @POST
-    @Path("/add")
-    @Secure
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response addToWishlist(@QueryParam("pId") int productId, @Context HttpServletRequest request) {
-        ResponseDTO responseDTO = new ResponseDTO();
-        HttpSession httpSession = request.getSession();
-
-        User user = (User) httpSession.getAttribute("user");
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            Wishlist existingWishlist = (Wishlist) session
-                    .createQuery("FROM Wishlist WHERE user.id = :uid AND product.id = :pid")
-                    .setParameter("uid", user.getId())
-                    .setParameter("pid", productId)
-                    .uniqueResult();
-            if (existingWishlist != null) {
-                responseDTO.setSuccess(true);
-                responseDTO.setMessage("Item is already in wishlist!");
-            } else {
-                Product product = session.get(Product.class, productId);
-                if (product == null) {
-                    responseDTO.setSuccess(false);
-                    responseDTO.setMessage("Failed adding item to wishlist!");
-                    return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
-                }
-                Wishlist wishlist = new Wishlist();
-                wishlist.setUser(user);
-                wishlist.setProduct(product);
-                wishlist.setAddedDate(LocalDateTime.now());
-                session.persist(wishlist);
-
-                transaction.commit();
-                responseDTO.setSuccess(true);
-                responseDTO.setMessage("Added to wishlist.");
-            }
-            return Response.ok(responseDTO).build();
-        } catch (Exception e) {
-            responseDTO.setSuccess(false);
-            responseDTO.setMessage(e.getMessage());
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
-        }
-    }
-
     @GET
     @Path("/count")
     @Produces(MediaType.APPLICATION_JSON)
@@ -161,6 +115,52 @@ public class WishlistController {
         } catch (Exception e) {
             responseDTO.setSuccess(false);
             responseDTO.setMessage("Failed to retrieve wishlist: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
+
+    @POST
+    @Path("/add")
+    @Secure
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addToWishlist(@QueryParam("pId") int productId, @Context HttpServletRequest request) {
+        ResponseDTO responseDTO = new ResponseDTO();
+        HttpSession httpSession = request.getSession();
+
+        User user = (User) httpSession.getAttribute("user");
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            Wishlist existingWishlist = session
+                    .createQuery("FROM Wishlist WHERE user.id = :uid AND product.id = :pid", Wishlist.class)
+                    .setParameter("uid", user.getId())
+                    .setParameter("pid", productId)
+                    .uniqueResult();
+            if (existingWishlist != null) {
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Item is already in wishlist!");
+            } else {
+                Product product = session.get(Product.class, productId);
+                if (product == null) {
+                    responseDTO.setSuccess(false);
+                    responseDTO.setMessage("Failed adding item to wishlist!");
+                    return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
+                }
+                Wishlist wishlist = new Wishlist();
+                wishlist.setUser(user);
+                wishlist.setProduct(product);
+                wishlist.setAddedDate(LocalDateTime.now());
+                session.persist(wishlist);
+
+                transaction.commit();
+                responseDTO.setSuccess(true);
+                responseDTO.setMessage("Added to wishlist.");
+            }
+            return Response.ok(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage(e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
