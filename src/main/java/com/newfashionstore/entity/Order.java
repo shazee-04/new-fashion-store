@@ -3,6 +3,7 @@ package com.newfashionstore.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +18,10 @@ public class Order implements Serializable {
     private LocalDateTime orderDate;
 
     @Column(name = "total_amount", nullable = false)
-    private double totalAmount;
+    private BigDecimal totalAmount;
+
+    @Column(name = "order_notes", length = 500)
+    private String orderNotes;
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id", nullable = false)
@@ -59,12 +63,20 @@ public class Order implements Serializable {
         this.orderDate = orderDate;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getOrderNotes() {
+        return orderNotes;
+    }
+
+    public void setOrderNotes(String orderNotes) {
+        this.orderNotes = orderNotes;
     }
 
     public PaymentMethod getPaymentMethod() {
