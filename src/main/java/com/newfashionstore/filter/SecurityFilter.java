@@ -9,7 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 @WebFilter(urlPatterns = {
-        "/wishlist.html"
+        "/wishlist.html",
+        "/checkout.html"
 })
 public class SecurityFilter implements Filter {
     @Override
