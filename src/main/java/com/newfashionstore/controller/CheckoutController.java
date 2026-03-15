@@ -4,6 +4,7 @@ import com.newfashionstore.annotations.Secure;
 import com.newfashionstore.dto.OrderRequestDTO;
 import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.*;
+import com.newfashionstore.util.Env;
 import com.newfashionstore.util.HibernateUtil;
 import com.newfashionstore.util.PayHereUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,6 +40,19 @@ public class CheckoutController {
 
         BigDecimal shippingFee = new BigDecimal("350");
         BigDecimal grandTotal = BigDecimal.ZERO;
+
+        String publicUrl = Env.get("app.public.url");
+        if (publicUrl == null || publicUrl.isBlank()) {
+            publicUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+                    + request.getContextPath();
+        }
+        String baseUrl = Env.get("app.url");
+        if (baseUrl == null || baseUrl.isBlank()) {
+            baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+                    + request.getContextPath();
+        }
+        String returnUrl = baseUrl + "/invoice.html";
+        String cancelUrl = baseUrl + "/checkout.html";
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -170,16 +184,13 @@ public class CheckoutController {
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
                 }
 
-                String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
-                        + request.getContextPath();
-
                 String amountFormatted = paymentAmount.setScale(2, RoundingMode.HALF_UP).toPlainString();
                 payHereParams = new HashMap<>();
                 payHereParams.put("sandbox", true);
                 payHereParams.put("merchant_id", merchantId);
-                payHereParams.put("return_url", baseUrl + "/order-tracking.html");
-                payHereParams.put("cancel_url", baseUrl + "/checkout.html");
-                payHereParams.put("notify_url", baseUrl + "/api/pay/payhere/notify");
+                payHereParams.put("return_url", returnUrl + "?orderId=" + orderId);
+                payHereParams.put("cancel_url", cancelUrl);
+                payHereParams.put("notify_url", publicUrl + "/api/pay/payhere/notify");
                 payHereParams.put("order_id", orderId);
                 payHereParams.put("items", "Order " + orderId);
                 payHereParams.put("amount", amountFormatted);
@@ -203,10 +214,13 @@ public class CheckoutController {
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("orderId", order.getId());
+                result.put("redirectUrl", returnUrl);
 
                 if (paymentMethod.getId() == 1) {
                     result.put("payhereHash", payHereHash);
                     result.put("params", payHereParams);
+                    result.put("returnUrl", returnUrl);
+                    result.put("cancelUrl", cancelUrl);
                 }
 
                 responseDTO.setSuccess(true);

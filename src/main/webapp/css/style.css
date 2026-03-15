@@ -417,6 +417,33 @@
     box-shadow: none !important;
 }
 
+/* Checkout validation icons: use circle dots instead of default Bootstrap glyphs */
+#Checkout .was-validated .form-control:valid,
+#Checkout .form-control.is-valid {
+    background-image: none !important;
+    background-size: 11px 11px;
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .25rem) center;
+    padding-right: calc(1.5em + .75rem);
+}
+
+#Checkout .was-validated .form-control:invalid,
+#Checkout .form-control.is-invalid {
+    background-image: none !important;
+    background-size: 11px 11px;
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .25rem) center;
+    padding-right: calc(1.5em + .75rem);
+}
+
+/* Keep selects clean (no extra glyph icon), rely on border color/state */
+#Checkout .was-validated .form-select:valid,
+#Checkout .form-select.is-valid,
+#Checkout .was-validated .form-select:invalid,
+#Checkout .form-select.is-invalid {
+    background-image: none !important;
+}
+
 #Checkout .checkout-autofill {
     background-color: var(--bs-info-bg-subtle);
     border-color: var(--bs-info);

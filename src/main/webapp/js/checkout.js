@@ -11,7 +11,10 @@ const checkoutState = {
     netTotal: 0,
     shippingFee: 350,
     isSubmitting: false,
-    isProgrammaticFill: false
+    isProgrammaticFill: false,
+    payhereReturnUrl: null,
+    payhereCancelUrl: null,
+    lastRedirectUrl: null
 };
 
 document.addEventListener('DOMContentLoaded', onCheckoutDomReady);
@@ -468,29 +471,34 @@ async function saveAddress(addressPayload) {
 
 function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) {
     if (Number(paymentMethodId) === 1) {
-        const payHereParams = preparePayHerePaymentParams(checkoutResult?.data?.params);
+        const rawParams = checkoutResult?.data?.params;
+        const payHereParams = preparePayHerePaymentParams(rawParams);
+        const returnUrl = String(rawParams?.return_url || checkoutResult?.data?.returnUrl || checkoutResult?.data?.redirectUrl || '').trim();
+        const cancelUrl = String(rawParams?.cancel_url || checkoutResult?.data?.cancelUrl || '').trim();
+        checkoutState.payhereReturnUrl = returnUrl || null;
+        checkoutState.payhereCancelUrl = cancelUrl || null;
+        checkoutState.lastRedirectUrl = returnUrl || checkoutState.lastRedirectUrl;
+
         if (!payHereParams) {
             console.error('PayHere payment params missing/invalid. Raw params:', checkoutResult?.data?.params);
-            showToast('Order placed, but PayHere parameters are missing. Please try again.', false);
-            redirectToOrderTracking();
+            showToast('Order created, but payment could not start (missing PayHere data). Please refresh and try again.', false);
             return false;
         }
 
         if (!window.payhere) {
             const payhereScript = document.querySelector('script[src*="payhere.lk/lib/payhere.js"]');
             console.error('PayHere SDK (window.payhere) is not available. Script tag:', payhereScript);
-            showToast('Order placed, but PayHere failed to load in your browser. Check your network/adblock.', false);
-            redirectToOrderTracking();
+            showToast('PayHere failed to load in your browser. Check network/adblock and try again.', false);
             return false;
         }
 
         if (typeof window.payhere.startPayment !== 'function') {
             console.error('PayHere SDK loaded, but startPayment is not a function. payhere:', window.payhere);
-            showToast('Order placed, but PayHere is not ready right now. Please refresh and try again.', false);
-            redirectToOrderTracking();
+            showToast('PayHere is not ready right now. Please refresh and try again.', false);
             return false;
         }
 
+        showToast('Redirecting to PayHere to complete payment.', true);
         attachPayHereHandlers();
         window.payhere.startPayment(payHereParams);
         return true;
@@ -498,19 +506,19 @@ function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) 
 
     if (Number(paymentMethodId) === 2) {
         showToast(checkoutResult.message || 'Order placed.', true);
-        redirectToOrderTracking();
+        redirectToUrl(checkoutResult?.data?.redirectUrl);
         return false;
     }
 
     if (Number(paymentMethodId) === 3) {
         showToast(checkoutResult.message || 'Order placed (COD).', true);
-        redirectToOrderTracking();
+        redirectToUrl(checkoutResult?.data?.redirectUrl);
         return false;
     }
 
     const redirectUrl = checkoutResult?.data?.redirectUrl || checkoutResult?.data?.paymentUrl || checkoutResult?.data?.url;
     if (redirectUrl) {
-        window.location.href = redirectUrl;
+        redirectToUrl(redirectUrl, 0);
         return true;
     }
 
@@ -534,14 +542,16 @@ function handleCheckoutSuccess(checkoutResult, paymentMethodId, addressPayload) 
     }
 
     showToast(checkoutResult.message || 'Checkout successful!', true);
-    redirectToOrderTracking();
+    redirectToUrl(checkoutState.lastRedirectUrl || checkoutResult?.data?.redirectUrl);
 
     return false;
 }
 
-function redirectToOrderTracking(delayMs = 900) {
+function redirectToUrl(url, delayMs = 900) {
+    const target = String(url || '').trim();
+    if (!target) return;
     setTimeout(() => {
-        window.location.href = 'order-tracking.html';
+        window.location.href = target;
     }, Number(delayMs || 0));
 }
 
@@ -556,19 +566,21 @@ function attachPayHereHandlers() {
         } else {
             console.log('PayHere completed.');
         }
-        showToast('Payment completed. Verifying order status...', false);
-        redirectToOrderTracking(500);
+        redirectToast('Payment completed.', `invoice.html?orderId=${safeOrderId}`);
     };
 
     window.payhere.onDismissed = function () {
-        restoreCheckoutUi();
-        showToast('Payment cancelled.', false);
+        // restoreCheckoutUi();
+        // Do not manually redirect; PayHere handles cancel_url.
+        redirectToast('Payment was cancelled.', 'checkout.html', false);
     };
 
     window.payhere.onError = function (error) {
-        restoreCheckoutUi();
+        // restoreCheckoutUi();
         const message = String(error || '').trim();
-        showToast(message ? `Payment failed: ${message}` : 'Payment failed.', false);
+        // Do not manually redirect; PayHere handles cancel_url/error return handling.
+        console.error('PayHere error:', error);
+        redirectToast('PayHere returned an error. Please try again.', 'checkout.html', false);
     };
 }
 
@@ -585,6 +597,8 @@ function preparePayHerePaymentParams(rawParams) {
 
     const requiredKeys = [
         'merchant_id',
+        'return_url',
+        'cancel_url',
         'notify_url',
         'order_id',
         'items',
