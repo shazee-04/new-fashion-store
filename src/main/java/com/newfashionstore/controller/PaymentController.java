@@ -1,5 +1,6 @@
 package com.newfashionstore.controller;
 
+import com.newfashionstore.annotations.Secure;
 import com.newfashionstore.entity.Cart;
 import com.newfashionstore.entity.Order;
 import com.newfashionstore.entity.OrderStatus;
@@ -19,6 +20,7 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 @Path("/pay")
+@Secure
 public class PaymentController {
     @POST
     @Path("/payhere/notify")
