@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     getBannerData();
+    getBrands();
     getNewArrivals();
     getBestSelling();
     getMoreProducts();
@@ -44,6 +45,43 @@ function renderBanners(banners) {
             </div>
         </div>
         `;
+    })
+}
+
+async function getBrands() {
+    try {
+        const response = await fetch("api/filters/brands")
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            renderBrands(result.data.brands);
+        }
+    } catch (error) {
+        console.error("Failed to load banner data:", error);
+    }
+}
+
+function renderBrands(brands) {
+    const brandsContainer = document.getElementById('brands-container');
+
+    brandsContainer.innerHTML = '';
+
+    brands.slice(0, 5).forEach((b) => {
+        const brandName = b.name;
+        const brandImage = b.path || 'assets/images/brand/clothing/brand-placeholder.jpg';
+
+        brandsContainer.innerHTML += `
+        <div class="col-6 col-md-4 col-lg d-flex">
+            <div class="image-zoom-effect w-100">
+                <div class="image-holder">
+                    <a href="shop.html?brand=${brandName}" class="brand-tile">
+                        <img src="${brandImage}" alt="${brandName}" class="img-fluid brand-logo"
+                        onerror="this.onerror=null;this.src='assets/images/brand/clothing/brand-placeholder.jpg';">
+                    </a>
+                </div>
+            </div>
+        </div>
+        `
     })
 }
 
