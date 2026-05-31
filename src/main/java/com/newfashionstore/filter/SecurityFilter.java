@@ -10,7 +10,8 @@ import java.io.IOException;
 
 @WebFilter(urlPatterns = {
         "/wishlist.html",
-        "/checkout.html"
+        "/checkout.html",
+        "/my-account.html"
 })
 public class SecurityFilter implements Filter {
     @Override
