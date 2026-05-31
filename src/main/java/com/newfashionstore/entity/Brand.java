@@ -15,6 +15,9 @@ public class Brand implements Serializable {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Column(name = "path")
+    private String path;
+
     public Brand() {
     }
 
@@ -32,5 +35,13 @@ public class Brand implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
