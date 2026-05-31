@@ -105,11 +105,11 @@ function renderOrderDetails(order) {
 			<div class="d-flex flex-wrap gap-3 align-items-center border-bottom py-3">
 				<img src="${image}" alt="${title}" class="border" style="width: 72px; height: 72px; object-fit: cover;" onerror="this.onerror=null;this.src='assets/images/product-placeholder.jpg';">
 				<div class="flex-grow-1">
-					<div class="text-uppercase fw-semibold">${title}</div>
+					<div class="text-uppercase fw-medium">${title}</div>
 					<div class="text-muted small">Color: ${color} · Size: ${size}</div>
 					<div class="text-muted small">Qty: ${qty} · Unit: ${unitPrice}</div>
 				</div>
-				<div class="text-end fw-semibold">${totalPrice}</div>
+				<div class="text-end fw-medium">${totalPrice}</div>
 			</div>
 		`;
     }).join('') || '<div class="text-muted small">No items found.</div>';
