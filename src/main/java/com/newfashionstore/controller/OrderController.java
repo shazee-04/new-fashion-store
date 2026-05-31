@@ -6,6 +6,7 @@ import com.newfashionstore.dto.ResponseDTO;
 import com.newfashionstore.entity.Order;
 import com.newfashionstore.entity.User;
 import com.newfashionstore.util.HibernateUtil;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -24,6 +25,24 @@ import java.util.Map;
 @Secure
 public class OrderController {
 
+    @Nonnull
+    private static Map<String, Object> getStringObjectMap(List<Order> orders) {
+        List<OrderSummaryDTO> summaries = new ArrayList<>();
+        for (Order order : orders) {
+            OrderSummaryDTO dto = new OrderSummaryDTO();
+            dto.setId(order.getId());
+            dto.setOrderCode("NF-" + String.format("%06d", order.getId()));
+            dto.setOrderDate(order.getOrderDate() != null ? order.getOrderDate().toString() : "");
+            dto.setStatus(order.getOrderStatus() != null ? order.getOrderStatus().getName() : "");
+            dto.setTotalAmount(order.getTotalAmount() == null ? 0 : order.getTotalAmount().doubleValue());
+            summaries.add(dto);
+        }
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("orders", summaries);
+        return data;
+    }
+
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
@@ -38,19 +57,7 @@ public class OrderController {
                     .setParameter("uid", user.getId())
                     .list();
 
-            List<OrderSummaryDTO> summaries = new ArrayList<>();
-            for (Order order : orders) {
-                OrderSummaryDTO dto = new OrderSummaryDTO();
-                dto.setId(order.getId());
-                dto.setOrderCode("NF-" + order.getId());
-                dto.setOrderDate(order.getOrderDate() != null ? order.getOrderDate().toString() : "");
-                dto.setStatus(order.getOrderStatus() != null ? order.getOrderStatus().getName() : "");
-                dto.setTotalAmount(order.getTotalAmount() == null ? 0 : order.getTotalAmount().doubleValue());
-                summaries.add(dto);
-            }
-
-            Map<String, Object> data = new HashMap<>();
-            data.put("orders", summaries);
+            Map<String, Object> data = getStringObjectMap(orders);
 
             responseDTO.setSuccess(true);
             responseDTO.setMessage("Orders loaded successfully.");
