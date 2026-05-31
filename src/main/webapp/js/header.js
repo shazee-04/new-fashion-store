@@ -159,15 +159,15 @@ class Header extends HTMLElement {
                     <input type="search" id="search-form" class="form-control border-0 border-bottom shadow-none"
                         placeholder="Type and press enter" value="" />
                     <button id="searchSubmit" class="search-submit border-0 position-absolute bg-transparent"
-                        style="bottom: 10px;right: 15px;">
+                        style="bottom: 10px;right: 15px;"> 
                         <i class="bi bi-arrow-right" style="font-size: 24px;"></i>
                     </button>
                 </div>
             </form>
-
-            <h5 class="cat-list-title">Browse Categories</h5>
-
-            <ul class="cat-list">
+    
+            <div class="d-none">
+                <h5 class="cat-list-title">Browse Categories</h5>
+                <ul class="cat-list">
                 <li class="cat-list-item">
                     <a href="#">Jackets</a>
                 </li>
@@ -190,7 +190,8 @@ class Header extends HTMLElement {
                     <a href="#">Jumpsuits</a>
                 </li>
             </ul>
-
+            </div>
+            
         </div>
     </div>
 
