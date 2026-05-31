@@ -43,4 +43,28 @@ public class FilterController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
         }
     }
+
+    @GET
+    @Path("/brands")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBrands() {
+        ResponseDTO responseDTO = new ResponseDTO();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<Brand> brandList = session.createQuery("FROM Brand", Brand.class).list();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("brands", brandList);
+
+            responseDTO.setSuccess(true);
+            responseDTO.setMessage("Filters loaded successfully.");
+            responseDTO.setData(data);
+
+            return Response.ok().entity(responseDTO).build();
+        } catch (Exception e) {
+            responseDTO.setSuccess(false);
+            responseDTO.setMessage("Failed to load brands: " + e.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(responseDTO).build();
+        }
+    }
 }
