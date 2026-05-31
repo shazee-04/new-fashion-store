@@ -359,12 +359,12 @@ class Header extends HTMLElement {
                             </a>
                             <ul class="dropdown-menu list-unstyled end-0" style="left: auto;"  aria-labelledby="dropdownUser">
                                 <li>
-                                    <a href="#" class="dropdown-item item-anchor">
+                                    <a href="my-account.html" class="dropdown-item item-anchor">
                                         Account
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="dropdown-item item-anchor">
+                                    <a href="order-tracking.html" class="dropdown-item item-anchor">
                                         Orders
                                     </a>
                                 </li>
