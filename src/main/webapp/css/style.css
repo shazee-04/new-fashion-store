@@ -2,6 +2,10 @@
     cursor: grab;
 }
 
+.bg-color-1 {
+    background-color: #f8f8f8;
+}
+
 .c-grab:active {
     cursor: grabbing;
 }
