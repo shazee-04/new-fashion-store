@@ -34,7 +34,7 @@ public class NewsletterEmail implements Mailable {
             message.setSubject(subject);
 
             String emailContent =
-                    "<table width='100%' cellpadding='0' cellspacing='0' style='background:#f4f6f8; padding:30px 0; font-family:Arial, sans-serif;'>" +
+                    "<table width='100%' cellpadding='0' cellspacing='0' style='background:#f4f6f800; padding:0 0; font-family:Arial, sans-serif;'>" +
                             "<tr>" +
                             "<td align='center'>" +
 
