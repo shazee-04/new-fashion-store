@@ -258,21 +258,21 @@ class Header extends HTMLElement {
             <div class="row justify-content-between align-items-center w-100 flex-nowrap">
 
                 <div class="col-auto d-flex align-items-center">
-                    <button class="navbar-toggler shadow-none border-0 bg-light py-1 px-2 me-2" type="button"
+                    <button class="navbar-toggler shadow-none bg-color-1 border-0 bg-light py-1 px-2 me-2" type="button"
                         data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
                         <i class="bi bi-list-nested"></i>
                     </button>
                     <a class="navbar-brand" href="index.html">
 <!--                        <img height="32px" src="assets/images/main-logo.png" alt="logo">-->
-                        <h3 class="p-0 m-0 fs-2">NEW FASHION</h3>
+                        <h3 class="p-0 m-0 fs-3">NEW FASHION</h3>
                     </a>
                 </div>
 
                 <div class="col-auto">
                     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
                         aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header">
-                            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                        <div class="offcanvas-header pt-4">
+                            <h5 class="offcanvas-title px-3" id="offcanvasNavbarLabel">Menu</h5>
                             <button type="button" class="text-reset shadow-none border-0 bg-transparent"
                                 data-bs-dismiss="offcanvas" aria-label="Close">
                                 <i class="bi bi-x-lg text-black"></i>
@@ -280,14 +280,14 @@ class Header extends HTMLElement {
                         </div>
 
                         <div class="offcanvas-body">
-                            <ul class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-lg-3 gap-xl-5 pe-3">
-                                <li class="nav-item">
+                            <ul class="navbar-nav justify-content-end flex-grow-1 gap-1 gap-lg-3 gap-xl-5 px-3">
+                                <li class="nav-item hover-bg-color-1">
                                     <a class="nav-link" href="index.html">Home</a>
                                 </li>
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" href="my-account.html#" id="dropdownShop"
                                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Shop</a>
-                                    <ul class="dropdown-menu list-unstyled" aria-labelledby="dropdownShop">
+                                    <ul class="dropdown-menu list-unstyled shadow-none bg-color-1" aria-labelledby="dropdownShop">
                                         <li>
                                             <a href="shop.html?sort=0" class="dropdown-item item-anchor">
                                                 New Arrivals
@@ -315,14 +315,27 @@ class Header extends HTMLElement {
                                         </li>
                                     </ul>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item hover-bg-color-1">
                                     <a class="nav-link text-danger" href="shop.html">Sale</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item hover-bg-color-1">
                                     <a class="nav-link" href="about.html">About</a>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item hover-bg-color-1">
                                     <a class="nav-link" href="contact.html">Contact</a>
+                                </li>
+                                <li class="nav-item hover-bg-color-1 d-block d-lg-none">
+                                    <a href="wishlist.html" class="nav-link">
+                                        Wishlist
+                                        <span class="wishlist-count m-auto"></span>
+                                    </a>
+                                </li>
+                                <li class="nav-item hover-bg-color-1 d-block d-lg-none">
+                                    <a href="cart.html" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
+                                        aria-controls="offcanvasCart">
+                                        Cart
+                                        <span class="cart-count m-auto"></span>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -330,14 +343,14 @@ class Header extends HTMLElement {
                 </div>
 
                 <div class="col-auto">
-                    <ul class="navbar-nav list-unstyled d-flex justify-content-end align-items-center mb-0 text-dark">
-                        <li class="nav-item">
+                    <ul class="navbar-nav list-unstyled d-flex flex-row gap-lg-0 gap-3 justify-content-end align-items-center mb-0 text-dark">
+                        <li class="nav-item d-none d-lg-block">
                             <a href="wishlist.html" class="nav-link">
                                     Wishlist
                                 <span class="wishlist-count m-auto"></span>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-none d-lg-block">
                             <a href="cart.html" class="nav-link" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
                                 aria-controls="offcanvasCart">
                                 Cart
@@ -358,7 +371,7 @@ class Header extends HTMLElement {
                                     <use xlink:href="#user"></use>
                                 </svg>
                             </a>
-                            <ul class="dropdown-menu list-unstyled end-0" style="left: auto;"  aria-labelledby="dropdownUser">
+                            <ul class="dropdown-menu list-unstyled end-0 position-absolute" style="left: auto;"  aria-labelledby="dropdownUser">
                                 <li>
                                     <a href="my-account.html" class="dropdown-item item-anchor">
                                         Account
