@@ -19,6 +19,9 @@ public class Subscriber implements Serializable {
     @Column(name = "date_subscribed", nullable = false)
     private LocalDateTime dateSubscribed;
 
+    @Column(name = "token", nullable = false, length = 255)
+    private String token;
+
     @ManyToOne
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
@@ -49,6 +52,14 @@ public class Subscriber implements Serializable {
 
     public void setDateSubscribed(LocalDateTime dateSubscribed) {
         this.dateSubscribed = dateSubscribed;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Status getStatus() {
