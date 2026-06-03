@@ -1,4 +1,6 @@
-document.getElementById('contactForm').addEventListener('submit', async (e) => {
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     document.getElementById('contactFormBtn').disabled = true;
 
@@ -53,9 +55,12 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
     } finally {
         document.getElementById('contactFormBtn').disabled = false;
     }
-});
+    });
+}
 
-document.getElementById('newsletterForm').addEventListener('submit', async (e) => {
+const newsletterForm = document.getElementById('newsletterForm');
+if (newsletterForm) {
+    newsletterForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     document.getElementById('newsletterFormBtn').disabled = true;
 
@@ -88,6 +93,59 @@ document.getElementById('newsletterForm').addEventListener('submit', async (e) =
     } finally {
         document.getElementById('newsletterFormBtn').disabled = false;
     }
-})
+    })
+}
+
+const unsubscribeForm = document.getElementById('unsubscribeForm');
+if (unsubscribeForm) {
+    const tokenHint = document.getElementById('tokenHint');
+    const searchParams = new URLSearchParams(window.location.search);
+    let token = searchParams.get('token');
+    if (!token && window.location.search && window.location.search.length > 1) {
+        const rawQuery = window.location.search.substring(1);
+        token = rawQuery.includes('=') ? token : rawQuery;
+    }
+
+    if (tokenHint) {
+        tokenHint.textContent = token
+            ? 'Click confirm to unsubscribe this email address from our newsletter.'
+            : 'Missing token. Please use the link from your newsletter email.';
+    }
+
+    unsubscribeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = document.getElementById('unsubscribeBtn');
+        button.disabled = true;
+
+        if (!token) {
+            showToast('Missing token. Please use the link from your newsletter email.', false);
+            button.disabled = false;
+            return;
+        }
+
+        try {
+            const response = await fetch('api/contact/newsletter/unsubscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({token: token})
+            });
+
+            const result = await response.json();
+            if (response.ok && result.success) {
+                showToast(result.message || 'Unsubscribed from newsletter successfully!', true);
+                document.getElementById('unsubscribeForm').reset();
+            } else {
+                showToast(result.message || 'Failed to unsubscribe from newsletter!', false);
+            }
+        } catch (error) {
+            console.error('Newsletter unsubscription error:', error);
+            showToast('Server connection failed! Please try again.', false);
+        } finally {
+            button.disabled = false;
+        }
+    });
+}
 
 
