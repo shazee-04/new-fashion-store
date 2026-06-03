@@ -3,7 +3,9 @@ package com.newfashionstore.mail;
 import com.newfashionstore.provider.MailServiceProvider;
 import com.newfashionstore.util.Env;
 import com.newfashionstore.util.Mailable;
-import jakarta.mail.*;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.text.StringEscapeUtils;
@@ -31,9 +33,8 @@ public class ContactEmail implements Mailable {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(Env.get("app.mail.contact")));
+            message.setFrom(new InternetAddress(Env.get("app.mail.contact"), Env.get("app.name")));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(Env.get("app.mail.contact")));
-            message.setReplyTo(new Address[]{new InternetAddress(email)});
 
             message.setSubject("Contact Form Submission: " + subject);
 
@@ -121,7 +122,7 @@ public class ContactEmail implements Mailable {
 
             Transport.send(message);
             this.onSuccess();
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             this.onFailure(e);
         }
     }
