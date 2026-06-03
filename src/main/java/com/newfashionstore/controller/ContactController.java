@@ -8,6 +8,7 @@ import com.newfashionstore.mail.ContactEmail;
 import com.newfashionstore.mail.NewsletterEmail;
 import com.newfashionstore.provider.MailServiceProvider;
 import com.newfashionstore.util.HibernateUtil;
+import com.newfashionstore.util.SecureToken;
 import com.newfashionstore.util.Validator;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -81,6 +82,7 @@ public class ContactController {
         String htmlContent = "<p>Thank you for subscribing to our newsletter! " +
                 "You'll now receive updates on our latest products, " +
                 "exclusive offers, and fashion tips.</p>";
+        String token = "";
 
         if (subscriber == null || subscriber.getEmail() == null || subscriber.getEmail().isBlank()) {
             responseDTO.setSuccess(false);
@@ -109,12 +111,16 @@ public class ContactController {
                     return Response.status(Response.Status.OK).entity(responseDTO).build();
                 } else {
                     existingSubscriber.setStatus(session.get(Status.class, 1));
+                    token = existingSubscriber.getToken();
                     session.merge(existingSubscriber);
                 }
             } else {
                 Subscriber newSubscriber = new Subscriber();
                 newSubscriber.setEmail(subscriber.getEmail());
                 newSubscriber.setStatus(session.get(Status.class, 1));
+
+                token = SecureToken.generateToken(32);
+                newSubscriber.setToken(token);
                 session.persist(newSubscriber);
             }
             transaction.commit();
@@ -122,7 +128,8 @@ public class ContactController {
             NewsletterEmail newsletterEmail = new NewsletterEmail(
                     subscriber.getEmail(),
                     subject,
-                    htmlContent
+                    htmlContent,
+                    token
             );
             MailServiceProvider.getInstance().sendMail(newsletterEmail);
 
@@ -143,26 +150,27 @@ public class ContactController {
     public Response unsubscribeNewsletter(Subscriber subscriber) {
         ResponseDTO responseDTO = new ResponseDTO();
 
-        if (subscriber == null || subscriber.getEmail() == null || subscriber.getEmail().isBlank()) {
+        if (subscriber == null || subscriber.getToken() == null || subscriber.getToken().isBlank()) {
             responseDTO.setSuccess(false);
-            responseDTO.setMessage("Please provide a valid email address!");
-            return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
-        }
-
-        if (!Validator.isValidEmail(subscriber.getEmail())) {
-            responseDTO.setSuccess(false);
-            responseDTO.setMessage("Please provide a valid email address!");
+            responseDTO.setMessage("Missing unsubscribe token!");
             return Response.status(Response.Status.BAD_REQUEST).entity(responseDTO).build();
         }
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            Subscriber existingSubscriber = session.createQuery("FROM Subscriber s WHERE s.email = :email", Subscriber.class)
-                    .setParameter("email", subscriber.getEmail())
+            Subscriber existingSubscriber = session
+                    .createQuery("FROM Subscriber s WHERE s.token = :token", Subscriber.class)
+                    .setParameter("token", subscriber.getToken())
                     .uniqueResult();
 
             if (existingSubscriber != null) {
+                if (existingSubscriber.getStatus().getId() == 2) {
+                    transaction.rollback();
+                    responseDTO.setSuccess(true);
+                    responseDTO.setMessage("You are already unsubscribed.");
+                    return Response.status(Response.Status.OK).entity(responseDTO).build();
+                }
                 existingSubscriber.setStatus(session.get(Status.class, 2));
                 session.merge(existingSubscriber);
                 transaction.commit();
@@ -173,7 +181,7 @@ public class ContactController {
             } else {
                 transaction.rollback();
                 responseDTO.setSuccess(false);
-                responseDTO.setMessage("Email not found in subscription list!");
+                responseDTO.setMessage("Invalid or expired unsubscribe token!");
                 return Response.status(Response.Status.NOT_FOUND).entity(responseDTO).build();
             }
         } catch (Exception e) {
