@@ -15,10 +15,14 @@ public class NewsletterEmail implements Mailable {
     private final String subject;
     private final String htmlContent;
 
-    public NewsletterEmail(String toEmail, String subject, String htmlContent) {
+    private final String unsubscribeLink = Env.get("app.url") + "/unsubscribe.html?";
+    private final String token;
+
+    public NewsletterEmail(String toEmail, String subject, String htmlContent, String token) {
         this.toEmail = toEmail;
         this.subject = subject;
         this.htmlContent = htmlContent;
+        this.token = token;
     }
 
     @Override
@@ -60,7 +64,8 @@ public class NewsletterEmail implements Mailable {
                             "<p style='margin:5px 0;'>You are receiving this email because you subscribed to our newsletter.</p>" +
                             "<p style='margin:5px 0;'>© " + java.time.Year.now() + " NEW FASHION STORE</p>" +
                             "<p style='margin:5px 0;'>" +
-                            "<a href='#' style='color:#777; text-decoration:underline;'>Unsubscribe</a>" +
+                            "<a href='" + unsubscribeLink + token + "' " +
+                            "style='color:#777; text-decoration:underline;'>Unsubscribe</a>" +
                             "</p>" +
                             "</td>" +
                             "</tr>" +
