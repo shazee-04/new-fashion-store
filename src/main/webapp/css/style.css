@@ -6,6 +6,10 @@
     background-color: #f8f8f8;
 }
 
+.hover-bg-color-1:hover {
+    background-color: var(--bs-light);
+}
+
 .c-grab:active {
     cursor: grabbing;
 }
@@ -736,6 +740,31 @@
 
     #product-detail #quantity {
         font-size: 1.05rem;
+    }
+
+    .offcanvas-body .nav-item .dropdown-menu {
+        background-color: transparent;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .nav-item .dropdown-menu li {
+        border-bottom: 1px solid var(--bs-light);
+    }
+
+    .nav-item .dropdown-menu li a:active {
+        background-color: var(--bs-light) !important;
+        color: var(--bs-dark) !important;
+    }
+
+    .nav-item .dropdown-menu li a {
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+    }
+
+    .offcanvas-body .nav-item {
+        padding-inline: 0.5rem;
+        border-bottom: 1px solid var(--bs-light);
     }
 }
 
