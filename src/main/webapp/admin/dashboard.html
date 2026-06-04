@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard | Overview</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&family=Marcellus&display=swap"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" type="text/css">
+    <link href="css/admin.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-wrapper">
+    <!-- Sidebar navigation -->
+    <admin-sidebar id="admin-sidebar-container"></admin-sidebar>
+
+    <!-- Content workspace -->
+    <div class="admin-content-area">
+        <!-- Top navbar -->
+        <admin-navbar title="Dashboard Overview"></admin-navbar>
+
+        <!-- Main stats area -->
+        <div class="admin-main-content">
+            <!-- Counters Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card">
+                        <i class="bi bi-currency-dollar stat-icon"></i>
+                        <div class="stat-label">Total Sales</div>
+                        <div class="stat-value" id="stats-total-sales">LKR 0.00</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card">
+                        <i class="bi bi-cart3 stat-icon"></i>
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value" id="stats-total-orders">0</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card">
+                        <i class="bi bi-people stat-icon"></i>
+                        <div class="stat-label">Total Customers</div>
+                        <div class="stat-value" id="stats-total-customers">0</div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="stat-card">
+                        <i class="bi bi-exclamation-triangle stat-icon text-danger"></i>
+                        <div class="stat-label">Low Stock Alerts</div>
+                        <div class="stat-value" id="stats-low-stock">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart and Recent Orders Row -->
+            <div class="row g-4">
+                <!-- Sales chart -->
+                <div class="col-12 col-xl-7">
+                    <div class="card border-0 rounded-0 shadow-sm p-4">
+                        <h4 class="mb-4">Sales Trends (Last 7 Days)</h4>
+                        <div style="position: relative; height: 320px; width: 100%;">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Table -->
+                <div class="col-12 col-xl-5">
+                    <div class="card border-0 rounded-0 shadow-sm p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="m-0">Recent Orders</h4>
+                            <a class="btn btn-sm btn-outline-dark" href="orders.html">View All</a>
+                        </div>
+                        <div class="table-responsive p-0 shadow-none border-0">
+                            <table class="table admin-table align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody id="recent-orders-container">
+                                <tr>
+                                    <td class="text-center py-4" colspan="3">
+                                        <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js" type="text/javascript"></script>
+
+<script src="js/admin-shared.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
