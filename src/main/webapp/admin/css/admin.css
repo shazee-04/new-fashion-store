@@ -1,0 +1,422 @@
+/* Admin Dashboard CSS Styles */
+
+:root {
+    --sidebar-bg: #111111;
+    --sidebar-color: #999999;
+    --sidebar-active-color: #ffffff;
+    --sidebar-hover-bg: #1f1f1f;
+    --primary-accent: #222222;
+    --secondary-accent: #6c757d;
+    --body-bg: #f5f6f8;
+    --heading-font: 'Marcellus', serif;
+    --body-font: 'Jost', sans-serif;
+}
+
+body {
+    font-family: var(--body-font);
+    background-color: var(--body-bg);
+    color: #333333;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, .section-title {
+    font-family: var(--heading-font);
+    font-weight: 500;
+    color: #111111;
+}
+
+/* Layout */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+}
+
+#admin-sidebar-container {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.admin-content-area {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: 0;
+}
+
+.admin-main-content {
+    padding: 2rem;
+    flex-grow: 1;
+}
+
+/* Sidebar Component Styling */
+.sidebar-brand {
+    padding: 1.5rem;
+    color: #ffffff;
+    border-bottom: 1px solid #222222;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    padding: 0.85rem 1.5rem;
+    color: var(--sidebar-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.sidebar-menu li a i {
+    font-size: 1.15rem;
+    margin-right: 0.85rem;
+    transition: transform 0.2s ease;
+}
+
+.sidebar-menu li a:hover {
+    background-color: var(--sidebar-hover-bg);
+    color: var(--sidebar-active-color);
+}
+
+.sidebar-menu li a:hover i {
+    transform: translateX(3px);
+}
+
+.sidebar-menu li.active a {
+    color: var(--sidebar-active-color);
+    background-color: var(--sidebar-hover-bg);
+    border-left: 3px solid #ffffff;
+}
+
+/* Top Navbar */
+.admin-navbar {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Stat Cards */
+.stat-card {
+    background-color: #ffffff;
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    padding: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-accent);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card:hover::after {
+    transform: scaleX(1);
+}
+
+.stat-icon {
+    font-size: 2.25rem;
+    color: var(--primary-accent);
+    opacity: 0.15;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--secondary-accent);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 1.85rem;
+    font-weight: 500;
+    color: #111111;
+    font-family: var(--heading-font);
+}
+
+/* Tables */
+.table-responsive {
+    background-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border-radius: 0;
+    padding: 1rem;
+}
+
+.admin-table {
+    width: 100%;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.admin-table th {
+    font-family: var(--body-font);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--secondary-accent);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+}
+
+.admin-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.95rem;
+    color: #444444;
+}
+
+.admin-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #fcfcfc;
+}
+
+/* Status Badges */
+.badge-status {
+    font-family: var(--body-font);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    padding: 0.35em 0.75em;
+    border-radius: 0;
+}
+
+.badge-status.active {
+    background-color: #e3fcef;
+    color: #00875a;
+}
+
+.badge-status.inactive, .badge-status.suspended {
+    background-color: #ffebe6;
+    color: #de350b;
+}
+
+.badge-status.pending {
+    background-color: #fffae6;
+    color: #ff8b00;
+}
+
+.badge-status.shipped {
+    background-color: #deebff;
+    color: #0747a6;
+}
+
+.badge-status.completed, .badge-status.delivered {
+    background-color: #e3fcef;
+    color: #00875a;
+}
+
+.badge-status.cancelled {
+    background-color: #f4f5f7;
+    color: #5e6c84;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 0;
+    font-family: var(--body-font);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+    padding: 0.55rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn-dark {
+    background-color: #111111;
+    border-color: #111111;
+}
+
+.btn-dark:hover {
+    background-color: #333333;
+    border-color: #333333;
+}
+
+.btn-outline-dark {
+    color: #111111;
+    border-color: #111111;
+}
+
+.btn-outline-dark:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border-radius: 0;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    font-family: var(--body-font);
+    font-size: 0.95rem;
+    color: #333333;
+    box-shadow: none !important;
+    transition: border-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #111111;
+}
+
+.form-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    color: #555555;
+    margin-bottom: 0.45rem;
+}
+
+/* Modals */
+.modal-content {
+    border-radius: 0;
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+.modal-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-title {
+    font-family: var(--heading-font);
+    font-size: 1.35rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 1rem 1.5rem;
+}
+
+/* Image Upload Previews */
+.image-upload-preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.image-preview-card {
+    width: 90px;
+    height: 90px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.image-preview-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-preview-card .delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: rgba(231, 76, 60, 0.9);
+    color: #ffffff;
+    border: none;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.image-preview-card .primary-badge {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #ffffff;
+    font-size: 0.55rem;
+    padding: 1px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Stock Variation list */
+.variation-row {
+    background-color: #fdfdfd;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 0.85rem;
+    margin-bottom: 0.65rem;
+    position: relative;
+}
+
+.variation-row .remove-variation-btn {
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+}
+
+/* Responsiveness */
+@media (max-width: 991.98px) {
+    #admin-sidebar-container {
+        margin-left: -260px;
+        position: fixed;
+        height: 100vh;
+        z-index: 1050;
+    }
+
+    #admin-sidebar-container.show {
+        margin-left: 0;
+    }
+
+    .admin-main-content {
+        padding: 1.25rem;
+    }
+}
