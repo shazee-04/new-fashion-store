@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Dashboard | User Accounts</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;700&family=Marcellus&display=swap"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" rel="stylesheet" type="text/css">
+    <link href="css/admin.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-wrapper">
+    <!-- Sidebar navigation -->
+    <admin-sidebar id="admin-sidebar-container"></admin-sidebar>
+
+    <!-- Content Workspace -->
+    <div class="admin-content-area">
+        <!-- Top navbar -->
+        <admin-navbar title="User Management"></admin-navbar>
+
+        <!-- Main Workspace -->
+        <div class="admin-main-content">
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs rounded-0 mb-4 border-bottom" id="userTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="accounts-panel" aria-selected="true"
+                            class="nav-link active rounded-0 text-uppercase fw-semibold px-4 py-2" data-bs-target="#accounts-panel" data-bs-toggle="tab" id="accounts-tab"
+                            role="tab" type="button">Registered Accounts
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="subscribers-panel" aria-selected="false"
+                            class="nav-link rounded-0 text-uppercase fw-semibold px-4 py-2" data-bs-target="#subscribers-panel" data-bs-toggle="tab" id="subscribers-tab"
+                            role="tab" type="button">Mailing List Subscribers
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Panels -->
+            <div class="tab-content" id="userTabsContent">
+                <!-- Panel 1: Accounts -->
+                <div aria-labelledby="accounts-tab" class="tab-pane fade show active" id="accounts-panel"
+                     role="tabpanel">
+                    <!-- Filters -->
+                    <div class="card border-0 rounded-0 shadow-sm p-3 mb-4">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-4">
+                                <input class="form-control" id="user-search-input" placeholder="Search by name or email..."
+                                       type="text">
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select class="form-select" id="filter-user-role">
+                                    <option value="">All Roles</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Customer">Customer</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <select class="form-select" id="filter-user-status">
+                                    <option value="">All Statuses</option>
+                                    <option value="1">Active</option>
+                                    <option value="2">Suspended</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-md-2">
+                                <button class="btn btn-outline-dark w-100 h-100" id="reset-users-filter-btn">Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Accounts Table -->
+                    <div class="table-responsive">
+                        <table class="table admin-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Role</th>
+                                <th>Verified</th>
+                                <th>Status</th>
+                                <th>Registered Date</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                            <tr>
+                                <td class="text-center py-4" colspan="9">
+                                    <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Panel 2: Subscribers -->
+                <div aria-labelledby="subscribers-tab" class="tab-pane fade" id="subscribers-panel" role="tabpanel">
+                    <!-- Subscribers Filter -->
+                    <div class="card border-0 rounded-0 shadow-sm p-3 mb-4">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-8">
+                                <input class="form-control" id="subscriber-search-input" placeholder="Search subscriber email..."
+                                       type="text">
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <button class="btn btn-outline-dark w-100 h-100" id="reset-subs-filter-btn">Clear
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Subscribers Table -->
+                    <div class="table-responsive">
+                        <table class="table admin-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Email Address</th>
+                                <th>Status</th>
+                                <th>Date Subscribed</th>
+                            </tr>
+                            </thead>
+                            <tbody id="subscribers-table-body">
+                            <tr>
+                                <td class="text-center py-4" colspan="4">
+                                    <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/toastify-js" type="text/javascript"></script>
+
+<script src="js/admin-shared.js"></script>
+<script src="js/users.js"></script>
+</body>
+</html>
