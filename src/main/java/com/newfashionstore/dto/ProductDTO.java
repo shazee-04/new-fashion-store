@@ -1,5 +1,8 @@
 package com.newfashionstore.dto;
 
+import com.newfashionstore.entity.Status;
+import jakarta.persistence.ManyToOne;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +18,10 @@ public class ProductDTO implements Serializable {
     private int defStockId;
     private boolean isWishlisted;
     private LocalDateTime addedDate;
+
+    //status
+    @ManyToOne
+    private Status status;
 
     public ProductDTO() {
     }
@@ -97,5 +104,13 @@ public class ProductDTO implements Serializable {
 
     public void setAddedDate(LocalDateTime addedDate) {
         this.addedDate = addedDate;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
